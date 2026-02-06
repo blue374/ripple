@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ripple - Music Therapy System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      color: white;
+    }
+
+    .container {
+      padding: 30px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      opacity: 0.6;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: transform 0.1s, opacity 0.1s;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: scale(1.05);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .btn-connect { background: #3b82f6; }
+    .btn-disconnect { background: #ef4444; }
+    .btn-calibrate { background: #8b5cf6; }
+    .btn-calibrated { background: #4ade80; }
+    .btn-settings { background: rgba(255,255,255,0.1); }
+
+    .preset-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    .preset-btn.active {
+      border-color: #4ade80;
+      background: rgba(74, 222, 128, 0.2);
+    }
+
+    .panel {
+      background: rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 25px;
+    }
+
+    .settings-panel {
+      background: rgba(255,255,255,0.1);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 25px;
+    }
+
+    .settings-panel h3 {
+      margin-bottom: 15px;
+    }
+
+    .settings-panel input[type="range"] {
+      width: 100%;
+      accent-color: #8b5cf6;
+    }
+
+    .hand-container {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 30px;
+    }
+
+    .finger {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 12px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.15);
+      transition: all 0.1s ease;
+    }
+
+    .finger.active {
+      transform: scale(1.08);
+    }
+
+    .finger.clickable {
+      border: 2px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+    }
+
+    .finger.clickable:hover {
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    .finger-label {
+      font-weight: bold;
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    .finger-name {
+      font-size: 0.7rem;
+      opacity: 0.6;
+      margin-top: 2px;
+    }
+
+    .status-text {
+      text-align: center;
+      opacity: 0.6;
+      margin-top: 10px;
+    }
+
+    .mapping-panel h3 {
+      margin-bottom: 15px;
+    }
+
+    .mapping-grid {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .mapping-item {
+      text-align: center;
+      padding: 10px 15px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      transition: background 0.2s;
+    }
+
+    .mapping-item.clickable {
+      cursor: pointer;
+    }
+
+    .mapping-item.clickable:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .mapping-chord {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .mapping-finger {
+      font-size: 0.8rem;
+      opacity: 0.6;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal {
+      background: #1e293b;
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .modal h3 {
+      margin-bottom: 20px;
+    }
+
+    .chord-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .chord-btn {
+      padding: 12px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .chord-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .chord-btn.selected {
+      border-color: #4ade80;
+      background: rgba(74, 222, 128, 0.2);
+    }
+
+    .modal-cancel {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .modal-cancel:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* Instrument selector */
+    .instrument-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .instrument-btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .instrument-btn.active {
+      border-color: #f97316;
+      background: rgba(249, 115, 22, 0.2);
+    }
+
+    /* Browser warning */
+    .warning-banner {
+      background: rgba(255, 200, 50, 0.2);
+      border: 1px solid rgba(255, 200, 50, 0.5);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .warning-banner a {
+      color: #ffd700;
+    }
+
+    /* Hidden */
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎵 Ripple</h1>
+      <p>Music Therapy System</p>
+    </div>
+
+    <div id="browser-warning" class="warning-banner hidden">
+      ⚠️ Web Serial API not supported.<br>
+      Please use <a href="https://www.google.com/chrome/" target="_blank">Chrome</a> or Edge.
+    </div>
+
+    <!-- Control Buttons -->
+    <div class="button-row">
+      <button id="connect-btn" class="btn btn-connect">Connect</button>
+      <button id="calibrate-btn" class="btn btn-calibrate" disabled>Calibrate</button>
+      <button id="settings-btn" class="btn btn-settings">⚙️ Settings</button>
+    </div>
+
+    <!-- Settings Panel -->
+    <div id="settings-panel" class="settings-panel hidden">
+      <h3>Sensitivity: <span id="threshold-value">15</span>%</h3>
+      <input type="range" id="threshold-slider" min="5" max="40" value="15">
+      
+      <h3 style="margin-top: 20px;">Instrument</h3>
+      <div class="instrument-row">
+        <button class="instrument-btn" data-instrument="sine">🎵 Sine</button>
+        <button class="instrument-btn" data-instrument="soft">🎹 Soft</button>
+        <button class="instrument-btn" data-instrument="bell">🔔 Bell</button>
+        <button class="instrument-btn active" data-instrument="pad">🧘 Pad</button>
+      </div>
+    </div>
+
+    <!-- Preset Buttons -->
+    <div class="preset-row">
+      <button class="preset-btn active" data-preset="therapy">🧘 Therapy</button>
+      <button class="preset-btn" data-preset="piano">🎹 Piano</button>
+      <button class="preset-btn" data-preset="chords">🎸 Chords</button>
+      <button class="preset-btn" data-preset="custom">✏️ Custom</button>
+    </div>
+
+    <!-- Hand Visualization -->
+    <div class="panel">
+      <div class="hand-container" id="hand-container">
+        <!-- Fingers will be generated by JS -->
+      </div>
+      <p class="status-text" id="status-text">Connect exoskeleton to start</p>
+    </div>
+
+    <!-- Current Mapping -->
+    <div class="panel mapping-panel">
+      <h3>Current Mapping</h3>
+      <div class="mapping-grid" id="mapping-grid">
+        <!-- Mapping items will be generated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Chord Selector Modal -->
+  <div id="chord-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <h3>Select Chord for <span id="modal-finger-name"></span></h3>
+      <div class="chord-grid" id="chord-grid">
+        <!-- Chords will be generated by JS -->
+      </div>
+      <button id="modal-cancel" class="modal-cancel">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    // ============ CONFIGURATION ============
+    const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
+    
+    const FINGER_COLORS = {
+      thumb: '#ef4444',
+      index: '#f97316',
+      middle: '#eab308',
+      ring: '#22c55e',
+      pinky: '#3b82f6',
+    };
+
+    const FINGER_CONFIG = {
+      thumb:  { idx: 1, range: 139000, width: 55, height: 75,  marginTop: 55 },
+      index:  { idx: 3, range: 184000, width: 45, height: 115, marginTop: 8 },
+      middle: { idx: 4, range: 139000, width: 45, height: 130, marginTop: 0 },
+      ring:   { idx: 5, range: 140000, width: 45, height: 115, marginTop: 8 },
+      pinky:  { idx: 6, range: 168000, width: 45, height: 100, marginTop: 25 },
+    };
+
+    const CHORDS = {
+      'C': [261.63], 'D': [293.66], 'E': [329.63], 'F': [349.23], 'G': [392.00], 'A': [440.00], 'B': [493.88],
+      'C_maj': [261.63, 329.63, 392.00], 'D_maj': [293.66, 369.99, 440.00], 'E_maj': [329.63, 415.30, 493.88],
+      'F_maj': [349.23, 440.00, 523.25], 'G_maj': [392.00, 493.88, 587.33], 'A_maj': [440.00, 554.37, 659.25],
+      'Am': [440.00, 523.25, 659.25], 'Dm': [293.66, 349.23, 440.00], 'Em': [329.63, 392.00, 493.88],
+      'C7': [261.63, 329.63, 392.00, 466.16], 'G7': [392.00, 493.88, 587.33, 698.46],
+    };
+
+    const PRESETS = {
+      therapy: { name: '🧘 Therapy', instrument: 'pad', mapping: { thumb: 'C_maj', index: 'F_maj', middle: 'G_maj', ring: 'Am', pinky: 'Em' }},
+      piano:   { name: '🎹 Piano',   instrument: 'bell', mapping: { thumb: 'C', index: 'D', middle: 'E', ring: 'F', pinky: 'G' }},
+      chords:  { name: '🎸 Chords',  instrument: 'soft', mapping: { thumb: 'C_maj', index: 'D_maj', middle: 'E_maj', ring: 'G_maj', pinky: 'A_maj' }},
+      custom:  { name: '✏️ Custom',  instrument: 'sine', mapping: { thumb: 'C', index: 'D', middle: 'E', ring: 'F', pinky: 'G' }},
+    };
+
+    // ============ AUDIO SYSTEM ============
+    const Audio = {
+      ctx: null,
+      volume: 0.3,
+      currentInstrument: 'pad',
+
+      init() {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      },
+
+      instruments: {
+        sine: (t, f) => Math.sin(2 * Math.PI * f * t),
+        soft: (t, f) => 0.6 * Math.sin(2 * Math.PI * f * t) + 0.3 * Math.sin(4 * Math.PI * f * t) + 0.1 * Math.sin(6 * Math.PI * f * t),
+        bell: (t, f, dur) => Math.sin(2 * Math.PI * f * t) * Math.exp(-3 * t) + 0.5 * Math.sin(4 * Math.PI * f * t) * Math.exp(-4 * t),
+        pad: (t, f) => 0.4 * Math.sin(2 * Math.PI * f * t) + 0.3 * Math.sin(2 * Math.PI * f * 1.002 * t) + 0.3 * Math.sin(2 * Math.PI * f * 0.998 * t),
+      },
+
+      envelope(samples, sampleRate, attack = 0.005, release = 0.02) {
+        const env = new Float32Array(samples.length).fill(1);
+        const attSamples = Math.floor(attack * sampleRate);
+        const relSamples = Math.floor(release * sampleRate);
+        
+        for (let i = 0; i < attSamples && i < env.length; i++) {
+          env[i] = i / attSamples;
+        }
+        for (let i = 0; i < relSamples && i < env.length; i++) {
+          env[env.length - 1 - i] = i / relSamples;
+        }
+        return env;
+      },
+
+      playChord(chordName) {
+        this.init();
+        
+        const frequencies = CHORDS[chordName];
+        if (!frequencies) return;
+
+        const duration = 0.15;
+        const sampleRate = this.ctx.sampleRate;
+        const numSamples = Math.floor(duration * sampleRate);
+        const buffer = this.ctx.createBuffer(1, numSamples, sampleRate);
+        const data = buffer.getChannelData(0);
+
+        const synth = this.instruments[this.currentInstrument] || this.instruments.sine;
+
+        // Generate waveform
+        for (let i = 0; i < numSamples; i++) {
+          const t = i / sampleRate;
+          let sample = 0;
+          for (const freq of frequencies) {
+            sample += synth(t, freq, duration);
+          }
+          data[i] = sample / frequencies.length;
+        }
+
+        // Apply envelope
+        const env = this.envelope(data, sampleRate);
+        for (let i = 0; i < numSamples; i++) {
+          data[i] *= env[i] * this.volume;
+        }
+
+        // Play
+        const source = this.ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(this.ctx.destination);
+        source.start();
+      },
+
+      playFingers(fingers, mapping) {
+        if (!fingers.length) return;
+        
+        // Collect all frequencies from active fingers
+        const allFreqs = [];
+        for (const finger of fingers) {
+          const chord = mapping[finger];
+          if (chord && CHORDS[chord]) {
+            allFreqs.push(...CHORDS[chord]);
+          }
+        }
+        
+        if (allFreqs.length === 0) return;
+
+        this.init();
+        
+        const duration = 0.1;
+        const sampleRate = this.ctx.sampleRate;
+        const numSamples = Math.floor(duration * sampleRate);
+        const buffer = this.ctx.createBuffer(1, numSamples, sampleRate);
+        const data = buffer.getChannelData(0);
+
+        const synth = this.instruments[this.currentInstrument] || this.instruments.sine;
+
+        for (let i = 0; i < numSamples; i++) {
+          const t = i / sampleRate;
+          let sample = 0;
+          for (const freq of allFreqs) {
+            sample += synth(t, freq, duration);
+          }
+          data[i] = sample / allFreqs.length;
+        }
+
+        const env = this.envelope(data, sampleRate);
+        for (let i = 0; i < numSamples; i++) {
+          data[i] *= env[i] * this.volume;
+        }
+
+        const source = this.ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(this.ctx.destination);
+        source.start();
+      }
+    };
+
+    // ============ SERIAL COMMUNICATION ============
+    const Serial = {
+      port: null,
+      reader: null,
+      connected: false,
+      buffer: new Uint8Array(0),
+
+      async connect() {
+        try {
+          this.port = await navigator.serial.requestPort();
+          await this.port.open({ baudRate: 921600 });
+          this.connected = true;
+          this.startReading();
+          return true;
+        } catch (err) {
+          console.error('Connection error:', err);
+          return false;
+        }
+      },
+
+      async disconnect() {
+        this.connected = false;
+        if (this.reader) {
+          try {
+            await this.reader.cancel();
+          } catch (e) {}
+          this.reader = null;
+        }
+        if (this.port) {
+          try {
+            await this.port.close();
+          } catch (e) {}
+          this.port = null;
+        }
+      },
+
+      async startReading() {
+        while (this.port && this.port.readable && this.connected) {
+          this.reader = this.port.readable.getReader();
+          try {
+            while (true) {
+              const { value, done } = await this.reader.read();
+              if (done) break;
+              this.processData(value);
+            }
+          } catch (err) {
+            if (this.connected) console.error('Read error:', err);
+          } finally {
+            this.reader.releaseLock();
+          }
+        }
+      },
+
+      processData(newData) {
+        // Append to buffer
+        const combined = new Uint8Array(this.buffer.length + newData.length);
+        combined.set(this.buffer);
+        combined.set(newData, this.buffer.length);
+        this.buffer = combined;
+
+        // Look for packets
+        while (this.buffer.length >= 40) {
+          let headerIdx = -1;
+          for (let i = 0; i < this.buffer.length - 1; i++) {
+            if (this.buffer[i] === 0xAA && this.buffer[i + 1] === 0x55) {
+              headerIdx = i;
+              break;
+            }
+          }
+
+          if (headerIdx === -1) {
+            this.buffer = this.buffer.slice(-1);
+            break;
+          }
+
+          if (headerIdx + 40 > this.buffer.length) {
+            this.buffer = this.buffer.slice(headerIdx);
+            break;
+          }
+
+          // Parse packet
+          const packet = this.buffer.slice(headerIdx, headerIdx + 40);
+          const values = [];
+          for (let i = 0; i < 10; i++) {
+            const val = packet[i*4] | (packet[i*4+1] << 8) | (packet[i*4+2] << 16) | (packet[i*4+3] << 24);
+            values.push(val >>> 0);
+          }
+
+          App.processEncoderData(values);
+          this.buffer = this.buffer.slice(headerIdx + 40);
+        }
+
+        if (this.buffer.length > 500) {
+          this.buffer = this.buffer.slice(-100);
+        }
+      }
+    };
+
+    // ============ MAIN APP ============
+    const App = {
+      connected: false,
+      calibrated: false,
+      currentPreset: 'therapy',
+      threshold: 0.15,
+      baseline: {},
+      activeFingers: new Set(),
+      selectedFinger: null,
+      showSettings: false,
+      calibrationSamples: {},
+
+      init() {
+        // Check Web Serial support
+        if (!('serial' in navigator)) {
+          document.getElementById('browser-warning').classList.remove('hidden');
+          document.getElementById('connect-btn').disabled = true;
+          return;
+        }
+
+        this.renderHand();
+        this.renderMapping();
+        this.renderChordGrid();
+        this.setupEventListeners();
+        this.updateUI();
+      },
+
+      setupEventListeners() {
+        // Connect/Disconnect
+        document.getElementById('connect-btn').addEventListener('click', () => this.toggleConnection());
+        
+        // Calibrate
+        document.getElementById('calibrate-btn').addEventListener('click', () => this.calibrate());
+        
+        // Settings toggle
+        document.getElementById('settings-btn').addEventListener('click', () => {
+          this.showSettings = !this.showSettings;
+          document.getElementById('settings-panel').classList.toggle('hidden', !this.showSettings);
+        });
+        
+        // Threshold slider
+        document.getElementById('threshold-slider').addEventListener('input', (e) => {
+          this.threshold = parseInt(e.target.value) / 100;
+          document.getElementById('threshold-value').textContent = e.target.value;
+        });
+        
+        // Instrument buttons
+        document.querySelectorAll('.instrument-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.instrument-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            Audio.currentInstrument = btn.dataset.instrument;
+            PRESETS[this.currentPreset].instrument = btn.dataset.instrument;
+          });
+        });
+        
+        // Preset buttons
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            this.currentPreset = btn.dataset.preset;
+            Audio.currentInstrument = PRESETS[this.currentPreset].instrument;
+            this.updatePresetUI();
+            this.renderMapping();
+            this.renderHand();
+          });
+        });
+        
+        // Modal cancel
+        document.getElementById('modal-cancel').addEventListener('click', () => {
+          this.selectedFinger = null;
+          document.getElementById('chord-modal').classList.add('hidden');
+        });
+      },
+
+      async toggleConnection() {
+        const btn = document.getElementById('connect-btn');
+        
+        if (this.connected) {
+          await Serial.disconnect();
+          this.connected = false;
+          this.calibrated = false;
+          this.baseline = {};
+          this.activeFingers.clear();
+          this.updateUI();
+        } else {
+          btn.disabled = true;
+          btn.textContent = 'Connecting...';
+          
+          const success = await Serial.connect();
+          
+          if (success) {
+            this.connected = true;
+            Audio.init(); // Initialize audio on user interaction
+          }
+          
+          this.updateUI();
+        }
+      },
+
+      async calibrate() {
+        if (!this.connected) return;
+        
+        const btn = document.getElementById('calibrate-btn');
+        btn.disabled = true;
+        btn.textContent = 'Calibrating...';
+        document.getElementById('status-text').textContent = 'Keep hand still...';
+        
+        // Collect samples for 1 second
+        this.calibrationSamples = {};
+        FINGERS.forEach(f => this.calibrationSamples[f] = []);
+        
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Calculate baseline from collected samples
+        for (const finger of FINGERS) {
+          const samples = this.calibrationSamples[finger];
+          if (samples.length > 0) {
+            this.baseline[finger] = samples.reduce((a, b) => a + b, 0) / samples.length;
+          }
+        }
+        
+        this.calibrated = true;
+        this.updateUI();
+      },
+
+      processEncoderData(values) {
+        // If calibrating, collect samples
+        if (!this.calibrated && this.calibrationSamples) {
+          for (const finger of FINGERS) {
+            const cfg = FINGER_CONFIG[finger];
+            this.calibrationSamples[finger]?.push(values[cfg.idx]);
+          }
+        }
+        
+        if (!this.calibrated) return;
+        
+        const newActive = new Set();
+        
+        for (const finger of FINGERS) {
+          const cfg = FINGER_CONFIG[finger];
+          const value = values[cfg.idx];
+          const base = this.baseline[finger];
+          
+          if (base !== undefined) {
+            const drop = (base - value) / cfg.range;
+            if (drop > this.threshold) {
+              newActive.add(finger);
+            }
+          }
+        }
+        
+        // Check if active fingers changed
+        const changed = newActive.size !== this.activeFingers.size ||
+                        [...newActive].some(f => !this.activeFingers.has(f));
+        
+        if (changed) {
+          const mapping = PRESETS[this.currentPreset].mapping;
+          
+          // Play sound for newly activated fingers
+          if (newActive.size > 0) {
+            Audio.playFingers([...newActive], mapping);
+          }
+          
+          this.activeFingers = newActive;
+          this.updateFingerVisuals();
+          this.updateStatusText();
+        }
+      },
+
+      renderHand() {
+        const container = document.getElementById('hand-container');
+        const mapping = PRESETS[this.currentPreset].mapping;
+        const isCustom = this.currentPreset === 'custom';
+        
+        container.innerHTML = FINGERS.map(finger => {
+          const cfg = FINGER_CONFIG[finger];
+          const color = FINGER_COLORS[finger];
+          const isActive = this.activeFingers.has(finger);
+          
+          return `
+            <div class="finger ${isActive ? 'active' : ''} ${isCustom ? 'clickable' : ''}"
+                 data-finger="${finger}"
+                 style="
+                   width: ${cfg.width}px;
+                   height: ${cfg.height}px;
+                   margin-top: ${cfg.marginTop}px;
+                   background: ${isActive ? `linear-gradient(180deg, ${color} 0%, ${color}99 100%)` : 'rgba(255,255,255,0.15)'};
+                   box-shadow: ${isActive ? `0 0 25px ${color}66` : 'none'};
+                 ">
+              <span class="finger-label">${mapping[finger] || '?'}</span>
+              <span class="finger-name">${finger}</span>
+            </div>
+          `;
+        }).join('');
+        
+        // Add click handlers for custom preset
+        if (isCustom) {
+          container.querySelectorAll('.finger').forEach(el => {
+            el.addEventListener('click', () => this.openChordSelector(el.dataset.finger));
+          });
+        }
+      },
+
+      renderMapping() {
+        const grid = document.getElementById('mapping-grid');
+        const mapping = PRESETS[this.currentPreset].mapping;
+        const isCustom = this.currentPreset === 'custom';
+        
+        grid.innerHTML = FINGERS.map(finger => `
+          <div class="mapping-item ${isCustom ? 'clickable' : ''}" data-finger="${finger}">
+            <div class="mapping-chord" style="color: ${FINGER_COLORS[finger]}">${mapping[finger]}</div>
+            <div class="mapping-finger">${finger}</div>
+          </div>
+        `).join('');
+        
+        if (isCustom) {
+          grid.querySelectorAll('.mapping-item').forEach(el => {
+            el.addEventListener('click', () => this.openChordSelector(el.dataset.finger));
+          });
+        }
+      },
+
+      renderChordGrid() {
+        const grid = document.getElementById('chord-grid');
+        grid.innerHTML = Object.keys(CHORDS).map(chord => `
+          <button class="chord-btn" data-chord="${chord}">${chord}</button>
+        `).join('');
+        
+        grid.querySelectorAll('.chord-btn').forEach(btn => {
+          btn.addEventListener('click', () => this.selectChord(btn.dataset.chord));
+        });
+      },
+
+      openChordSelector(finger) {
+        if (this.currentPreset !== 'custom') return;
+        
+        this.selectedFinger = finger;
+        document.getElementById('modal-finger-name').textContent = finger;
+        
+        const currentChord = PRESETS.custom.mapping[finger];
+        document.querySelectorAll('.chord-btn').forEach(btn => {
+          btn.classList.toggle('selected', btn.dataset.chord === currentChord);
+        });
+        
+        document.getElementById('chord-modal').classList.remove('hidden');
+      },
+
+      selectChord(chord) {
+        if (!this.selectedFinger) return;
+        
+        PRESETS.custom.mapping[this.selectedFinger] = chord;
+        this.selectedFinger = null;
+        document.getElementById('chord-modal').classList.add('hidden');
+        
+        this.renderHand();
+        this.renderMapping();
+      },
+
+      updateFingerVisuals() {
+        const mapping = PRESETS[this.currentPreset].mapping;
+        
+        document.querySelectorAll('.finger').forEach(el => {
+          const finger = el.dataset.finger;
+          const cfg = FINGER_CONFIG[finger];
+          const color = FINGER_COLORS[finger];
+          const isActive = this.activeFingers.has(finger);
+          
+          el.classList.toggle('active', isActive);
+          el.style.background = isActive 
+            ? `linear-gradient(180deg, ${color} 0%, ${color}99 100%)`
+            : 'rgba(255,255,255,0.15)';
+          el.style.boxShadow = isActive ? `0 0 25px ${color}66` : 'none';
+        });
+      },
+
+      updateStatusText() {
+        const status = document.getElementById('status-text');
+        const mapping = PRESETS[this.currentPreset].mapping;
+        
+        if (this.activeFingers.size > 0) {
+          const chords = [...this.activeFingers].map(f => mapping[f]).join(' + ');
+          status.textContent = `Playing: ${chords}`;
+        } else if (this.currentPreset === 'custom') {
+          status.textContent = 'Click a finger to customize';
+        } else {
+          status.textContent = 'Bend fingers to play';
+        }
+      },
+
+      updatePresetUI() {
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.preset === this.currentPreset);
+        });
+        
+        // Update instrument buttons
+        const currentInstrument = PRESETS[this.currentPreset].instrument;
+        document.querySelectorAll('.instrument-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.instrument === currentInstrument);
+        });
+        
+        this.updateStatusText();
+      },
+
+      updateUI() {
+        const connectBtn = document.getElementById('connect-btn');
+        const calibrateBtn = document.getElementById('calibrate-btn');
+        const statusText = document.getElementById('status-text');
+        
+        // Connect button
+        connectBtn.disabled = false;
+        if (this.connected) {
+          connectBtn.textContent = 'Disconnect';
+          connectBtn.classList.remove('btn-connect');
+          connectBtn.classList.add('btn-disconnect');
+        } else {
+          connectBtn.textContent = 'Connect';
+          connectBtn.classList.remove('btn-disconnect');
+          connectBtn.classList.add('btn-connect');
+        }
+        
+        // Calibrate button
+        if (this.calibrated) {
+          calibrateBtn.textContent = '✓ Calibrated';
+          calibrateBtn.classList.remove('btn-calibrate');
+          calibrateBtn.classList.add('btn-calibrated');
+          calibrateBtn.disabled = true;
+        } else if (this.connected) {
+          calibrateBtn.textContent = 'Calibrate';
+          calibrateBtn.classList.remove('btn-calibrated');
+          calibrateBtn.classList.add('btn-calibrate');
+          calibrateBtn.disabled = false;
+        } else {
+          calibrateBtn.textContent = 'Calibrate';
+          calibrateBtn.classList.remove('btn-calibrated');
+          calibrateBtn.classList.add('btn-calibrate');
+          calibrateBtn.disabled = true;
+        }
+        
+        // Status text
+        if (!this.connected) {
+          statusText.textContent = 'Connect exoskeleton to start';
+        } else if (!this.calibrated) {
+          statusText.textContent = 'Click Calibrate and keep hand still';
+        } else {
+          this.updateStatusText();
+        }
+        
+        this.renderHand();
+      }
+    };
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', () => App.init());
+  </script>
+</body>
+</html>
