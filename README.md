@@ -4,7 +4,7 @@
 
 Ripple transforms finger movements into music, designed for therapeutic applications. Simply wear the exoskeleton, move your fingers, and create beautiful sounds — no installation required.
 
-🌐 **[Try it live →](https://YOUR_USERNAME.github.io/ripple)** *(update with your actual URL)*
+🌐 **[Try it live →](https://blue374.github.io/ripple/)**
 
 ---
 
