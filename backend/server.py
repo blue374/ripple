@@ -26,7 +26,7 @@ CHORDS = {
 INSTRUMENTS = {
     'sine': lambda t, f: np.sin(2 * np.pi * f * t),
     'soft': lambda t, f: 0.6*np.sin(2*np.pi*f*t) + 0.3*np.sin(4*np.pi*f*t) + 0.1*np.sin(6*np.pi*f*t),
-    'bell': lambda t, f: np.sin(2*np.pi*f*t)*np.exp(-3*t) + 0.5*np.sin(4*np.pi*f*t)*np.exp(-4*t),
+    'bell': lambda t, f: np.sin(2*np.pi*f*t) + 0.5*np.sin(4*np.pi*f*t),
     'pad': lambda t, f: 0.4*np.sin(2*np.pi*f*t) + 0.3*np.sin(2*np.pi*(f*1.002)*t) + 0.3*np.sin(2*np.pi*(f*0.998)*t),
 }
 
@@ -81,9 +81,9 @@ TUTORIALS = {
 
 FINGERS = {
     'thumb': {'idx': 1, 'range': 139000},
-    'index': {'idx': 3, 'range': 184000},
+    'index': {'idx': 5, 'range': 140000},
     'middle': {'idx': 4, 'range': 139000},
-    'ring': {'idx': 5, 'range': 140000},
+    'ring': {'idx': 3, 'range': 184000},
     'pinky': {'idx': 6, 'range': 168000},
 }
 
@@ -93,8 +93,11 @@ state = {
     "active_fingers": [],
     "current_preset": "piano",
     "threshold": 0.15,
+    "release": -0.05,
     "mode": "play",
     "tutorial": {"current": None, "step": 0, "completed": False},
+    "recording": False,
+    "playing_back": False,
 }
 
 rest = {}
@@ -105,31 +108,70 @@ clients = []
 running = False
 last_active = set()
 
-def envelope(t, attack=0.005, release=0.02):
-    env = np.ones_like(t)
-    att = int(attack * SAMPLE_RATE)
-    rel = int(release * SAMPLE_RATE)
-    if att > 0: env[:att] = np.linspace(0, 1, att)
-    if rel > 0: env[-rel:] = np.linspace(1, 0, rel)
-    return env
+# Recording state
+current_recording = []
+recording_start_time = 0
 
-def play_sound(fingers):
-    if not fingers or not stream:
-        return
-    preset = PRESETS[state["current_preset"]]
-    all_freqs = []
-    for f in fingers:
-        chord = preset["mapping"].get(f)
-        if chord and chord in CHORDS:
-            all_freqs.extend(CHORDS[chord])
-    if not all_freqs:
-        return
-    duration = 0.1
-    t = np.linspace(0, duration, int(SAMPLE_RATE * duration), False)
-    synth = INSTRUMENTS.get(preset["instrument"], INSTRUMENTS["sine"])
-    wave = sum(synth(t, f) for f in all_freqs) / len(all_freqs)
-    wave = wave * envelope(t) * 0.3
-    stream.write(wave.astype(np.float32))
+current_frequencies = []
+phase = {}
+audio_lock = threading.Lock()
+
+def audio_callback(outdata, frames, time_info, status):
+    global phase
+    with audio_lock:
+        if not current_frequencies:
+            outdata[:] = np.zeros((frames, 1), dtype=np.float32)
+            return
+        
+        preset = PRESETS[state["current_preset"]]
+        synth_name = preset["instrument"]
+        
+        t = np.arange(frames) / SAMPLE_RATE
+        wave = np.zeros(frames)
+        
+        for freq in current_frequencies:
+            if freq not in phase:
+                phase[freq] = 0.0
+            
+            if synth_name == 'sine':
+                wave += np.sin(2 * np.pi * freq * t + phase[freq])
+            elif synth_name == 'soft':
+                wave += 0.6*np.sin(2*np.pi*freq*t + phase[freq]) + 0.3*np.sin(4*np.pi*freq*t + phase[freq]*2) + 0.1*np.sin(6*np.pi*freq*t + phase[freq]*3)
+            elif synth_name == 'bell':
+                wave += np.sin(2*np.pi*freq*t + phase[freq]) + 0.5*np.sin(4*np.pi*freq*t + phase[freq]*2)
+            elif synth_name == 'pad':
+                wave += 0.4*np.sin(2*np.pi*freq*t + phase[freq]) + 0.3*np.sin(2*np.pi*(freq*1.002)*t + phase[freq]) + 0.3*np.sin(2*np.pi*(freq*0.998)*t + phase[freq])
+            
+            phase[freq] += 2 * np.pi * freq * frames / SAMPLE_RATE
+            phase[freq] %= 2 * np.pi
+        
+        wave = wave / max(len(current_frequencies), 1) * 0.3
+        outdata[:, 0] = wave.astype(np.float32)
+
+def update_sound(fingers):
+    global current_frequencies, phase
+    with audio_lock:
+        if not fingers:
+            current_frequencies = []
+            phase = {}
+            return
+        
+        preset = PRESETS[state["current_preset"]]
+        new_freqs = []
+        for f in fingers:
+            chord = preset["mapping"].get(f)
+            if chord and chord in CHORDS:
+                new_freqs.extend(CHORDS[chord])
+        
+        new_phase = {}
+        for freq in new_freqs:
+            if freq in phase:
+                new_phase[freq] = phase[freq]
+            else:
+                new_phase[freq] = 0.0
+        
+        current_frequencies = new_freqs
+        phase = new_phase
 
 def broadcast_sync(msg):
     for client in clients[:]:
@@ -164,6 +206,15 @@ def check_tutorial_progress(new_fingers):
                 "total": len(sequence)
             })
 
+def record_event(fingers):
+    global current_recording, recording_start_time
+    if state["recording"] and recording_start_time > 0:
+        timestamp = time.time() - recording_start_time
+        current_recording.append({
+            "time": timestamp,
+            "fingers": list(fingers)
+        })
+
 def read_loop():
     global active, running, last_active
     running = True
@@ -176,19 +227,30 @@ def read_loop():
                     if idx + 40 <= len(data):
                         v = struct.unpack('<IIIIIIIIII', data[idx:idx+40])
                         new_active = set()
+                        
                         for name, cfg in FINGERS.items():
                             if name in rest:
                                 drop = (rest[name] - v[cfg['idx']]) / cfg['range']
-                                if drop > state["threshold"]:
-                                    new_active.add(name)
+                                
+                                if name in active:
+                                    if drop > state["release"]:
+                                        new_active.add(name)
+                                else:
+                                    if drop > state["threshold"]:
+                                        new_active.add(name)
+                        
                         if new_active != active:
                             if state["mode"] == "tutorial":
                                 check_tutorial_progress(new_active)
+                            
+                            # Record if recording
+                            if state["recording"]:
+                                record_event(new_active)
+                            
                             last_active = active.copy()
                             active = new_active.copy()
                             state["active_fingers"] = list(active)
-                            if active:
-                                play_sound(active)
+                            update_sound(active)
                             broadcast_sync({"type": "fingers", "active": list(active)})
                 except ValueError:
                     pass
@@ -197,9 +259,14 @@ def read_loop():
         time.sleep(0.005)
 
 def disconnect():
-    global ser, stream, running, active, last_active
+    global ser, stream, running, active, last_active, current_frequencies, phase
     running = False
     time.sleep(0.1)
+    
+    with audio_lock:
+        current_frequencies = []
+        phase = {}
+    
     if stream:
         try:
             stream.stop()
@@ -218,11 +285,38 @@ def disconnect():
     state["connected"] = False
     state["calibrated"] = False
     state["active_fingers"] = []
+    state["recording"] = False
     rest.clear()
+
+async def playback_recording(websocket, recording, preset_name):
+    state["playing_back"] = True
+    state["current_preset"] = preset_name
+    
+    await websocket.send_json({"type": "playback_started"})
+    
+    start_time = time.time()
+    event_idx = 0
+    
+    while event_idx < len(recording) and state["playing_back"]:
+        elapsed = time.time() - start_time
+        event = recording[event_idx]
+        
+        if elapsed >= event["time"]:
+            fingers = set(event["fingers"])
+            update_sound(fingers)
+            await websocket.send_json({"type": "fingers", "active": list(fingers)})
+            event_idx += 1
+        else:
+            await asyncio.sleep(0.01)
+    
+    update_sound(set())
+    await websocket.send_json({"type": "fingers", "active": []})
+    await websocket.send_json({"type": "playback_stopped"})
+    state["playing_back"] = False
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    global ser, stream, running
+    global ser, stream, running, current_recording, recording_start_time
     await websocket.accept()
     clients.append(websocket)
     
@@ -242,7 +336,13 @@ async def websocket_endpoint(websocket: WebSocket):
             if data["type"] == "connect":
                 try:
                     ser = serial.Serial('/dev/ttyUSB0', 921600, timeout=0.02)
-                    stream = sd.OutputStream(samplerate=SAMPLE_RATE, channels=1, blocksize=256, latency='low')
+                    stream = sd.OutputStream(
+                        samplerate=SAMPLE_RATE, 
+                        channels=1, 
+                        blocksize=512,
+                        latency='low',
+                        callback=audio_callback
+                    )
                     stream.start()
                     state["connected"] = True
                     threading.Thread(target=read_loop, daemon=True).start()
@@ -276,11 +376,13 @@ async def websocket_endpoint(websocket: WebSocket):
             
             elif data["type"] == "set_preset":
                 state["current_preset"] = data["preset"]
+                update_sound(active)
                 await websocket.send_json({"type": "preset_changed", "preset": data["preset"]})
             
             elif data["type"] == "set_mapping":
                 PRESETS["custom"]["mapping"][data["finger"]] = data["chord"]
                 state["current_preset"] = "custom"
+                update_sound(active)
                 await websocket.send_json({"type": "mapping_updated", "finger": data["finger"], "chord": data["chord"]})
             
             elif data["type"] == "set_threshold":
@@ -320,8 +422,37 @@ async def websocket_endpoint(websocket: WebSocket):
                         "total": len(tutorial["sequence"])
                     })
             
+            # Recording controls
+            elif data["type"] == "start_recording":
+                current_recording = []
+                recording_start_time = time.time()
+                state["recording"] = True
+                await websocket.send_json({"type": "recording_started"})
+            
+            elif data["type"] == "stop_recording":
+                state["recording"] = False
+                recording_data = {
+                    "events": current_recording,
+                    "preset": state["current_preset"],
+                    "duration": time.time() - recording_start_time if recording_start_time > 0 else 0
+                }
+                await websocket.send_json({
+                    "type": "recording_stopped",
+                    "recording": recording_data
+                })
+            
+            elif data["type"] == "playback":
+                recording = data["recording"]
+                preset = data.get("preset", "piano")
+                asyncio.create_task(playback_recording(websocket, recording["events"], preset))
+            
+            elif data["type"] == "stop_playback":
+                state["playing_back"] = False
+            
             elif data["type"] == "test_sound":
-                play_sound([data.get("finger", "thumb")])
+                update_sound([data.get("finger", "thumb")])
+                await asyncio.sleep(0.3)
+                update_sound([])
                 
     except:
         pass

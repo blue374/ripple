@@ -87,6 +87,64 @@ function TutorialCard({ id, name, difficulty, length, onStart, active }) {
   )
 }
 
+function RecordingCard({ recording, onPlay, onDelete, isPlaying }) {
+  return (
+    <div style={{ 
+      background: isPlaying ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255,255,255,0.1)', 
+      border: isPlaying ? '2px solid #ef4444' : '2px solid transparent',
+      borderRadius: '12px', padding: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' 
+    }}>
+      <div>
+        <h4 style={{ marginBottom: '5px' }}>{recording.name}</h4>
+        <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>
+          {recording.events.length} notes • {recording.duration.toFixed(1)}s
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap: '8px' }}>
+        <button onClick={() => onPlay(recording)}
+          style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: isPlaying ? '#ef4444' : '#4ade80', color: 'white', cursor: 'pointer' }}>
+          {isPlaying ? '⏹' : '▶'}
+        </button>
+        <button onClick={() => onDelete(recording.id)}
+          style={{ padding: '8px 12px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer' }}>
+          🗑
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function SaveRecordingModal({ onSave, onClose }) {
+  const [name, setName] = useState('')
+  
+  return (
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
+      <div style={{ background: '#1e293b', borderRadius: '20px', padding: '30px', maxWidth: '400px', width: '90%' }}>
+        <h3 style={{ marginBottom: '20px' }}>Save Recording</h3>
+        <input
+          type="text"
+          placeholder="Recording name..."
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          style={{ width: '100%', padding: '12px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '1rem', marginBottom: '20px' }}
+          autoFocus
+        />
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button onClick={onClose}
+            style={{ flex: 1, padding: '12px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.2)', color: 'white', cursor: 'pointer' }}>
+            Cancel
+          </button>
+          <button onClick={() => name.trim() && onSave(name.trim())}
+            disabled={!name.trim()}
+            style={{ flex: 1, padding: '12px', borderRadius: '8px', border: 'none', background: name.trim() ? '#4ade80' : '#555', color: 'white', cursor: name.trim() ? 'pointer' : 'default' }}>
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
   const [connected, setConnected] = useState(false)
   const [calibrated, setCalibrated] = useState(false)
@@ -101,7 +159,25 @@ export default function App() {
   const [mode, setMode] = useState('play')
   const [tab, setTab] = useState('play')
   const [tutorialState, setTutorialState] = useState({ current: null, name: '', step: 0, total: 0, nextFinger: null, sequence: [], completed: false })
+  
+  // Recording state
+  const [isRecording, setIsRecording] = useState(false)
+  const [recordings, setRecordings] = useState(() => {
+    const saved = localStorage.getItem('ripple-recordings')
+    return saved ? JSON.parse(saved) : []
+  })
+  const [pendingRecording, setPendingRecording] = useState(null)
+  const [showSaveModal, setShowSaveModal] = useState(false)
+  const [playingId, setPlayingId] = useState(null)
+  const [recordingTime, setRecordingTime] = useState(0)
+  const recordingTimerRef = useRef(null)
+  
   const ws = useRef(null)
+
+  // Save recordings to localStorage
+  useEffect(() => {
+    localStorage.setItem('ripple-recordings', JSON.stringify(recordings))
+  }, [recordings])
 
   useEffect(() => {
     ws.current = new WebSocket('ws://localhost:8000/ws')
@@ -125,6 +201,21 @@ export default function App() {
         setTutorialState(prev => ({ ...prev, completed: true, nextFinger: null }))
       } else if (data.type === 'tutorial_reset') {
         setTutorialState(prev => ({ ...prev, step: 0, nextFinger: data.next_finger, completed: false }))
+      } else if (data.type === 'recording_started') {
+        setIsRecording(true)
+        setRecordingTime(0)
+        recordingTimerRef.current = setInterval(() => setRecordingTime(t => t + 0.1), 100)
+      } else if (data.type === 'recording_stopped') {
+        setIsRecording(false)
+        clearInterval(recordingTimerRef.current)
+        if (data.recording.events.length > 0) {
+          setPendingRecording(data.recording)
+          setShowSaveModal(true)
+        }
+      } else if (data.type === 'playback_started') {
+        // Playing
+      } else if (data.type === 'playback_stopped') {
+        setPlayingId(null)
       }
     }
     return () => ws.current?.close()
@@ -140,6 +231,37 @@ export default function App() {
   const handleFingerClick = (finger) => setSelectedFinger(finger)
   const handleChordSelect = (chord) => { ws.current?.send(JSON.stringify({ type: 'set_mapping', finger: selectedFinger, chord })); setSelectedFinger(null) }
   const updateThreshold = (val) => { setThreshold(val); ws.current?.send(JSON.stringify({ type: 'set_threshold', value: val })) }
+
+  // Recording functions
+  const startRecording = () => ws.current?.send(JSON.stringify({ type: 'start_recording' }))
+  const stopRecording = () => ws.current?.send(JSON.stringify({ type: 'stop_recording' }))
+  
+  const saveRecording = (name) => {
+    if (pendingRecording) {
+      const newRecording = {
+        id: Date.now(),
+        name,
+        ...pendingRecording
+      }
+      setRecordings(prev => [...prev, newRecording])
+      setPendingRecording(null)
+      setShowSaveModal(false)
+    }
+  }
+  
+  const playRecording = (recording) => {
+    if (playingId === recording.id) {
+      ws.current?.send(JSON.stringify({ type: 'stop_playback' }))
+      setPlayingId(null)
+    } else {
+      setPlayingId(recording.id)
+      ws.current?.send(JSON.stringify({ type: 'playback', recording, preset: recording.preset }))
+    }
+  }
+  
+  const deleteRecording = (id) => {
+    setRecordings(prev => prev.filter(r => r.id !== id))
+  }
 
   const currentMapping = presets[currentPreset]?.mapping || {}
 
@@ -174,11 +296,14 @@ export default function App() {
 
       <div style={{ display: 'flex', gap: '10px', marginBottom: '25px', justifyContent: 'center' }}>
         <button onClick={() => { setTab('play'); exitTutorial(); }}
-          style={{ padding: '12px 30px', borderRadius: '12px', border: tab === 'play' ? '2px solid #3b82f6' : '2px solid transparent',
+          style={{ padding: '12px 24px', borderRadius: '12px', border: tab === 'play' ? '2px solid #3b82f6' : '2px solid transparent',
             background: tab === 'play' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', fontSize: '1rem' }}>🎹 Play</button>
         <button onClick={() => setTab('tutorial')}
-          style={{ padding: '12px 30px', borderRadius: '12px', border: tab === 'tutorial' ? '2px solid #8b5cf6' : '2px solid transparent',
+          style={{ padding: '12px 24px', borderRadius: '12px', border: tab === 'tutorial' ? '2px solid #8b5cf6' : '2px solid transparent',
             background: tab === 'tutorial' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', fontSize: '1rem' }}>📚 Tutorial</button>
+        <button onClick={() => setTab('recordings')}
+          style={{ padding: '12px 24px', borderRadius: '12px', border: tab === 'recordings' ? '2px solid #ef4444' : '2px solid transparent',
+            background: tab === 'recordings' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', fontSize: '1rem' }}>🎙 Recordings</button>
       </div>
 
       {tab === 'play' && (
@@ -190,10 +315,26 @@ export default function App() {
                   background: currentPreset === key ? 'rgba(74, 222, 128, 0.2)' : 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer' }}>{preset.name}</button>
             ))}
           </div>
+          
+          {/* Recording controls */}
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', justifyContent: 'center' }}>
+            {!isRecording ? (
+              <button onClick={startRecording} disabled={!calibrated}
+                style={{ padding: '12px 24px', borderRadius: '12px', border: 'none', background: calibrated ? '#ef4444' : '#555', color: 'white', cursor: calibrated ? 'pointer' : 'default', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                🔴 Start Recording
+              </button>
+            ) : (
+              <button onClick={stopRecording}
+                style={{ padding: '12px 24px', borderRadius: '12px', border: '2px solid #ef4444', background: 'rgba(239, 68, 68, 0.2)', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', animation: 'pulse 1s infinite' }}>
+                ⏹ Stop Recording ({recordingTime.toFixed(1)}s)
+              </button>
+            )}
+          </div>
+          
           <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '20px', padding: '20px', marginBottom: '25px' }}>
             <Hand activeFingers={activeFingers} mapping={currentMapping} onFingerClick={currentPreset === 'custom' ? handleFingerClick : null} />
             <p style={{ textAlign: 'center', opacity: 0.6, marginTop: '10px' }}>
-              {activeFingers.length > 0 ? `Playing: ${activeFingers.map(f => currentMapping[f]).join(' + ')}` : currentPreset === 'custom' ? 'Click a finger to customize' : 'Bend fingers to play'}
+              {isRecording ? '🔴 Recording...' : activeFingers.length > 0 ? `Playing: ${activeFingers.map(f => currentMapping[f]).join(' + ')}` : currentPreset === 'custom' ? 'Click a finger to customize' : 'Bend fingers to play'}
             </p>
           </div>
           <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '15px', padding: '20px' }}>
@@ -263,7 +404,34 @@ export default function App() {
         </div>
       )}
 
+      {tab === 'recordings' && (
+        <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '20px', padding: '25px' }}>
+          <h2 style={{ marginBottom: '20px' }}>🎙 My Recordings</h2>
+          
+          {recordings.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px', opacity: 0.6 }}>
+              <p style={{ marginBottom: '15px' }}>No recordings yet!</p>
+              <p>Go to Play tab and click "Start Recording" to create one.</p>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gap: '15px' }}>
+              {recordings.map(recording => (
+                <RecordingCard
+                  key={recording.id}
+                  recording={recording}
+                  onPlay={playRecording}
+                  onDelete={deleteRecording}
+                  isPlaying={playingId === recording.id}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {selectedFinger && <ChordSelector chords={chords} currentChord={currentMapping[selectedFinger]} onSelect={handleChordSelect} onClose={() => setSelectedFinger(null)} />}
+      
+      {showSaveModal && <SaveRecordingModal onSave={saveRecording} onClose={() => { setShowSaveModal(false); setPendingRecording(null); }} />}
     </div>
   )
 }
