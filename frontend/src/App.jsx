@@ -62,7 +62,6 @@ function SoundSelector({ chords, drums, currentSound, currentType, onSelect, onC
       <div style={{ background: '#1e293b', borderRadius: '20px', padding: '30px', maxWidth: '500px', width: '90%', maxHeight: '80vh', overflow: 'auto' }}>
         <h3 style={{ marginBottom: '20px' }}>Select Sound</h3>
         
-        {/* Type tabs */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
           {['note', 'chord', 'drum', 'none'].map(t => (
             <button key={t} onClick={() => setTab(t)}
@@ -126,15 +125,15 @@ function RecordingCard({ recording, onPlay, onEdit, onDelete, isPlaying }) {
         </div>
       </div>
       <div style={{ display: 'flex', gap: '8px' }}>
-        <button onClick={() => onPlay(recording)}
-          style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: isPlaying ? '#ef4444' : '#4ade80', color: 'white', cursor: 'pointer' }}>
-          {isPlaying ? '⏹' : '▶'}
+        <button onClick={(e) => { e.stopPropagation(); onPlay(recording); }}
+          style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: isPlaying ? '#ef4444' : '#4ade80', color: 'white', cursor: 'pointer', fontSize: '1.1rem' }}>
+          {isPlaying ? '⏹' : '▶️'}
         </button>
-        <button onClick={() => onEdit(recording)}
+        <button onClick={(e) => { e.stopPropagation(); onEdit(recording); }}
           style={{ padding: '8px 12px', borderRadius: '8px', border: 'none', background: '#8b5cf6', color: 'white', cursor: 'pointer' }}>
           ✏️
         </button>
-        <button onClick={() => onDelete(recording.id)}
+        <button onClick={(e) => { e.stopPropagation(); onDelete(recording.id); }}
           style={{ padding: '8px 12px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer' }}>
           🗑
         </button>
@@ -143,11 +142,14 @@ function RecordingCard({ recording, onPlay, onEdit, onDelete, isPlaying }) {
   )
 }
 
-function CreatorMode({ recording, onSave, onClose }) {
+function CreatorMode({ recording, onSave, onClose, ws, connected }) {
   const [events, setEvents] = useState(recording.events || [])
   const [name, setName] = useState(recording.name || '')
   const [selectedEvent, setSelectedEvent] = useState(null)
-  const duration = recording.duration || (events.length > 0 ? Math.max(...events.map(e => e.time)) + 1 : 5)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [playbackTime, setPlaybackTime] = useState(0)
+  const playbackRef = useRef(null)
+  const duration = Math.max(recording.duration || 0, events.length > 0 ? Math.max(...events.map(e => e.time)) + 1 : 5)
   const pixelsPerSecond = 100
   
   const moveEvent = (index, newTime) => {
@@ -163,56 +165,128 @@ function CreatorMode({ recording, onSave, onClose }) {
   }
   
   const handleDrag = (e, index) => {
-    const rect = e.currentTarget.parentElement.getBoundingClientRect()
+    const track = e.currentTarget.closest('[data-track]')
+    if (!track) return
+    const rect = track.getBoundingClientRect()
     const x = e.clientX - rect.left
-    const newTime = x / pixelsPerSecond
+    const newTime = Math.max(0, x / pixelsPerSecond)
     moveEvent(index, newTime)
   }
+  
+  const playRecording = () => {
+    if (!connected) {
+      alert('Please connect and calibrate first to hear playback')
+      return
+    }
+    
+    if (isPlaying) {
+      // Stop
+      setIsPlaying(false)
+      setPlaybackTime(0)
+      if (playbackRef.current) {
+        clearInterval(playbackRef.current)
+      }
+      ws.current?.send(JSON.stringify({ type: 'stop_playback' }))
+    } else {
+      // Play
+      setIsPlaying(true)
+      setPlaybackTime(0)
+      
+      const startTime = Date.now()
+      let eventIdx = 0
+      
+      // Send playback command
+      ws.current?.send(JSON.stringify({ 
+        type: 'playback', 
+        recording: { events, preset: recording.preset || 'piano' }
+      }))
+      
+      // Update playhead
+      playbackRef.current = setInterval(() => {
+        const elapsed = (Date.now() - startTime) / 1000
+        setPlaybackTime(elapsed)
+        
+        if (elapsed >= duration) {
+          setIsPlaying(false)
+          setPlaybackTime(0)
+          clearInterval(playbackRef.current)
+        }
+      }, 50)
+    }
+  }
+  
+  useEffect(() => {
+    return () => {
+      if (playbackRef.current) {
+        clearInterval(playbackRef.current)
+      }
+    }
+  }, [])
   
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#0f172a', zIndex: 100, overflow: 'auto' }}>
       <div style={{ padding: '20px' }}>
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flexWrap: 'wrap' }}>
             <button onClick={onClose} style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer' }}>← Back</button>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Recording name..."
-              style={{ padding: '10px 15px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '1.2rem', width: '300px' }}
+              style={{ padding: '10px 15px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '1.2rem', width: '250px' }}
             />
           </div>
-          <button onClick={() => onSave({ ...recording, name, events, duration })}
-            style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: '#4ade80', color: 'black', cursor: 'pointer', fontWeight: 'bold' }}>
-            💾 Save
-          </button>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button onClick={playRecording}
+              style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: isPlaying ? '#ef4444' : '#3b82f6', color: 'white', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.1rem' }}>
+              {isPlaying ? '⏹ Stop' : '▶️ Play'}
+            </button>
+            <button onClick={() => onSave({ ...recording, name, events, duration })}
+              style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: '#4ade80', color: 'black', cursor: 'pointer', fontWeight: 'bold' }}>
+              💾 Save
+            </button>
+          </div>
         </div>
         
         {/* Timeline */}
-        <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
+        <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '12px', padding: '20px', marginBottom: '20px', overflowX: 'auto' }}>
           <h3 style={{ marginBottom: '15px' }}>🎼 Timeline</h3>
           
           {/* Time ruler */}
-          <div style={{ display: 'flex', marginBottom: '10px', marginLeft: '80px' }}>
+          <div style={{ position: 'relative', marginLeft: '80px', marginBottom: '10px', height: '20px' }}>
             {Array.from({ length: Math.ceil(duration) + 1 }, (_, i) => (
-              <div key={i} style={{ width: `${pixelsPerSecond}px`, fontSize: '0.8rem', opacity: 0.5 }}>{i}s</div>
+              <div key={i} style={{ position: 'absolute', left: `${i * pixelsPerSecond}px`, fontSize: '0.8rem', opacity: 0.5 }}>{i}s</div>
             ))}
+            {/* Playhead */}
+            {isPlaying && (
+              <div style={{ 
+                position: 'absolute', 
+                left: `${playbackTime * pixelsPerSecond}px`, 
+                top: 0, 
+                bottom: '-200px', 
+                width: '2px', 
+                background: '#ef4444',
+                zIndex: 10,
+                pointerEvents: 'none'
+              }} />
+            )}
           </div>
           
           {/* Tracks per finger */}
           {FINGERS.map(finger => (
             <div key={finger} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-              <div style={{ width: '80px', fontSize: '0.85rem', color: FINGER_COLORS[finger], fontWeight: 'bold' }}>{finger}</div>
+              <div style={{ width: '80px', fontSize: '0.85rem', color: FINGER_COLORS[finger], fontWeight: 'bold', flexShrink: 0 }}>{finger}</div>
               <div 
+                data-track
                 style={{ 
                   flex: 1, 
                   height: '40px', 
                   background: 'rgba(255,255,255,0.05)', 
                   borderRadius: '8px', 
                   position: 'relative',
-                  minWidth: `${duration * pixelsPerSecond}px`
+                  minWidth: `${Math.max(duration, 5) * pixelsPerSecond}px`
                 }}
               >
                 {/* Grid lines */}
@@ -235,7 +309,7 @@ function CreatorMode({ recording, onSave, onClose }) {
                         left: `${event.time * pixelsPerSecond}px`,
                         top: '4px',
                         height: '32px',
-                        minWidth: '30px',
+                        minWidth: '40px',
                         padding: '0 8px',
                         background: selectedEvent === idx ? '#4ade80' : FINGER_COLORS[finger],
                         borderRadius: '6px',
@@ -246,6 +320,7 @@ function CreatorMode({ recording, onSave, onClose }) {
                         fontSize: '0.75rem',
                         fontWeight: 'bold',
                         boxShadow: selectedEvent === idx ? '0 0 10px #4ade80' : 'none',
+                        zIndex: selectedEvent === idx ? 5 : 1,
                       }}
                     >
                       {sound?.sound || '♪'}
@@ -259,16 +334,16 @@ function CreatorMode({ recording, onSave, onClose }) {
         
         {/* Selected event controls */}
         {selectedEvent !== null && events[selectedEvent] && (
-          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '12px', padding: '20px' }}>
+          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
             <h4 style={{ marginBottom: '15px' }}>Selected Note</h4>
-            <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '15px', alignItems: 'center', flexWrap: 'wrap' }}>
               <div>
                 <span style={{ opacity: 0.6, marginRight: '10px' }}>Time:</span>
                 <input
                   type="number"
                   step="0.1"
                   value={events[selectedEvent].time.toFixed(2)}
-                  onChange={(e) => moveEvent(selectedEvent, parseFloat(e.target.value))}
+                  onChange={(e) => moveEvent(selectedEvent, parseFloat(e.target.value) || 0)}
                   style={{ padding: '8px', borderRadius: '6px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', width: '80px' }}
                 />
                 <span style={{ opacity: 0.6, marginLeft: '5px' }}>s</span>
@@ -286,8 +361,8 @@ function CreatorMode({ recording, onSave, onClose }) {
         )}
         
         {/* Instructions */}
-        <div style={{ marginTop: '20px', opacity: 0.6, fontSize: '0.9rem' }}>
-          <p>💡 Drag notes to move them • Click to select • Use the delete button to remove notes</p>
+        <div style={{ opacity: 0.6, fontSize: '0.9rem' }}>
+          <p>💡 Drag notes to move them • Click to select • Press Play to preview</p>
         </div>
       </div>
     </div>
@@ -306,7 +381,7 @@ function SaveRecordingModal({ onSave, onClose }) {
           placeholder="Recording name..."
           value={name}
           onChange={(e) => setName(e.target.value)}
-          style={{ width: '100%', padding: '12px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '1rem', marginBottom: '20px' }}
+          style={{ width: '100%', padding: '12px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '1rem', marginBottom: '20px', boxSizing: 'border-box' }}
           autoFocus
         />
         <div style={{ display: 'flex', gap: '10px' }}>
@@ -403,6 +478,7 @@ export default function App() {
           setShowSaveModal(true)
         }
       } else if (data.type === 'playback_started') {
+        // Playback started
       } else if (data.type === 'playback_stopped') {
         setPlayingId(null)
       }
@@ -437,12 +513,17 @@ export default function App() {
   }
   
   const playRecording = (recording) => {
+    if (!connected) {
+      alert('Please connect and calibrate the device first to hear playback')
+      return
+    }
+    
     if (playingId === recording.id) {
       ws.current?.send(JSON.stringify({ type: 'stop_playback' }))
       setPlayingId(null)
     } else {
       setPlayingId(recording.id)
-      ws.current?.send(JSON.stringify({ type: 'playback', recording, preset: recording.preset }))
+      ws.current?.send(JSON.stringify({ type: 'playback', recording }))
     }
   }
   
@@ -462,7 +543,7 @@ export default function App() {
   const currentMapping = presets[currentPreset]?.mapping || {}
 
   if (creatorRecording) {
-    return <CreatorMode recording={creatorRecording} onSave={saveCreatorRecording} onClose={() => setCreatorRecording(null)} />
+    return <CreatorMode recording={creatorRecording} onSave={saveCreatorRecording} onClose={() => setCreatorRecording(null)} ws={ws} connected={connected} />
   }
 
   return (
@@ -608,6 +689,12 @@ export default function App() {
       {tab === 'recordings' && (
         <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '20px', padding: '25px' }}>
           <h2 style={{ marginBottom: '20px' }}>🎙 My Recordings</h2>
+          
+          {!connected && (
+            <div style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid #ef4444', borderRadius: '10px', padding: '15px', marginBottom: '20px' }}>
+              ⚠️ Connect and calibrate the device to play recordings with sound
+            </div>
+          )}
           
           {recordings.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '40px', opacity: 0.6 }}>
