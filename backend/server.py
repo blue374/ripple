@@ -11,19 +11,113 @@ import threading
 import time
 from collections import deque
 
+# Base frequencies for each note (octave 4)
+BASE_FREQS = {
+    'C': 262, 'C#': 277, 'Db': 277, 'D': 294, 'D#': 311, 'Eb': 311,
+    'E': 330, 'F': 349, 'F#': 370, 'Gb': 370, 'G': 392, 'G#': 415,
+    'Ab': 415, 'A': 440, 'A#': 466, 'Bb': 466, 'B': 494
+}
+
+# Chord intervals (semitones from root)
+CHORD_INTERVALS = {
+    'maj': [0, 4, 7],
+    'm': [0, 3, 7],
+    '7': [0, 4, 7, 10],
+}
+
+def get_frequency(note, octave=4):
+    """Get frequency for a note at a given octave"""
+    base = BASE_FREQS.get(note, 262)
+    return base * (2 ** (octave - 4))
+
+def parse_sound(sound_str):
+    """Parse a sound string like 'C_maj_inv1_oct5' into frequencies"""
+    if not sound_str or sound_str == 'none':
+        return []
+    
+    # Extract octave
+    octave = 4
+    if '_oct' in sound_str:
+        try:
+            octave = int(sound_str.split('_oct')[1][0])
+            sound_str = sound_str.split('_oct')[0]
+        except:
+            pass
+    
+    # Extract inversion
+    inversion = 0
+    if '_inv' in sound_str:
+        try:
+            inversion = int(sound_str.split('_inv')[1][0])
+            sound_str = sound_str.split('_inv')[0]
+        except:
+            pass
+    
+    # Check if it's a chord
+    if '_maj' in sound_str:
+        root = sound_str.replace('_maj', '')
+        intervals = CHORD_INTERVALS['maj']
+    elif sound_str.endswith('m') and not sound_str.endswith('_m'):
+        root = sound_str[:-1]
+        intervals = CHORD_INTERVALS['m']
+    elif sound_str.endswith('7'):
+        root = sound_str[:-1]
+        intervals = CHORD_INTERVALS['7']
+    else:
+        # Single note
+        return [get_frequency(sound_str, octave)]
+    
+    # Get root frequency
+    root_freq = get_frequency(root, octave)
+    
+    # Calculate chord frequencies
+    freqs = []
+    for i, interval in enumerate(intervals):
+        freq = root_freq * (2 ** (interval / 12))
+        # Apply inversion - move lower notes up an octave
+        if i < inversion:
+            freq *= 2
+        freqs.append(freq)
+    
+    return sorted(freqs)
+
+
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 SAMPLE_RATE = 44100
 
 CHORDS = {
+    # Natural notes
     'C': [262], 'D': [294], 'E': [330], 'F': [349], 'G': [392], 'A': [440], 'B': [494],
+    # Sharp notes
+    'C#': [277], 'D#': [311], 'F#': [370], 'G#': [415], 'A#': [466],
+    # Flat notes (enharmonic equivalents)
+    'Db': [277], 'Eb': [311], 'Gb': [370], 'Ab': [415], 'Bb': [466],
+    # Higher octave
     'C5': [523], 'D5': [587], 'E5': [659], 'F5': [698], 'G5': [784],
+    # Major chords
     'C_maj': [262, 330, 392], 'D_maj': [294, 370, 440], 'E_maj': [330, 415, 494],
-    'F_maj': [349, 440, 523], 'G_maj': [392, 494, 587], 'A_maj': [440, 554, 659],
-    'Am': [440, 523, 659], 'Dm': [294, 349, 440], 'Em': [330, 392, 494],
-    'Cm': [262, 311, 392], 'Fm': [349, 415, 523], 'Gm': [392, 466, 587],
-    'C7': [262, 330, 392, 466], 'G7': [392, 494, 587, 698],
+    'F_maj': [349, 440, 523], 'G_maj': [392, 494, 587], 'A_maj': [440, 554, 659], 'B_maj': [494, 622, 740],
+    # Sharp major chords
+    'C#_maj': [277, 349, 415], 'D#_maj': [311, 392, 466], 'F#_maj': [370, 466, 554],
+    'G#_maj': [415, 523, 622], 'A#_maj': [466, 587, 698],
+    # Flat major chords
+    'Db_maj': [277, 349, 415], 'Eb_maj': [311, 392, 466], 'Gb_maj': [370, 466, 554],
+    'Ab_maj': [415, 523, 622], 'Bb_maj': [466, 587, 698],
+    # Minor chords
+    'Am': [440, 523, 659], 'Bm': [494, 587, 740], 'Cm': [262, 311, 392],
+    'Dm': [294, 349, 440], 'Em': [330, 392, 494], 'Fm': [349, 415, 523], 'Gm': [392, 466, 587],
+    # Sharp minor chords
+    'C#m': [277, 330, 415], 'D#m': [311, 370, 466], 'F#m': [370, 440, 554],
+    'G#m': [415, 494, 622], 'A#m': [466, 554, 698],
+    # Flat minor chords
+    'Dbm': [277, 330, 415], 'Ebm': [311, 370, 466], 'Gbm': [370, 440, 554],
+    'Abm': [415, 494, 622], 'Bbm': [466, 554, 698],
+    # 7th chords
+    'C7': [262, 330, 392, 466], 'D7': [294, 370, 440, 523], 'E7': [330, 415, 494, 587],
+    'F7': [349, 440, 523, 622], 'G7': [392, 494, 587, 698], 'A7': [440, 554, 659, 784], 'B7': [494, 622, 740, 880],
+    # None
     'none': [],
 }
 
@@ -324,8 +418,9 @@ def update_sound(fingers, trigger_drums=True):
                 sound_type = custom_types.get(f, 'note')
                 if sound_type == 'drum' or sound_type == 'none':
                     continue
-            
-            if sound and sound in CHORDS:
+                # Use dynamic parsing for custom sounds with octave/inversion
+                new_freqs.extend(parse_sound(sound))
+            elif sound and sound in CHORDS:
                 new_freqs.extend(CHORDS[sound])
         
         new_phase = {}
