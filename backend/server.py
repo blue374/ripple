@@ -29,38 +29,49 @@ CHORDS = {
 
 DRUMS = ['kick', 'snare', 'hihat', 'tom', 'clap', 'cymbal']
 
-def generate_drum(drum_type, duration=0.2):
+def generate_drum(drum_type, duration=0.4):
     t = np.linspace(0, duration, int(SAMPLE_RATE * duration), False)
     
     if drum_type == 'kick':
-        freq = 150 * np.exp(-10 * t)
-        wave = np.sin(2 * np.pi * freq * t) * np.exp(-8 * t)
-        wave += 0.5 * np.random.randn(len(t)) * np.exp(-30 * t)
+        # Deep bass with sub frequencies
+        freq = 55 * np.exp(-2 * t)
+        wave = np.sin(2 * np.pi * freq * t) * np.exp(-3 * t)
+        wave += 0.6 * np.sin(2 * np.pi * 35 * t) * np.exp(-4 * t)
+        wave += 0.2 * np.random.randn(len(t)) * np.exp(-80 * t)
+    
     elif drum_type == 'snare':
-        wave = 0.3 * np.sin(2 * np.pi * 200 * t) * np.exp(-20 * t)
-        wave += 0.7 * np.random.randn(len(t)) * np.exp(-15 * t)
+        wave = 0.4 * np.sin(2 * np.pi * 180 * t) * np.exp(-25 * t)
+        wave += 0.6 * np.random.randn(len(t)) * np.exp(-18 * t)
+    
     elif drum_type == 'hihat':
-        wave = np.random.randn(len(t)) * np.exp(-25 * t)
+        wave = np.random.randn(len(t)) * np.exp(-35 * t)
         wave = np.diff(np.concatenate([[0], wave]))
+    
     elif drum_type == 'tom':
-        freq = 100 * np.exp(-5 * t)
-        wave = np.sin(2 * np.pi * freq * t) * np.exp(-10 * t)
+        freq = 90 * np.exp(-4 * t)
+        wave = np.sin(2 * np.pi * freq * t) * np.exp(-8 * t)
+    
     elif drum_type == 'clap':
         wave = np.zeros(len(t))
-        for i in range(4):
-            offset = int(i * 0.01 * SAMPLE_RATE)
+        for i in range(5):
+            offset = int((i * 0.012 + np.random.random() * 0.005) * SAMPLE_RATE)
             if offset < len(t):
                 remaining = len(t) - offset
-                wave[offset:] += np.random.randn(remaining) * np.exp(-30 * np.linspace(0, duration, remaining))
-        wave *= np.exp(-10 * t)
+                noise = np.random.randn(remaining)
+                hit_env = np.exp(-60 * np.linspace(0, 0.1, remaining))
+                wave[offset:] += noise * hit_env * (0.7 ** i)
+        wave *= np.exp(-12 * t)
+        wave += 0.15 * np.random.randn(len(t)) * np.exp(-6 * t)
+    
     elif drum_type == 'cymbal':
-        wave = np.random.randn(len(t)) * np.exp(-5 * t)
-        wave += 0.3 * np.random.randn(len(t)) * np.exp(-2 * t)
+        wave = np.random.randn(len(t)) * np.exp(-2.5 * t)
+        wave += 0.4 * np.random.randn(len(t)) * np.exp(-1 * t)
+    
     else:
         wave = np.zeros(len(t))
     
     if np.max(np.abs(wave)) > 0:
-        wave = wave / np.max(np.abs(wave)) * 0.6
+        wave = wave / np.max(np.abs(wave)) * 0.75
     return wave.astype(np.float32)
 
 # Pre-generate drum samples
