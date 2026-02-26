@@ -17,6 +17,36 @@ const INVERSIONS = [
   { value: 2, label: '2nd Inv' },
 ]
 
+// Default data (same as server)
+const DEFAULT_PRESETS = {
+  'therapy': { name: '🧘 Therapy', instrument: 'pad', mapping: { thumb: 'C_maj', index: 'F_maj', middle: 'G_maj', ring: 'Am', pinky: 'Em' } },
+  'piano': { name: '🎹 Piano', instrument: 'bell', mapping: { thumb: 'C', index: 'D', middle: 'E', ring: 'F', pinky: 'G' } },
+  'chords': { name: '🎸 Chords', instrument: 'soft', mapping: { thumb: 'C_maj', index: 'D_maj', middle: 'E_maj', ring: 'G_maj', pinky: 'A_maj' } },
+  'drums': { name: '🥁 Drums', instrument: 'drums', mapping: { thumb: 'kick', index: 'snare', middle: 'hihat', ring: 'tom', pinky: 'clap' } },
+  'custom': { name: '✏️ Custom', instrument: 'sine', mapping: { thumb: 'C', index: 'D', middle: 'E', ring: 'F', pinky: 'G' } },
+}
+
+const DEFAULT_DRUMS = ['kick', 'snare', 'hihat', 'tom', 'clap', 'cymbal']
+
+const DEFAULT_TUTORIALS = {
+  'scale': { name: 'Simple Scale', difficulty: 'Beginner', length: 10 },
+  'hotcross': { name: 'Hot Cross Buns', difficulty: 'Beginner', length: 17 },
+  'rain': { name: 'Rain Rain Go Away', difficulty: 'Beginner', length: 13 },
+  'mary': { name: 'Mary Had a Little Lamb', difficulty: 'Easy', length: 26 },
+  'happy': { name: 'Happy Birthday', difficulty: 'Easy', length: 19 },
+  'london': { name: 'London Bridge', difficulty: 'Easy', length: 25 },
+  'twinkle': { name: 'Twinkle Twinkle Little Star', difficulty: 'Easy', length: 42 },
+  'brother': { name: 'Are You Sleeping (Frère Jacques)', difficulty: 'Medium', length: 28 },
+  'jingle': { name: 'Jingle Bells (Chorus)', difficulty: 'Medium', length: 25 },
+  'ode': { name: 'Ode to Joy', difficulty: 'Medium', length: 30 },
+  'rowboat': { name: 'Row Row Row Your Boat', difficulty: 'Medium', length: 24 },
+  'entertainer': { name: 'The Entertainer (Intro)', difficulty: 'Hard', length: 32 },
+  'minuet': { name: 'Minuet in G (Simplified)', difficulty: 'Hard', length: 35 },
+  'furelise': { name: 'Für Elise (Theme)', difficulty: 'Hard', length: 29 },
+  'cancan': { name: 'Can-Can (Fast)', difficulty: 'Hard', length: 41 },
+  'flight': { name: 'Flight of the Bumblebee (Mini)', difficulty: 'Hard', length: 41 },
+}
+
 function Hand({ activeFingers, mapping, onFingerClick, highlightFinger }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', padding: '30px' }}>
@@ -84,18 +114,13 @@ function OctaveInversionSelector({ sound, soundType, onSelect, onBack }) {
           <h3 style={{ margin: 0 }}>{displaySound}</h3>
         </div>
         
-        {/* Octave Selection */}
         <div style={{ marginBottom: '20px' }}>
           <h4 style={{ marginBottom: '10px', opacity: 0.7 }}>Octave</h4>
           <div style={{ display: 'flex', gap: '8px' }}>
             {OCTAVES.map(oct => (
               <button key={oct} onClick={() => setOctave(oct)}
-                style={{ 
-                  flex: 1, padding: '12px', borderRadius: '8px', 
-                  border: octave === oct ? '2px solid #4ade80' : '2px solid transparent',
-                  background: octave === oct ? 'rgba(74, 222, 128, 0.2)' : 'rgba(255,255,255,0.1)', 
-                  color: 'white', cursor: 'pointer', fontSize: '1rem' 
-                }}>
+                style={{ flex: 1, padding: '12px', borderRadius: '8px', border: octave === oct ? '2px solid #4ade80' : '2px solid transparent',
+                  background: octave === oct ? 'rgba(74, 222, 128, 0.2)' : 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', fontSize: '1rem' }}>
                 {oct}
               </button>
             ))}
@@ -106,19 +131,14 @@ function OctaveInversionSelector({ sound, soundType, onSelect, onBack }) {
           </div>
         </div>
         
-        {/* Inversion Selection (only for chords) */}
         {isChord && (
           <div style={{ marginBottom: '20px' }}>
             <h4 style={{ marginBottom: '10px', opacity: 0.7 }}>Inversion</h4>
             <div style={{ display: 'flex', gap: '8px' }}>
               {INVERSIONS.map(inv => (
                 <button key={inv.value} onClick={() => setInversion(inv.value)}
-                  style={{ 
-                    flex: 1, padding: '12px', borderRadius: '8px', 
-                    border: inversion === inv.value ? '2px solid #8b5cf6' : '2px solid transparent',
-                    background: inversion === inv.value ? 'rgba(139, 92, 246, 0.2)' : 'rgba(255,255,255,0.1)', 
-                    color: 'white', cursor: 'pointer', fontSize: '0.9rem' 
-                  }}>
+                  style={{ flex: 1, padding: '12px', borderRadius: '8px', border: inversion === inv.value ? '2px solid #8b5cf6' : '2px solid transparent',
+                    background: inversion === inv.value ? 'rgba(139, 92, 246, 0.2)' : 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', fontSize: '0.9rem' }}>
                   {inv.label}
                 </button>
               ))}
@@ -126,7 +146,6 @@ function OctaveInversionSelector({ sound, soundType, onSelect, onBack }) {
           </div>
         )}
         
-        {/* Preview */}
         <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '10px', padding: '15px', marginBottom: '20px', textAlign: 'center' }}>
           <span style={{ opacity: 0.6 }}>Selected: </span>
           <span style={{ fontWeight: 'bold', color: '#4ade80' }}>
@@ -143,12 +162,11 @@ function OctaveInversionSelector({ sound, soundType, onSelect, onBack }) {
   )
 }
 
-function SoundSelector({ chords, drums, currentSound, currentType, onSelect, onClose }) {
+function SoundSelector({ drums, currentSound, currentType, onSelect, onClose }) {
   const [tab, setTab] = useState(currentType || 'note')
   const [selectedSound, setSelectedSound] = useState(null)
   const [selectedType, setSelectedType] = useState(null)
   
-  // Parse notes and chords
   const notes = ['C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B']
   const majorChords = ['C_maj', 'C#_maj', 'Db_maj', 'D_maj', 'D#_maj', 'Eb_maj', 'E_maj', 'F_maj', 'F#_maj', 'Gb_maj', 'G_maj', 'G#_maj', 'Ab_maj', 'A_maj', 'A#_maj', 'Bb_maj', 'B_maj']
   const minorChords = ['Am', 'A#m', 'Bbm', 'Bm', 'Cm', 'C#m', 'Dbm', 'Dm', 'D#m', 'Ebm', 'Em', 'Fm', 'F#m', 'Gbm', 'Gm', 'G#m', 'Abm']
@@ -164,14 +182,7 @@ function SoundSelector({ chords, drums, currentSound, currentType, onSelect, onC
   }
   
   if (selectedSound) {
-    return (
-      <OctaveInversionSelector 
-        sound={selectedSound} 
-        soundType={selectedType}
-        onSelect={onSelect}
-        onBack={() => { setSelectedSound(null); setSelectedType(null); }}
-      />
-    )
+    return <OctaveInversionSelector sound={selectedSound} soundType={selectedType} onSelect={onSelect} onBack={() => { setSelectedSound(null); setSelectedType(null) }} />
   }
   
   return (
@@ -203,8 +214,7 @@ function SoundSelector({ chords, drums, currentSound, currentType, onSelect, onC
               {notes.map(note => (
                 <button key={note} onClick={() => handleSoundClick(note, 'note')}
                   style={{ padding: '12px 8px', borderRadius: '8px', border: '2px solid transparent',
-                    background: note.includes('#') || note.includes('b') ? 'rgba(100,100,100,0.3)' : 'rgba(255,255,255,0.1)', 
-                    color: 'white', cursor: 'pointer', fontSize: '0.9rem' }}>
+                    background: note.includes('#') || note.includes('b') ? 'rgba(100,100,100,0.3)' : 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', fontSize: '0.9rem' }}>
                   {note}
                 </button>
               ))}
@@ -215,35 +225,29 @@ function SoundSelector({ chords, drums, currentSound, currentType, onSelect, onC
         {tab === 'chord' && (
           <>
             <p style={{ opacity: 0.6, marginBottom: '10px', fontSize: '0.85rem' }}>Click a chord to select octave & inversion</p>
-            
             <h4 style={{ marginTop: '15px', marginBottom: '10px', opacity: 0.7 }}>Major</h4>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginBottom: '15px' }}>
               {majorChords.map(chord => (
                 <button key={chord} onClick={() => handleSoundClick(chord, 'chord')}
-                  style={{ padding: '10px 6px', borderRadius: '8px', border: '2px solid transparent',
-                    background: 'rgba(74, 222, 128, 0.15)', color: 'white', cursor: 'pointer', fontSize: '0.8rem' }}>
+                  style={{ padding: '10px 6px', borderRadius: '8px', border: '2px solid transparent', background: 'rgba(74, 222, 128, 0.15)', color: 'white', cursor: 'pointer', fontSize: '0.8rem' }}>
                   {chord.replace('_maj', '')}
                 </button>
               ))}
             </div>
-            
             <h4 style={{ marginBottom: '10px', opacity: 0.7 }}>Minor</h4>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginBottom: '15px' }}>
               {minorChords.map(chord => (
                 <button key={chord} onClick={() => handleSoundClick(chord, 'chord')}
-                  style={{ padding: '10px 6px', borderRadius: '8px', border: '2px solid transparent',
-                    background: 'rgba(139, 92, 246, 0.15)', color: 'white', cursor: 'pointer', fontSize: '0.8rem' }}>
+                  style={{ padding: '10px 6px', borderRadius: '8px', border: '2px solid transparent', background: 'rgba(139, 92, 246, 0.15)', color: 'white', cursor: 'pointer', fontSize: '0.8rem' }}>
                   {chord}
                 </button>
               ))}
             </div>
-            
             <h4 style={{ marginBottom: '10px', opacity: 0.7 }}>7th</h4>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
               {seventh.map(chord => (
                 <button key={chord} onClick={() => handleSoundClick(chord, 'chord')}
-                  style={{ padding: '10px 6px', borderRadius: '8px', border: '2px solid transparent',
-                    background: 'rgba(249, 115, 22, 0.15)', color: 'white', cursor: 'pointer', fontSize: '0.8rem' }}>
+                  style={{ padding: '10px 6px', borderRadius: '8px', border: '2px solid transparent', background: 'rgba(249, 115, 22, 0.15)', color: 'white', cursor: 'pointer', fontSize: '0.8rem' }}>
                   {chord}
                 </button>
               ))}
@@ -255,8 +259,7 @@ function SoundSelector({ chords, drums, currentSound, currentType, onSelect, onC
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
             {drums.map(drum => (
               <button key={drum} onClick={() => handleSoundClick(drum, 'drum')}
-                style={{ padding: '15px', borderRadius: '8px', border: '2px solid transparent',
-                  background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', fontSize: '1rem' }}>
+                style={{ padding: '15px', borderRadius: '8px', border: '2px solid transparent', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', fontSize: '1rem' }}>
                 {drum}
               </button>
             ))}
@@ -287,16 +290,11 @@ function TutorialCard({ id, name, difficulty, length, onStart, active }) {
 
 function RecordingCard({ recording, onPlay, onEdit, onDelete, isPlaying }) {
   return (
-    <div style={{ 
-      background: isPlaying ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255,255,255,0.1)', 
-      border: isPlaying ? '2px solid #ef4444' : '2px solid transparent',
-      borderRadius: '12px', padding: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' 
-    }}>
+    <div style={{ background: isPlaying ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255,255,255,0.1)', border: isPlaying ? '2px solid #ef4444' : '2px solid transparent',
+      borderRadius: '12px', padding: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <div>
         <h4 style={{ marginBottom: '5px' }}>{recording.name}</h4>
-        <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>
-          {recording.events.length} notes • {recording.duration.toFixed(1)}s
-        </div>
+        <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>{recording.events.length} notes • {recording.duration.toFixed(1)}s</div>
       </div>
       <div style={{ display: 'flex', gap: '8px' }}>
         <button onClick={(e) => { e.stopPropagation(); onPlay(recording); }}
@@ -304,13 +302,9 @@ function RecordingCard({ recording, onPlay, onEdit, onDelete, isPlaying }) {
           {isPlaying ? '⏹' : '▶️'}
         </button>
         <button onClick={(e) => { e.stopPropagation(); onEdit(recording); }}
-          style={{ padding: '8px 12px', borderRadius: '8px', border: 'none', background: '#8b5cf6', color: 'white', cursor: 'pointer' }}>
-          ✏️
-        </button>
+          style={{ padding: '8px 12px', borderRadius: '8px', border: 'none', background: '#8b5cf6', color: 'white', cursor: 'pointer' }}>✏️</button>
         <button onClick={(e) => { e.stopPropagation(); onDelete(recording.id); }}
-          style={{ padding: '8px 12px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer' }}>
-          🗑
-        </button>
+          style={{ padding: '8px 12px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer' }}>🗑</button>
       </div>
     </div>
   )
@@ -333,51 +327,35 @@ function CreatorMode({ recording, onSave, onClose, ws, connected }) {
     setEvents(newEvents)
   }
   
-  const deleteEvent = (index) => {
-    setEvents(events.filter((_, i) => i !== index))
-    setSelectedEvent(null)
-  }
+  const deleteEvent = (index) => { setEvents(events.filter((_, i) => i !== index)); setSelectedEvent(null) }
   
   const handleDrag = (e, index) => {
     const track = e.currentTarget.closest('[data-track]')
     if (!track) return
     const rect = track.getBoundingClientRect()
     const x = e.clientX - rect.left
-    const newTime = Math.max(0, x / pixelsPerSecond)
-    moveEvent(index, newTime)
+    moveEvent(index, Math.max(0, x / pixelsPerSecond))
   }
   
   const playRecording = () => {
-    if (!connected) {
-      alert('Please connect and calibrate first to hear playback')
-      return
-    }
-    
+    if (!connected) { alert('Please connect and calibrate first to hear playback'); return }
     if (isPlaying) {
-      setIsPlaying(false)
-      setPlaybackTime(0)
+      setIsPlaying(false); setPlaybackTime(0)
       if (playbackRef.current) clearInterval(playbackRef.current)
       ws.current?.send(JSON.stringify({ type: 'stop_playback' }))
     } else {
-      setIsPlaying(true)
-      setPlaybackTime(0)
+      setIsPlaying(true); setPlaybackTime(0)
       const startTime = Date.now()
       ws.current?.send(JSON.stringify({ type: 'playback', recording: { events, preset: recording.preset || 'piano' } }))
       playbackRef.current = setInterval(() => {
         const elapsed = (Date.now() - startTime) / 1000
         setPlaybackTime(elapsed)
-        if (elapsed >= duration) {
-          setIsPlaying(false)
-          setPlaybackTime(0)
-          clearInterval(playbackRef.current)
-        }
+        if (elapsed >= duration) { setIsPlaying(false); setPlaybackTime(0); clearInterval(playbackRef.current) }
       }, 50)
     }
   }
   
-  useEffect(() => {
-    return () => { if (playbackRef.current) clearInterval(playbackRef.current) }
-  }, [])
+  useEffect(() => { return () => { if (playbackRef.current) clearInterval(playbackRef.current) } }, [])
   
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#0f172a', zIndex: 100, overflow: 'auto' }}>
@@ -389,14 +367,11 @@ function CreatorMode({ recording, onSave, onClose, ws, connected }) {
               style={{ padding: '10px 15px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '1.2rem', width: '250px' }} />
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button onClick={playRecording}
-              style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: isPlaying ? '#ef4444' : '#3b82f6', color: 'white', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.1rem' }}>
+            <button onClick={playRecording} style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: isPlaying ? '#ef4444' : '#3b82f6', color: 'white', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.1rem' }}>
               {isPlaying ? '⏹ Stop' : '▶️ Play'}
             </button>
             <button onClick={() => onSave({ ...recording, name, events, duration })}
-              style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: '#4ade80', color: 'black', cursor: 'pointer', fontWeight: 'bold' }}>
-              💾 Save
-            </button>
+              style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: '#4ade80', color: 'black', cursor: 'pointer', fontWeight: 'bold' }}>�� Save</button>
           </div>
         </div>
         
@@ -406,11 +381,8 @@ function CreatorMode({ recording, onSave, onClose, ws, connected }) {
             {Array.from({ length: Math.ceil(duration) + 1 }, (_, i) => (
               <div key={i} style={{ position: 'absolute', left: `${i * pixelsPerSecond}px`, fontSize: '0.8rem', opacity: 0.5 }}>{i}s</div>
             ))}
-            {isPlaying && (
-              <div style={{ position: 'absolute', left: `${playbackTime * pixelsPerSecond}px`, top: 0, bottom: '-200px', width: '2px', background: '#ef4444', zIndex: 10, pointerEvents: 'none' }} />
-            )}
+            {isPlaying && <div style={{ position: 'absolute', left: `${playbackTime * pixelsPerSecond}px`, top: 0, bottom: '-200px', width: '2px', background: '#ef4444', zIndex: 10, pointerEvents: 'none' }} />}
           </div>
-          
           {FINGERS.map(finger => (
             <div key={finger} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
               <div style={{ width: '80px', fontSize: '0.85rem', color: FINGER_COLORS[finger], fontWeight: 'bold', flexShrink: 0 }}>{finger}</div>
@@ -450,7 +422,6 @@ function CreatorMode({ recording, onSave, onClose, ws, connected }) {
             </div>
           </div>
         )}
-        
         <div style={{ opacity: 0.6, fontSize: '0.9rem' }}><p>💡 Drag notes to move them • Click to select • Press Play to preview</p></div>
       </div>
     </div>
@@ -480,12 +451,11 @@ export default function App() {
   const [calibrated, setCalibrated] = useState(false)
   const [activeFingers, setActiveFingers] = useState([])
   const [currentPreset, setCurrentPreset] = useState('piano')
-  const [presets, setPresets] = useState({})
-  const [chords, setChords] = useState([])
-  const [drums, setDrums] = useState([])
-  const [tutorials, setTutorials] = useState({})
+  const [presets, setPresets] = useState(DEFAULT_PRESETS)
+  const [drums, setDrums] = useState(DEFAULT_DRUMS)
+  const [tutorials, setTutorials] = useState(DEFAULT_TUTORIALS)
   const [selectedFinger, setSelectedFinger] = useState(null)
-  const [customTypes, setCustomTypes] = useState({})
+  const [customTypes, setCustomTypes] = useState({ thumb: 'note', index: 'note', middle: 'note', ring: 'note', pinky: 'note' })
   const [threshold, setThreshold] = useState(0.15)
   const [showSettings, setShowSettings] = useState(false)
   const [mode, setMode] = useState('play')
@@ -509,46 +479,67 @@ export default function App() {
   useEffect(() => { localStorage.setItem('ripple-recordings', JSON.stringify(recordings)) }, [recordings])
 
   useEffect(() => {
-    ws.current = new WebSocket('ws://localhost:8000/ws')
-    ws.current.onmessage = (event) => {
-      const data = JSON.parse(event.data)
-      if (data.type === 'init') {
-        setPresets(data.presets); setChords(data.chords); setDrums(data.drums || []); setTutorials(data.tutorials)
-        setCurrentPreset(data.state.current_preset); setConnected(data.state.connected); setCalibrated(data.state.calibrated); setCustomTypes(data.custom_types || {})
-      } else if (data.type === 'status') { setConnected(data.connected); if (data.calibrated !== undefined) setCalibrated(data.calibrated)
-      } else if (data.type === 'calibrated') { setCalibrated(true)
-      } else if (data.type === 'fingers') { setActiveFingers(data.active)
-      } else if (data.type === 'preset_changed') { setCurrentPreset(data.preset)
-      } else if (data.type === 'mapping_updated') {
-        setPresets(prev => ({ ...prev, custom: { ...prev.custom, mapping: { ...prev.custom?.mapping, [data.finger]: data.sound } } }))
-        if (data.custom_types) setCustomTypes(data.custom_types)
-      } else if (data.type === 'tutorial_started') {
-        setMode('tutorial'); setTutorialState({ current: data.tutorial, name: data.name, step: 0, total: data.total, nextFinger: data.next_finger, sequence: data.sequence, completed: false })
-      } else if (data.type === 'tutorial_progress') { setTutorialState(prev => ({ ...prev, step: data.step, nextFinger: data.next_finger }))
-      } else if (data.type === 'tutorial_complete') { setTutorialState(prev => ({ ...prev, completed: true, nextFinger: null }))
-      } else if (data.type === 'tutorial_reset') { setTutorialState(prev => ({ ...prev, step: 0, nextFinger: data.next_finger, completed: false }))
-      } else if (data.type === 'recording_started') {
-        setIsRecording(true); setRecordingTime(0); recordingTimerRef.current = setInterval(() => setRecordingTime(t => t + 0.1), 100)
-      } else if (data.type === 'recording_stopped') {
-        setIsRecording(false); clearInterval(recordingTimerRef.current)
-        if (data.recording.events.length > 0) { setPendingRecording(data.recording); setShowSaveModal(true) }
-      } else if (data.type === 'playback_stopped') { setPlayingId(null) }
+    const connectWs = () => {
+      ws.current = new WebSocket('ws://localhost:8000/ws')
+      ws.current.onopen = () => console.log('WebSocket connected')
+      ws.current.onclose = () => {
+        console.log('WebSocket disconnected')
+        setConnected(false)
+        setCalibrated(false)
+      }
+      ws.current.onerror = () => console.log('WebSocket error')
+      ws.current.onmessage = (event) => {
+        const data = JSON.parse(event.data)
+        if (data.type === 'init') {
+          setPresets(data.presets || DEFAULT_PRESETS)
+          setDrums(data.drums || DEFAULT_DRUMS)
+          setTutorials(data.tutorials || DEFAULT_TUTORIALS)
+          setCurrentPreset(data.state?.current_preset || 'piano')
+          setConnected(data.state?.connected || false)
+          setCalibrated(data.state?.calibrated || false)
+          setCustomTypes(data.custom_types || { thumb: 'note', index: 'note', middle: 'note', ring: 'note', pinky: 'note' })
+        } else if (data.type === 'status') { setConnected(data.connected); if (data.calibrated !== undefined) setCalibrated(data.calibrated)
+        } else if (data.type === 'calibrated') { setCalibrated(true)
+        } else if (data.type === 'fingers') { setActiveFingers(data.active)
+        } else if (data.type === 'preset_changed') { setCurrentPreset(data.preset)
+        } else if (data.type === 'mapping_updated') {
+          setPresets(prev => ({ ...prev, custom: { ...prev.custom, mapping: { ...prev.custom?.mapping, [data.finger]: data.sound } } }))
+          if (data.custom_types) setCustomTypes(data.custom_types)
+        } else if (data.type === 'tutorial_started') {
+          setMode('tutorial'); setTutorialState({ current: data.tutorial, name: data.name, step: 0, total: data.total, nextFinger: data.next_finger, sequence: data.sequence, completed: false })
+        } else if (data.type === 'tutorial_progress') { setTutorialState(prev => ({ ...prev, step: data.step, nextFinger: data.next_finger }))
+        } else if (data.type === 'tutorial_complete') { setTutorialState(prev => ({ ...prev, completed: true, nextFinger: null }))
+        } else if (data.type === 'tutorial_reset') { setTutorialState(prev => ({ ...prev, step: 0, nextFinger: data.next_finger, completed: false }))
+        } else if (data.type === 'recording_started') {
+          setIsRecording(true); setRecordingTime(0); recordingTimerRef.current = setInterval(() => setRecordingTime(t => t + 0.1), 100)
+        } else if (data.type === 'recording_stopped') {
+          setIsRecording(false); clearInterval(recordingTimerRef.current)
+          if (data.recording.events.length > 0) { setPendingRecording(data.recording); setShowSaveModal(true) }
+        } else if (data.type === 'playback_stopped') { setPlayingId(null) }
+      }
     }
+    connectWs()
     return () => ws.current?.close()
   }, [])
 
-  const connect = () => ws.current?.send(JSON.stringify({ type: 'connect' }))
-  const disconnect = () => ws.current?.send(JSON.stringify({ type: 'disconnect' }))
-  const calibrate = () => ws.current?.send(JSON.stringify({ type: 'calibrate' }))
-  const selectPreset = (preset) => ws.current?.send(JSON.stringify({ type: 'set_preset', preset }))
-  const startTutorial = (id) => ws.current?.send(JSON.stringify({ type: 'start_tutorial', tutorial: id }))
-  const resetTutorial = () => ws.current?.send(JSON.stringify({ type: 'reset_tutorial' }))
-  const exitTutorial = () => { ws.current?.send(JSON.stringify({ type: 'set_mode', mode: 'play' })); setMode('play'); setTutorialState({ current: null, name: '', step: 0, total: 0, nextFinger: null, sequence: [], completed: false }) }
+  const send = (msg) => { if (ws.current?.readyState === WebSocket.OPEN) ws.current.send(JSON.stringify(msg)) }
+  const connect = () => send({ type: 'connect' })
+  const disconnect = () => send({ type: 'disconnect' })
+  const calibrate = () => send({ type: 'calibrate' })
+  const selectPreset = (preset) => { setCurrentPreset(preset); send({ type: 'set_preset', preset }) }
+  const startTutorial = (id) => send({ type: 'start_tutorial', tutorial: id })
+  const resetTutorial = () => send({ type: 'reset_tutorial' })
+  const exitTutorial = () => { send({ type: 'set_mode', mode: 'play' }); setMode('play'); setTutorialState({ current: null, name: '', step: 0, total: 0, nextFinger: null, sequence: [], completed: false }) }
   const handleFingerClick = (finger) => setSelectedFinger(finger)
-  const handleSoundSelect = (sound, soundType) => { ws.current?.send(JSON.stringify({ type: 'set_mapping', finger: selectedFinger, sound, sound_type: soundType })); setSelectedFinger(null) }
-  const updateThreshold = (val) => { setThreshold(val); ws.current?.send(JSON.stringify({ type: 'set_threshold', value: val })) }
-  const startRecording = () => ws.current?.send(JSON.stringify({ type: 'start_recording' }))
-  const stopRecording = () => ws.current?.send(JSON.stringify({ type: 'stop_recording' }))
+  const handleSoundSelect = (sound, soundType) => { 
+    setPresets(prev => ({ ...prev, custom: { ...prev.custom, mapping: { ...prev.custom?.mapping, [selectedFinger]: sound } } }))
+    setCustomTypes(prev => ({ ...prev, [selectedFinger]: soundType }))
+    send({ type: 'set_mapping', finger: selectedFinger, sound, sound_type: soundType })
+    setSelectedFinger(null) 
+  }
+  const updateThreshold = (val) => { setThreshold(val); send({ type: 'set_threshold', value: val }) }
+  const startRecording = () => send({ type: 'start_recording' })
+  const stopRecording = () => send({ type: 'stop_recording' })
   
   const saveRecording = (name) => {
     if (pendingRecording) { setRecordings(prev => [...prev, { id: Date.now(), name, ...pendingRecording }]); setPendingRecording(null); setShowSaveModal(false) }
@@ -556,8 +547,8 @@ export default function App() {
   
   const playRecording = (recording) => {
     if (!connected) { alert('Please connect and calibrate the device first to hear playback'); return }
-    if (playingId === recording.id) { ws.current?.send(JSON.stringify({ type: 'stop_playback' })); setPlayingId(null) }
-    else { setPlayingId(recording.id); ws.current?.send(JSON.stringify({ type: 'playback', recording })) }
+    if (playingId === recording.id) { send({ type: 'stop_playback' }); setPlayingId(null) }
+    else { setPlayingId(recording.id); send({ type: 'playback', recording }) }
   }
   
   const editRecording = (recording) => setCreatorRecording(recording)
@@ -594,7 +585,7 @@ export default function App() {
       )}
 
       <div style={{ display: 'flex', gap: '10px', marginBottom: '25px', justifyContent: 'center', flexWrap: 'wrap' }}>
-        <button onClick={() => { setTab('play'); exitTutorial(); }} style={{ padding: '12px 24px', borderRadius: '12px', border: tab === 'play' ? '2px solid #3b82f6' : '2px solid transparent', background: tab === 'play' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', fontSize: '1rem' }}>🎹 Play</button>
+        <button onClick={() => { setTab('play'); exitTutorial() }} style={{ padding: '12px 24px', borderRadius: '12px', border: tab === 'play' ? '2px solid #3b82f6' : '2px solid transparent', background: tab === 'play' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', fontSize: '1rem' }}>🎹 Play</button>
         <button onClick={() => setTab('tutorial')} style={{ padding: '12px 24px', borderRadius: '12px', border: tab === 'tutorial' ? '2px solid #8b5cf6' : '2px solid transparent', background: tab === 'tutorial' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', fontSize: '1rem' }}>📚 Tutorial</button>
         <button onClick={() => setTab('recordings')} style={{ padding: '12px 24px', borderRadius: '12px', border: tab === 'recordings' ? '2px solid #ef4444' : '2px solid transparent', background: tab === 'recordings' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', fontSize: '1rem' }}>🎙 Recordings</button>
       </div>
@@ -707,7 +698,7 @@ export default function App() {
         </div>
       )}
 
-      {selectedFinger && <SoundSelector chords={chords} drums={drums} currentSound={currentMapping[selectedFinger]} currentType={customTypes[selectedFinger]} onSelect={handleSoundSelect} onClose={() => setSelectedFinger(null)} />}
+      {selectedFinger && <SoundSelector drums={drums} currentSound={currentMapping[selectedFinger]} currentType={customTypes[selectedFinger]} onSelect={handleSoundSelect} onClose={() => setSelectedFinger(null)} />}
       {showSaveModal && <SaveRecordingModal onSave={saveRecording} onClose={() => { setShowSaveModal(false); setPendingRecording(null) }} />}
     </div>
   )
