@@ -1,4 +1,6 @@
 import asyncio
+import glob
+import platform
 import json
 import serial
 import struct
@@ -625,7 +627,20 @@ async def websocket_endpoint(websocket: WebSocket):
             
             if data["type"] == "connect":
                 try:
-                    ser = serial.Serial('/dev/ttyUSB0', 921600, timeout=0.02)
+                    # Auto-detect serial port (works on Mac and Linux)
+                    port = None
+                    if platform.system() == 'Darwin':  # Mac
+                        ports = glob.glob('/dev/tty.usb*') + glob.glob('/dev/cu.usb*') + glob.glob('/dev/tty.SLAB*')
+                    else:  # Linux
+                        ports = glob.glob('/dev/ttyUSB*') + glob.glob('/dev/ttyACM*')
+                    
+                    if ports:
+                        port = ports[0]
+                        print(f"Found serial port: {port}")
+                    else:
+                        raise Exception("No USB device found. Please connect the DexUMI.")
+                    
+                    ser = serial.Serial(port, 921600, timeout=0.02)
                     stream = sd.OutputStream(
                         samplerate=SAMPLE_RATE, 
                         channels=1, 
