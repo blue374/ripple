@@ -184,9 +184,9 @@ FINGERS = {
     'pinky': {'idx': 6, 'range': 168000},
 }
 
-THRESHOLD_ON = 0.25
-THRESHOLD_OFF = 0.2
-FILTER_SIZE = 8  # Number of frames to average
+THRESHOLD_ON = 2.5
+THRESHOLD_OFF = 2.0
+FILTER_SIZE = 5  # Number of frames to average
 
 state = {
     "connected": False,
@@ -433,6 +433,7 @@ def read_loop():
                                 
                                 # Calculate drop using filtered value
                                 drop = (rest[name] - filtered_value) / cfg['range']
+                                print(f"{name}: {drop:.2f}", end=" | ")
                                 
                                 # Hysteresis: different thresholds for on vs off
                             if name in active:
