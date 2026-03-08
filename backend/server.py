@@ -184,15 +184,17 @@ FINGERS = {
     'pinky': {'idx': 6, 'range': 168000},
 }
 
-THRESHOLD = 0.15
-FILTER_SIZE = 5  # Number of frames to average
+THRESHOLD_ON = 0.25
+THRESHOLD_OFF = 0.2
+FILTER_SIZE = 8  # Number of frames to average
 
 state = {
     "connected": False,
     "calibrated": False,
     "active_fingers": [],
     "current_preset": "piano",
-    "threshold": THRESHOLD,
+    "threshold_on": THRESHOLD_ON,
+    "threshold_off": THRESHOLD_OFF,
     "mode": "play",
     "tutorial": {"current": None, "step": 0, "completed": False},
     "recording": False,
@@ -432,14 +434,21 @@ def read_loop():
                                 # Calculate drop using filtered value
                                 drop = (rest[name] - filtered_value) / cfg['range']
                                 
-                                if drop > state["threshold"]:
+                                # Hysteresis: different thresholds for on vs off
+                            if name in active:
+                                # Already active - stay active until below OFF threshold
+                                if drop > THRESHOLD_OFF:
+                                    new_active.add(name)
+                            else:
+                                # Not active - only activate above ON threshold
+                                if drop > THRESHOLD_ON:
                                     new_active.add(name)
                                 
                                 if state["mode"] == "tutorial":
                                     if drop < TUTORIAL_RELEASE_THRESHOLD:
                                         tutorial_ready.add(name)
                                     
-                                    if drop > state["threshold"] and name in tutorial_ready:
+                                    if drop > THRESHOLD_ON and name in tutorial_ready:
                                         check_tutorial_progress(name, True)
                         
                         if new_active != active:
@@ -573,39 +582,51 @@ async def websocket_endpoint(websocket: WebSocket):
                     )
                     stream.start()
                     state["connected"] = True
-                    threading.Thread(target=read_loop, daemon=True).start()
+                    # DON'T start read_loop here - wait until after calibration
                     await websocket.send_json({"type": "status", "connected": True})
                 except Exception as e:
                     await websocket.send_json({"type": "error", "message": str(e)})
-            
+           
             elif data["type"] == "disconnect":
                 disconnect()
                 await websocket.send_json({"type": "status", "connected": False, "calibrated": False})
             
             elif data["type"] == "calibrate":
-                # Clear buffers before calibration
-                for name in FINGERS:
-                    finger_buffers[name].clear()
-                
-                baseline = {name: [] for name in FINGERS}
-                for _ in range(30):
-                    raw = ser.read(64)
-                    if len(raw) >= 40:
-                        try:
-                            idx = raw.index(b'\xaa\x55')
-                            if idx + 40 <= len(raw):
-                                v = struct.unpack('<IIIIIIIIII', raw[idx:idx+40])
-                                for name, cfg in FINGERS.items():
-                                    baseline[name].append(v[cfg['idx']])
-                        except ValueError:
-                            pass
-                    await asyncio.sleep(0.02)
-                for name in FINGERS:
-                    if baseline[name]:
-                        rest[name] = int(np.mean(baseline[name]))
-                state["calibrated"] = True
-                await websocket.send_json({"type": "calibrated", "baselines": rest})
-            
+                try:
+                    for name in FINGERS:
+                        finger_buffers[name].clear()
+                    
+                    ser.reset_input_buffer()
+                    
+                    baseline = {name: [] for name in FINGERS}
+                    for _ in range(30):
+                        raw = ser.read(64)
+                        if len(raw) >= 40:
+                            try:
+                                idx = raw.index(b'\xaa\x55')
+                                if idx + 40 <= len(raw):
+                                    v = struct.unpack('<IIIIIIIIII', raw[idx:idx+40])
+                                    for name, cfg in FINGERS.items():
+                                        baseline[name].append(v[cfg['idx']])
+                            except ValueError:
+                                pass
+                        await asyncio.sleep(0.02)
+                    
+                    for name in FINGERS:
+                        if baseline[name]:
+                            rest[name] = int(np.mean(baseline[name]))
+                    
+                    state["calibrated"] = True
+                    print(f"Calibration complete: {rest}")
+                    await websocket.send_json({"type": "calibrated", "baselines": rest})
+                    
+                    # NOW start the read loop after calibration is done
+                    threading.Thread(target=read_loop, daemon=True).start()
+                    
+                except Exception as e:
+                    print(f"Calibration error: {e}")
+                    await websocket.send_json({"type": "error", "message": str(e)})
+       
             elif data["type"] == "set_preset":
                 state["current_preset"] = data["preset"]
                 update_sound(active, trigger_drums=False)
