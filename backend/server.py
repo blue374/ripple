@@ -20,7 +20,6 @@ BASE_FREQS = {
     'Ab': 415, 'A': 440, 'A#': 466, 'Bb': 466, 'B': 494
 }
 
-# Chord intervals (semitones from root)
 CHORD_INTERVALS = {
     'maj': [0, 4, 7],
     'm': [0, 3, 7],
@@ -28,16 +27,13 @@ CHORD_INTERVALS = {
 }
 
 def get_frequency(note, octave=4):
-    """Get frequency for a note at a given octave"""
     base = BASE_FREQS.get(note, 262)
     return base * (2 ** (octave - 4))
 
 def parse_sound(sound_str):
-    """Parse a sound string like 'C_maj_inv1_oct5' into frequencies"""
     if not sound_str or sound_str == 'none':
         return []
     
-    # Extract octave
     octave = 4
     if '_oct' in sound_str:
         try:
@@ -46,7 +42,6 @@ def parse_sound(sound_str):
         except:
             pass
     
-    # Extract inversion
     inversion = 0
     if '_inv' in sound_str:
         try:
@@ -55,7 +50,6 @@ def parse_sound(sound_str):
         except:
             pass
     
-    # Check if it's a chord
     if '_maj' in sound_str:
         root = sound_str.replace('_maj', '')
         intervals = CHORD_INTERVALS['maj']
@@ -66,17 +60,12 @@ def parse_sound(sound_str):
         root = sound_str[:-1]
         intervals = CHORD_INTERVALS['7']
     else:
-        # Single note
         return [get_frequency(sound_str, octave)]
     
-    # Get root frequency
     root_freq = get_frequency(root, octave)
-    
-    # Calculate chord frequencies
     freqs = []
     for i, interval in enumerate(intervals):
         freq = root_freq * (2 ** (interval / 12))
-        # Apply inversion - move lower notes up an octave
         if i < inversion:
             freq *= 2
         freqs.append(freq)
@@ -90,36 +79,24 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 SAMPLE_RATE = 44100
 
 CHORDS = {
-    # Natural notes
     'C': [262], 'D': [294], 'E': [330], 'F': [349], 'G': [392], 'A': [440], 'B': [494],
-    # Sharp notes
     'C#': [277], 'D#': [311], 'F#': [370], 'G#': [415], 'A#': [466],
-    # Flat notes (enharmonic equivalents)
     'Db': [277], 'Eb': [311], 'Gb': [370], 'Ab': [415], 'Bb': [466],
-    # Higher octave
     'C5': [523], 'D5': [587], 'E5': [659], 'F5': [698], 'G5': [784],
-    # Major chords
     'C_maj': [262, 330, 392], 'D_maj': [294, 370, 440], 'E_maj': [330, 415, 494],
     'F_maj': [349, 440, 523], 'G_maj': [392, 494, 587], 'A_maj': [440, 554, 659], 'B_maj': [494, 622, 740],
-    # Sharp major chords
     'C#_maj': [277, 349, 415], 'D#_maj': [311, 392, 466], 'F#_maj': [370, 466, 554],
     'G#_maj': [415, 523, 622], 'A#_maj': [466, 587, 698],
-    # Flat major chords
     'Db_maj': [277, 349, 415], 'Eb_maj': [311, 392, 466], 'Gb_maj': [370, 466, 554],
     'Ab_maj': [415, 523, 622], 'Bb_maj': [466, 587, 698],
-    # Minor chords
     'Am': [440, 523, 659], 'Bm': [494, 587, 740], 'Cm': [262, 311, 392],
     'Dm': [294, 349, 440], 'Em': [330, 392, 494], 'Fm': [349, 415, 523], 'Gm': [392, 466, 587],
-    # Sharp minor chords
     'C#m': [277, 330, 415], 'D#m': [311, 370, 466], 'F#m': [370, 440, 554],
     'G#m': [415, 494, 622], 'A#m': [466, 554, 698],
-    # Flat minor chords
     'Dbm': [277, 330, 415], 'Ebm': [311, 370, 466], 'Gbm': [370, 440, 554],
     'Abm': [415, 494, 622], 'Bbm': [466, 554, 698],
-    # 7th chords
     'C7': [262, 330, 392, 466], 'D7': [294, 370, 440, 523], 'E7': [330, 415, 494, 587],
     'F7': [349, 440, 523, 622], 'G7': [392, 494, 587, 698], 'A7': [440, 554, 659, 784], 'B7': [494, 622, 740, 880],
-    # None
     'none': [],
 }
 
@@ -129,24 +106,19 @@ def generate_drum(drum_type, duration=0.4):
     t = np.linspace(0, duration, int(SAMPLE_RATE * duration), False)
     
     if drum_type == 'kick':
-        # Deep bass with sub frequencies
         freq = 55 * np.exp(-2 * t)
         wave = np.sin(2 * np.pi * freq * t) * np.exp(-3 * t)
         wave += 0.6 * np.sin(2 * np.pi * 35 * t) * np.exp(-4 * t)
         wave += 0.2 * np.random.randn(len(t)) * np.exp(-80 * t)
-    
     elif drum_type == 'snare':
         wave = 0.4 * np.sin(2 * np.pi * 180 * t) * np.exp(-25 * t)
         wave += 0.6 * np.random.randn(len(t)) * np.exp(-18 * t)
-    
     elif drum_type == 'hihat':
         wave = np.random.randn(len(t)) * np.exp(-35 * t)
         wave = np.diff(np.concatenate([[0], wave]))
-    
     elif drum_type == 'tom':
         freq = 90 * np.exp(-4 * t)
         wave = np.sin(2 * np.pi * freq * t) * np.exp(-8 * t)
-    
     elif drum_type == 'clap':
         wave = np.zeros(len(t))
         for i in range(5):
@@ -158,11 +130,9 @@ def generate_drum(drum_type, duration=0.4):
                 wave[offset:] += noise * hit_env * (0.7 ** i)
         wave *= np.exp(-12 * t)
         wave += 0.15 * np.random.randn(len(t)) * np.exp(-6 * t)
-    
     elif drum_type == 'cymbal':
         wave = np.random.randn(len(t)) * np.exp(-2.5 * t)
         wave += 0.4 * np.random.randn(len(t)) * np.exp(-1 * t)
-    
     else:
         wave = np.zeros(len(t))
     
@@ -170,7 +140,6 @@ def generate_drum(drum_type, duration=0.4):
         wave = wave / np.max(np.abs(wave)) * 0.75
     return wave.astype(np.float32)
 
-# Pre-generate drum samples
 drum_samples = {drum: generate_drum(drum) for drum in DRUMS}
 
 INSTRUMENTS = {
@@ -189,90 +158,22 @@ PRESETS = {
 }
 
 TUTORIALS = {
-    # BEGINNER
-    'scale': {
-        'name': 'Simple Scale',
-        'difficulty': 'Beginner',
-        'sequence': ['thumb', 'index', 'middle', 'ring', 'pinky', 'pinky', 'ring', 'middle', 'index', 'thumb'],
-    },
-    'hotcross': {
-        'name': 'Hot Cross Buns',
-        'difficulty': 'Beginner',
-        'sequence': ['middle', 'index', 'thumb', 'middle', 'index', 'thumb', 'thumb', 'thumb', 'thumb', 'thumb', 'index', 'index', 'index', 'index', 'middle', 'index', 'thumb'],
-    },
-    'rain': {
-        'name': 'Rain Rain Go Away',
-        'difficulty': 'Beginner',
-        'sequence': ['middle', 'thumb', 'middle', 'middle', 'thumb', 'middle', 'middle', 'thumb', 'middle', 'ring', 'middle', 'index', 'thumb'],
-    },
-    # EASY
-    'mary': {
-        'name': 'Mary Had a Little Lamb',
-        'difficulty': 'Easy',
-        'sequence': ['middle', 'index', 'thumb', 'index', 'middle', 'middle', 'middle', 'index', 'index', 'index', 'middle', 'pinky', 'pinky', 'middle', 'index', 'thumb', 'index', 'middle', 'middle', 'middle', 'middle', 'index', 'index', 'middle', 'index', 'thumb'],
-    },
-    'happy': {
-        'name': 'Happy Birthday',
-        'difficulty': 'Easy',
-        'sequence': ['thumb', 'thumb', 'index', 'thumb', 'ring', 'middle', 'thumb', 'thumb', 'index', 'thumb', 'pinky', 'ring', 'thumb', 'thumb', 'thumb', 'middle', 'ring', 'middle', 'index'],
-    },
-    'london': {
-        'name': 'London Bridge',
-        'difficulty': 'Easy',
-        'sequence': ['pinky', 'ring', 'middle', 'ring', 'pinky', 'pinky', 'pinky', 'ring', 'ring', 'ring', 'pinky', 'pinky', 'pinky', 'pinky', 'ring', 'middle', 'ring', 'pinky', 'pinky', 'pinky', 'ring', 'ring', 'pinky', 'ring', 'middle'],
-    },
-    'twinkle': {
-        'name': 'Twinkle Twinkle Little Star',
-        'difficulty': 'Easy',
-        'sequence': ['thumb', 'thumb', 'pinky', 'pinky', 'pinky', 'pinky', 'pinky', 'ring', 'ring', 'middle', 'middle', 'index', 'index', 'thumb', 'pinky', 'pinky', 'ring', 'ring', 'middle', 'middle', 'index', 'pinky', 'pinky', 'ring', 'ring', 'middle', 'middle', 'index', 'thumb', 'thumb', 'pinky', 'pinky', 'pinky', 'pinky', 'pinky', 'ring', 'ring', 'middle', 'middle', 'index', 'index', 'thumb'],
-    },
-    # MEDIUM
-    'brother': {
-        'name': 'Are You Sleeping (Frère Jacques)',
-        'difficulty': 'Medium',
-        'sequence': ['thumb', 'index', 'middle', 'thumb', 'thumb', 'index', 'middle', 'thumb', 'middle', 'ring', 'pinky', 'middle', 'ring', 'pinky', 'pinky', 'ring', 'middle', 'thumb', 'pinky', 'ring', 'middle', 'thumb', 'thumb', 'pinky', 'thumb', 'thumb', 'pinky', 'thumb'],
-    },
-    'jingle': {
-        'name': 'Jingle Bells (Chorus)',
-        'difficulty': 'Medium',
-        'sequence': ['middle', 'middle', 'middle', 'middle', 'middle', 'middle', 'middle', 'pinky', 'thumb', 'index', 'middle', 'ring', 'ring', 'ring', 'ring', 'ring', 'middle', 'middle', 'middle', 'middle', 'index', 'index', 'middle', 'index', 'pinky'],
-    },
-    'ode': {
-        'name': 'Ode to Joy',
-        'difficulty': 'Medium',
-        'sequence': ['middle', 'middle', 'ring', 'pinky', 'pinky', 'ring', 'middle', 'index', 'thumb', 'thumb', 'index', 'middle', 'middle', 'index', 'index', 'middle', 'middle', 'ring', 'pinky', 'pinky', 'ring', 'middle', 'index', 'thumb', 'thumb', 'index', 'middle', 'index', 'thumb', 'thumb'],
-    },
-    'rowboat': {
-        'name': 'Row Row Row Your Boat',
-        'difficulty': 'Medium',
-        'sequence': ['thumb', 'thumb', 'thumb', 'index', 'middle', 'middle', 'index', 'middle', 'ring', 'pinky', 'pinky', 'pinky', 'pinky', 'middle', 'middle', 'middle', 'thumb', 'thumb', 'thumb', 'pinky', 'ring', 'middle', 'index', 'thumb'],
-    },
-    # HARD
-    'entertainer': {
-        'name': 'The Entertainer (Intro)',
-        'difficulty': 'Hard',
-        'sequence': ['index', 'middle', 'index', 'thumb', 'index', 'middle', 'ring', 'middle', 'index', 'middle', 'index', 'thumb', 'index', 'middle', 'ring', 'pinky', 'ring', 'middle', 'ring', 'middle', 'index', 'thumb', 'index', 'middle', 'middle', 'ring', 'pinky', 'ring', 'middle', 'index', 'thumb', 'index'],
-    },
-    'minuet': {
-        'name': 'Minuet in G (Simplified)',
-        'difficulty': 'Hard',
-        'sequence': ['pinky', 'index', 'middle', 'ring', 'pinky', 'pinky', 'thumb', 'middle', 'index', 'middle', 'ring', 'middle', 'index', 'thumb', 'index', 'thumb', 'index', 'middle', 'ring', 'middle', 'pinky', 'index', 'middle', 'ring', 'pinky', 'pinky', 'thumb', 'ring', 'middle', 'index', 'thumb', 'index', 'middle', 'ring', 'pinky'],
-    },
-    'furelise': {
-        'name': 'Für Elise (Theme)',
-        'difficulty': 'Hard',
-        'sequence': ['middle', 'index', 'middle', 'index', 'middle', 'thumb', 'index', 'thumb', 'thumb', 'middle', 'thumb', 'middle', 'index', 'middle', 'index', 'middle', 'middle', 'index', 'middle', 'index', 'middle', 'thumb', 'index', 'thumb', 'thumb', 'middle', 'index', 'thumb', 'thumb'],
-    },
-    'cancan': {
-        'name': 'Can-Can (Fast)',
-        'difficulty': 'Hard',
-        'sequence': ['thumb', 'thumb', 'index', 'index', 'middle', 'middle', 'ring', 'ring', 'pinky', 'ring', 'middle', 'index', 'thumb', 'index', 'middle', 'ring', 'pinky', 'pinky', 'ring', 'ring', 'middle', 'middle', 'index', 'index', 'thumb', 'index', 'middle', 'ring', 'pinky', 'ring', 'middle', 'index', 'thumb', 'thumb', 'middle', 'middle', 'pinky', 'middle', 'thumb', 'middle', 'pinky'],
-    },
-    'flight': {
-        'name': 'Flight of the Bumblebee (Mini)',
-        'difficulty': 'Hard',
-        'sequence': ['thumb', 'index', 'middle', 'index', 'thumb', 'index', 'middle', 'ring', 'middle', 'index', 'thumb', 'index', 'middle', 'ring', 'pinky', 'ring', 'middle', 'ring', 'pinky', 'ring', 'middle', 'index', 'thumb', 'index', 'middle', 'index', 'thumb', 'index', 'middle', 'ring', 'middle', 'index', 'thumb', 'index', 'middle', 'ring', 'pinky', 'ring', 'middle', 'index', 'thumb'],
-    },
+    'scale': {'name': 'Simple Scale', 'difficulty': 'Beginner', 'sequence': ['thumb', 'index', 'middle', 'ring', 'pinky', 'pinky', 'ring', 'middle', 'index', 'thumb']},
+    'hotcross': {'name': 'Hot Cross Buns', 'difficulty': 'Beginner', 'sequence': ['middle', 'index', 'thumb', 'middle', 'index', 'thumb', 'thumb', 'thumb', 'thumb', 'thumb', 'index', 'index', 'index', 'index', 'middle', 'index', 'thumb']},
+    'rain': {'name': 'Rain Rain Go Away', 'difficulty': 'Beginner', 'sequence': ['middle', 'thumb', 'middle', 'middle', 'thumb', 'middle', 'middle', 'thumb', 'middle', 'ring', 'middle', 'index', 'thumb']},
+    'mary': {'name': 'Mary Had a Little Lamb', 'difficulty': 'Easy', 'sequence': ['middle', 'index', 'thumb', 'index', 'middle', 'middle', 'middle', 'index', 'index', 'index', 'middle', 'pinky', 'pinky', 'middle', 'index', 'thumb', 'index', 'middle', 'middle', 'middle', 'middle', 'index', 'index', 'middle', 'index', 'thumb']},
+    'happy': {'name': 'Happy Birthday', 'difficulty': 'Easy', 'sequence': ['thumb', 'thumb', 'index', 'thumb', 'ring', 'middle', 'thumb', 'thumb', 'index', 'thumb', 'pinky', 'ring', 'thumb', 'thumb', 'thumb', 'middle', 'ring', 'middle', 'index']},
+    'london': {'name': 'London Bridge', 'difficulty': 'Easy', 'sequence': ['pinky', 'ring', 'middle', 'ring', 'pinky', 'pinky', 'pinky', 'ring', 'ring', 'ring', 'pinky', 'pinky', 'pinky', 'pinky', 'ring', 'middle', 'ring', 'pinky', 'pinky', 'pinky', 'ring', 'ring', 'pinky', 'ring', 'middle']},
+    'twinkle': {'name': 'Twinkle Twinkle Little Star', 'difficulty': 'Easy', 'sequence': ['thumb', 'thumb', 'pinky', 'pinky', 'pinky', 'pinky', 'pinky', 'ring', 'ring', 'middle', 'middle', 'index', 'index', 'thumb', 'pinky', 'pinky', 'ring', 'ring', 'middle', 'middle', 'index', 'pinky', 'pinky', 'ring', 'ring', 'middle', 'middle', 'index', 'thumb', 'thumb', 'pinky', 'pinky', 'pinky', 'pinky', 'pinky', 'ring', 'ring', 'middle', 'middle', 'index', 'index', 'thumb']},
+    'brother': {'name': 'Are You Sleeping (Frère Jacques)', 'difficulty': 'Medium', 'sequence': ['thumb', 'index', 'middle', 'thumb', 'thumb', 'index', 'middle', 'thumb', 'middle', 'ring', 'pinky', 'middle', 'ring', 'pinky', 'pinky', 'ring', 'middle', 'thumb', 'pinky', 'ring', 'middle', 'thumb', 'thumb', 'pinky', 'thumb', 'thumb', 'pinky', 'thumb']},
+    'jingle': {'name': 'Jingle Bells (Chorus)', 'difficulty': 'Medium', 'sequence': ['middle', 'middle', 'middle', 'middle', 'middle', 'middle', 'middle', 'pinky', 'thumb', 'index', 'middle', 'ring', 'ring', 'ring', 'ring', 'ring', 'middle', 'middle', 'middle', 'middle', 'index', 'index', 'middle', 'index', 'pinky']},
+    'ode': {'name': 'Ode to Joy', 'difficulty': 'Medium', 'sequence': ['middle', 'middle', 'ring', 'pinky', 'pinky', 'ring', 'middle', 'index', 'thumb', 'thumb', 'index', 'middle', 'middle', 'index', 'index', 'middle', 'middle', 'ring', 'pinky', 'pinky', 'ring', 'middle', 'index', 'thumb', 'thumb', 'index', 'middle', 'index', 'thumb', 'thumb']},
+    'rowboat': {'name': 'Row Row Row Your Boat', 'difficulty': 'Medium', 'sequence': ['thumb', 'thumb', 'thumb', 'index', 'middle', 'middle', 'index', 'middle', 'ring', 'pinky', 'pinky', 'pinky', 'pinky', 'middle', 'middle', 'middle', 'thumb', 'thumb', 'thumb', 'pinky', 'ring', 'middle', 'index', 'thumb']},
+    'entertainer': {'name': 'The Entertainer (Intro)', 'difficulty': 'Hard', 'sequence': ['index', 'middle', 'index', 'thumb', 'index', 'middle', 'ring', 'middle', 'index', 'middle', 'index', 'thumb', 'index', 'middle', 'ring', 'pinky', 'ring', 'middle', 'ring', 'middle', 'index', 'thumb', 'index', 'middle', 'middle', 'ring', 'pinky', 'ring', 'middle', 'index', 'thumb', 'index']},
+    'minuet': {'name': 'Minuet in G (Simplified)', 'difficulty': 'Hard', 'sequence': ['pinky', 'index', 'middle', 'ring', 'pinky', 'pinky', 'thumb', 'middle', 'index', 'middle', 'ring', 'middle', 'index', 'thumb', 'index', 'thumb', 'index', 'middle', 'ring', 'middle', 'pinky', 'index', 'middle', 'ring', 'pinky', 'pinky', 'thumb', 'ring', 'middle', 'index', 'thumb', 'index', 'middle', 'ring', 'pinky']},
+    'furelise': {'name': 'Für Elise (Theme)', 'difficulty': 'Hard', 'sequence': ['middle', 'index', 'middle', 'index', 'middle', 'thumb', 'index', 'thumb', 'thumb', 'middle', 'thumb', 'middle', 'index', 'middle', 'index', 'middle', 'middle', 'index', 'middle', 'index', 'middle', 'thumb', 'index', 'thumb', 'thumb', 'middle', 'index', 'thumb', 'thumb']},
+    'cancan': {'name': 'Can-Can (Fast)', 'difficulty': 'Hard', 'sequence': ['thumb', 'thumb', 'index', 'index', 'middle', 'middle', 'ring', 'ring', 'pinky', 'ring', 'middle', 'index', 'thumb', 'index', 'middle', 'ring', 'pinky', 'pinky', 'ring', 'ring', 'middle', 'middle', 'index', 'index', 'thumb', 'index', 'middle', 'ring', 'pinky', 'ring', 'middle', 'index', 'thumb', 'thumb', 'middle', 'middle', 'pinky', 'middle', 'thumb', 'middle', 'pinky']},
+    'flight': {'name': 'Flight of the Bumblebee (Mini)', 'difficulty': 'Hard', 'sequence': ['thumb', 'index', 'middle', 'index', 'thumb', 'index', 'middle', 'ring', 'middle', 'index', 'thumb', 'index', 'middle', 'ring', 'pinky', 'ring', 'middle', 'ring', 'pinky', 'ring', 'middle', 'index', 'thumb', 'index', 'middle', 'index', 'thumb', 'index', 'middle', 'ring', 'middle', 'index', 'thumb', 'index', 'middle', 'ring', 'pinky', 'ring', 'middle', 'index', 'thumb']},
 }
 
 FINGERS = {
@@ -284,6 +185,7 @@ FINGERS = {
 }
 
 THRESHOLD = 0.15
+FILTER_SIZE = 5  # Number of frames to average
 
 state = {
     "connected": False,
@@ -308,18 +210,19 @@ clients = []
 running = False
 last_active = set()
 
+# Filtering buffers for each finger
+finger_buffers = {name: deque(maxlen=FILTER_SIZE) for name in FINGERS}
+
 tutorial_ready = set(['thumb', 'index', 'middle', 'ring', 'pinky'])
 TUTORIAL_RELEASE_THRESHOLD = 0.08
 
 current_recording = []
 recording_start_time = 0
 
-# Audio state
 current_frequencies = []
 phase = {}
 audio_lock = threading.Lock()
 
-# Drum queue for one-shot sounds
 drum_queue = deque()
 drum_playback_pos = {}
 
@@ -328,7 +231,6 @@ def audio_callback(outdata, frames, time_info, status):
     
     wave = np.zeros(frames, dtype=np.float32)
     
-    # Mix sustained notes
     with audio_lock:
         if current_frequencies:
             preset = PRESETS[state["current_preset"]]
@@ -354,7 +256,6 @@ def audio_callback(outdata, frames, time_info, status):
             
             wave = wave / max(len(current_frequencies), 1) * 0.3
     
-    # Mix drum sounds
     drums_to_remove = []
     for drum_id, (drum_type, pos) in list(drum_playback_pos.items()):
         if drum_type in drum_samples:
@@ -370,13 +271,11 @@ def audio_callback(outdata, frames, time_info, status):
     for drum_id in drums_to_remove:
         del drum_playback_pos[drum_id]
     
-    # Process new drums from queue
     while drum_queue:
         drum_type = drum_queue.popleft()
         drum_id = time.time()
         drum_playback_pos[drum_id] = (drum_type, 0)
     
-    # Clip to prevent distortion
     wave = np.clip(wave, -1.0, 1.0)
     outdata[:, 0] = wave
 
@@ -390,7 +289,6 @@ def update_sound(fingers, trigger_drums=True):
     preset = PRESETS[state["current_preset"]]
     is_drum_preset = preset["instrument"] == "drums"
     
-    # Handle drums
     if trigger_drums:
         for f in fingers:
             sound = preset["mapping"].get(f)
@@ -400,7 +298,6 @@ def update_sound(fingers, trigger_drums=True):
                 if sound in DRUMS:
                     play_drum(sound)
     
-    # Handle sustained sounds
     with audio_lock:
         if is_drum_preset:
             current_frequencies = []
@@ -420,7 +317,6 @@ def update_sound(fingers, trigger_drums=True):
                 sound_type = custom_types.get(f, 'note')
                 if sound_type == 'drum' or sound_type == 'none':
                     continue
-                # Use dynamic parsing for custom sounds with octave/inversion
                 new_freqs.extend(parse_sound(sound))
             elif sound and sound in CHORDS:
                 new_freqs.extend(CHORDS[sound])
@@ -497,12 +393,29 @@ def record_event(fingers, newly_pressed):
                 "preset": state["current_preset"]
             })
 
+def get_filtered_value(finger, raw_value):
+    """Add value to buffer and return moving average"""
+    finger_buffers[finger].append(raw_value)
+    if len(finger_buffers[finger]) > 0:
+        return sum(finger_buffers[finger]) / len(finger_buffers[finger])
+    return raw_value
+
 def read_loop():
     global active, running, last_active, tutorial_ready
     running = True
+    if ser and ser.is_open:
+        ser.reset_input_buffer()
+    
+    # Clear filter buffers
+    for name in FINGERS:
+        finger_buffers[name].clear()
+    
     while running and state["connected"]:
         try:
-            data = ser.read(64)
+            if ser.in_waiting > 0:
+                data = ser.read(min(ser.in_waiting, 64))
+            else:
+                data = ser.read(64)
             if len(data) >= 40:
                 try:
                     idx = data.index(b'\xaa\x55')
@@ -512,7 +425,12 @@ def read_loop():
                         
                         for name, cfg in FINGERS.items():
                             if name in rest:
-                                drop = (rest[name] - v[cfg['idx']]) / cfg['range']
+                                # Get raw value and apply filter
+                                raw_value = v[cfg['idx']]
+                                filtered_value = get_filtered_value(name, raw_value)
+                                
+                                # Calculate drop using filtered value
+                                drop = (rest[name] - filtered_value) / cfg['range']
                                 
                                 if drop > state["threshold"]:
                                     new_active.add(name)
@@ -534,7 +452,6 @@ def read_loop():
                             active = new_active.copy()
                             state["active_fingers"] = list(active)
                             
-                            # Trigger drums for new presses, update sustained for all
                             if newly_pressed:
                                 update_sound(newly_pressed, trigger_drums=True)
                             update_sound(active, trigger_drums=False)
@@ -544,7 +461,7 @@ def read_loop():
                     pass
         except:
             pass
-        time.sleep(0.005)
+        time.sleep(0.001)
 
 def disconnect():
     global ser, stream, running, active, last_active, current_frequencies, phase, tutorial_ready
@@ -576,6 +493,10 @@ def disconnect():
     state["active_fingers"] = []
     state["recording"] = False
     rest.clear()
+    
+    # Clear filter buffers
+    for name in FINGERS:
+        finger_buffers[name].clear()
 
 async def playback_recording(websocket, events):
     state["playing_back"] = True
@@ -627,11 +548,10 @@ async def websocket_endpoint(websocket: WebSocket):
             
             if data["type"] == "connect":
                 try:
-                    # Auto-detect serial port (works on Mac and Linux)
                     port = None
-                    if platform.system() == 'Darwin':  # Mac
+                    if platform.system() == 'Darwin':
                         ports = glob.glob('/dev/tty.usb*') + glob.glob('/dev/cu.usb*') + glob.glob('/dev/tty.SLAB*')
-                    else:  # Linux
+                    else:
                         ports = glob.glob('/dev/ttyUSB*') + glob.glob('/dev/ttyACM*')
                     
                     if ports:
@@ -640,11 +560,14 @@ async def websocket_endpoint(websocket: WebSocket):
                     else:
                         raise Exception("No USB device found. Please connect the DexUMI.")
                     
-                    ser = serial.Serial(port, 921600, timeout=0.02)
+                    ser = serial.Serial(port, 921600, timeout=0.01)
+                    ser.reset_input_buffer()
+                    ser.reset_output_buffer()
+                    
                     stream = sd.OutputStream(
                         samplerate=SAMPLE_RATE, 
                         channels=1, 
-                        blocksize=512,
+                        blocksize=256,
                         latency='low',
                         callback=audio_callback
                     )
@@ -660,6 +583,10 @@ async def websocket_endpoint(websocket: WebSocket):
                 await websocket.send_json({"type": "status", "connected": False, "calibrated": False})
             
             elif data["type"] == "calibrate":
+                # Clear buffers before calibration
+                for name in FINGERS:
+                    finger_buffers[name].clear()
+                
                 baseline = {name: [] for name in FINGERS}
                 for _ in range(30):
                     raw = ser.read(64)
