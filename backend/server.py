@@ -436,22 +436,22 @@ def read_loop():
                                 print(f"{name}: {drop:.2f}", end=" | ")
                                 
                                 # Hysteresis: different thresholds for on vs off
-                            if name in active:
+                                if name in active:
                                 # Already active - stay active until below OFF threshold
-                                if drop > THRESHOLD_OFF:
-                                    new_active.add(name)
-                            else:
-                                # Not active - only activate above ON threshold
-                                if drop > THRESHOLD_ON:
-                                    new_active.add(name)
+                                    if drop > THRESHOLD_OFF:
+                                        new_active.add(name)
+                                    else:
+                                        # Not active - only activate above ON threshold
+                                        if drop > THRESHOLD_ON:
+                                            new_active.add(name)
+                                        
+                                        if state["mode"] == "tutorial":
+                                            if drop < TUTORIAL_RELEASE_THRESHOLD:
+                                                tutorial_ready.add(name)
+                                            
+                                            if drop > THRESHOLD_ON and name in tutorial_ready:
+                                                check_tutorial_progress(name, True)
                                 
-                                if state["mode"] == "tutorial":
-                                    if drop < TUTORIAL_RELEASE_THRESHOLD:
-                                        tutorial_ready.add(name)
-                                    
-                                    if drop > THRESHOLD_ON and name in tutorial_ready:
-                                        check_tutorial_progress(name, True)
-                        
                         if new_active != active:
                             newly_pressed = new_active - active
                             
