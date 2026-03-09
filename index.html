@@ -144,15 +144,52 @@
 
     .btn:disabled { opacity: 0.35; cursor: default; }
 
-    .btn-connect { border-color: rgba(124,109,250,0.4); color: var(--accent); }
-    .btn-connect:hover:not(:disabled) { background: rgba(124,109,250,0.1); }
-    .btn-disconnect { border-color: rgba(239,68,68,0.4); color: #ef4444; }
-    .btn-disconnect:hover:not(:disabled) { background: rgba(239,68,68,0.1); }
-    .btn-calibrate { border-color: rgba(139,92,246,0.4); color: #a78bfa; }
-    .btn-calibrate:hover:not(:disabled) { background: rgba(139,92,246,0.1); }
-    .btn-calibrated { border-color: rgba(74,222,128,0.4); color: var(--green); }
-    .btn-recalibrate { border-color: rgba(234,179,8,0.4); color: #eab308; }
-    .btn-recalibrate:hover:not(:disabled) { background: rgba(234,179,8,0.1); }
+    .btn-connect { 
+      border-color: rgba(155,140,255,0.6); 
+      color: #fff;
+      background: linear-gradient(135deg, rgba(155,140,255,0.4), rgba(155,140,255,0.2));
+      box-shadow: 0 0 20px rgba(155,140,255,0.25);
+    }
+    .btn-connect:hover:not(:disabled) { 
+      background: linear-gradient(135deg, rgba(155,140,255,0.6), rgba(155,140,255,0.3));
+      box-shadow: 0 0 30px rgba(155,140,255,0.4);
+    }
+    .btn-disconnect { 
+      border-color: rgba(255,107,107,0.6); 
+      color: #fff;
+      background: linear-gradient(135deg, rgba(255,107,107,0.4), rgba(255,107,107,0.2));
+      box-shadow: 0 0 20px rgba(255,107,107,0.25);
+    }
+    .btn-disconnect:hover:not(:disabled) { 
+      background: linear-gradient(135deg, rgba(255,107,107,0.6), rgba(255,107,107,0.3));
+      box-shadow: 0 0 30px rgba(255,107,107,0.4);
+    }
+    .btn-calibrate { 
+      border-color: rgba(255,140,200,0.6); 
+      color: #fff;
+      background: linear-gradient(135deg, rgba(255,140,200,0.4), rgba(255,140,200,0.2));
+      box-shadow: 0 0 20px rgba(255,140,200,0.25);
+    }
+    .btn-calibrate:hover:not(:disabled) { 
+      background: linear-gradient(135deg, rgba(255,140,200,0.6), rgba(255,140,200,0.3));
+      box-shadow: 0 0 30px rgba(255,140,200,0.4);
+    }
+    .btn-calibrated { 
+      border-color: rgba(74,222,128,0.6); 
+      color: #fff;
+      background: linear-gradient(135deg, rgba(74,222,128,0.4), rgba(74,222,128,0.2));
+      box-shadow: 0 0 20px rgba(74,222,128,0.25);
+    }
+    .btn-recalibrate { 
+      border-color: rgba(255,217,61,0.6); 
+      color: #fff;
+      background: linear-gradient(135deg, rgba(255,217,61,0.4), rgba(255,217,61,0.2));
+      box-shadow: 0 0 20px rgba(255,217,61,0.2);
+    }
+    .btn-recalibrate:hover:not(:disabled) { 
+      background: linear-gradient(135deg, rgba(255,217,61,0.5), rgba(255,217,61,0.3));
+      box-shadow: 0 0 30px rgba(255,217,61,0.35);
+    }
 
     /* Tabs */
     .tabs {
@@ -1494,17 +1531,18 @@ const UI = (() => {
     const recal = document.getElementById('recalibrate-btn');
 
     if(App.connected) {
-      cb.textContent='Disconnect'; cb.className='btn btn-disconnect';
+      cb.textContent='Disconnect'; cb.className='btn btn-disconnect'; cb.disabled=false;
       if(App.calibrated) {
         cal.classList.add('hidden');
         recal.classList.remove('hidden');
+        recal.disabled=false;
         recal.textContent='Re-calibrate'; recal.className='btn btn-recalibrate';
       } else {
         cal.disabled=false; cal.textContent='Calibrate'; cal.className='btn btn-calibrate';
         cal.classList.remove('hidden'); recal.classList.add('hidden');
       }
     } else {
-      cb.textContent='Connect'; cb.className='btn btn-connect';
+      cb.textContent='Connect'; cb.className='btn btn-connect'; cb.disabled=false;
       cal.disabled=true; cal.textContent='Calibrate'; cal.className='btn btn-calibrate';
       cal.classList.remove('hidden'); recal.classList.add('hidden');
     }
