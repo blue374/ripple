@@ -3,991 +3,1710 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ripple - Music Therapy System</title>
+  <title>Ripple — Music Therapy System</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --surface2: #1a1a24;
+      --border: rgba(255,255,255,0.07);
+      --text: #e8e8f0;
+      --muted: rgba(232,232,240,0.4);
+      --accent: #7c6dfa;
+      --accent2: #fa6d9a;
+      --green: #4ade80;
+      --thumb: #ef4444;
+      --index: #f97316;
+      --middle: #eab308;
+      --ring: #22c55e;
+      --pinky: #818cf8;
     }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      font-family: 'DM Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
-      color: white;
+      overflow-x: hidden;
     }
 
-    .container {
-      padding: 30px;
-      max-width: 900px;
+    /* Ambient background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(124,109,250,0.06) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 80%, rgba(250,109,154,0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
       margin: 0 auto;
+      padding: 40px 24px 80px;
     }
 
+    /* Header */
     .header {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 48px;
     }
 
     .header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 5px;
+      font-family: 'DM Serif Display', serif;
+      font-size: 3.5rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--text) 40%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
     }
 
     .header p {
-      opacity: 0.6;
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
     }
 
-    .button-row {
+    /* Warning */
+    .warning {
+      background: rgba(250,200,50,0.08);
+      border: 1px solid rgba(250,200,50,0.3);
+      border-radius: 10px;
+      padding: 14px 20px;
+      margin-bottom: 28px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #ffd700;
+    }
+
+    .warning a { color: #ffd700; }
+    .hidden { display: none !important; }
+
+    /* Control bar */
+    .control-bar {
       display: flex;
       gap: 10px;
-      margin-bottom: 25px;
       justify-content: center;
       flex-wrap: wrap;
+      margin-bottom: 32px;
     }
 
     .btn {
-      padding: 10px 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      padding: 10px 22px;
       border-radius: 8px;
-      border: none;
-      color: white;
+      border: 1px solid var(--border);
+      color: var(--text);
       cursor: pointer;
-      font-size: 1rem;
-      transition: transform 0.1s, opacity 0.1s;
+      transition: all 0.15s;
+      background: var(--surface2);
     }
 
     .btn:hover:not(:disabled) {
-      transform: scale(1.05);
+      border-color: rgba(255,255,255,0.2);
+      background: #222230;
     }
 
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
+    .btn:disabled { opacity: 0.35; cursor: default; }
 
-    .btn-connect { background: #3b82f6; }
-    .btn-disconnect { background: #ef4444; }
-    .btn-calibrate { background: #8b5cf6; }
-    .btn-calibrated { background: #4ade80; }
-    .btn-settings { background: rgba(255,255,255,0.1); }
+    .btn-connect { border-color: rgba(124,109,250,0.4); color: var(--accent); }
+    .btn-connect:hover:not(:disabled) { background: rgba(124,109,250,0.1); }
+    .btn-disconnect { border-color: rgba(239,68,68,0.4); color: #ef4444; }
+    .btn-disconnect:hover:not(:disabled) { background: rgba(239,68,68,0.1); }
+    .btn-calibrate { border-color: rgba(139,92,246,0.4); color: #a78bfa; }
+    .btn-calibrate:hover:not(:disabled) { background: rgba(139,92,246,0.1); }
+    .btn-calibrated { border-color: rgba(74,222,128,0.4); color: var(--green); }
+    .btn-recalibrate { border-color: rgba(234,179,8,0.4); color: #eab308; }
+    .btn-recalibrate:hover:not(:disabled) { background: rgba(234,179,8,0.1); }
 
-    .preset-row {
+    /* Tabs */
+    .tabs {
       display: flex;
-      gap: 10px;
-      margin-bottom: 25px;
-      justify-content: center;
+      gap: 4px;
+      margin-bottom: 28px;
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .tab {
+      flex: 1;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      padding: 9px;
+      border-radius: 7px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+
+    .tab.active {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    /* Preset strip */
+    .preset-strip {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
       flex-wrap: wrap;
+      justify-content: center;
     }
 
     .preset-btn {
-      padding: 12px 20px;
-      border-radius: 12px;
-      border: 2px solid transparent;
-      background: rgba(255,255,255,0.1);
-      color: white;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      padding: 9px 18px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
       cursor: pointer;
-      font-size: 1rem;
-      transition: all 0.2s;
+      transition: all 0.15s;
     }
+
+    .preset-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
 
     .preset-btn.active {
-      border-color: #4ade80;
-      background: rgba(74, 222, 128, 0.2);
+      background: rgba(124,109,250,0.15);
+      border-color: rgba(124,109,250,0.5);
+      color: var(--accent);
     }
 
+    /* Panel */
     .panel {
-      background: rgba(255,255,255,0.08);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 25px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 20px;
     }
 
-    .settings-panel {
-      background: rgba(255,255,255,0.1);
-      border-radius: 15px;
-      padding: 20px;
-      margin-bottom: 25px;
+    .panel-title {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
     }
 
-    .settings-panel h3 {
-      margin-bottom: 15px;
-    }
-
-    .settings-panel input[type="range"] {
-      width: 100%;
-      accent-color: #8b5cf6;
-    }
-
-    .hand-container {
+    /* Hand visualization */
+    .hand-wrap {
       display: flex;
       justify-content: center;
-      gap: 12px;
-      padding: 30px;
+      align-items: flex-end;
+      gap: 10px;
+      padding: 20px 0 10px;
     }
 
-    .finger {
+    .finger-col {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-end;
-      padding-bottom: 12px;
-      border-radius: 22px;
-      background: rgba(255,255,255,0.15);
-      transition: all 0.1s ease;
+      gap: 6px;
+    }
+
+    .finger {
+      border-radius: 16px 16px 8px 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      transition: all 0.08s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .finger::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: inherit;
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 0.08s;
     }
 
     .finger.active {
-      transform: scale(1.08);
+      transform: scaleY(0.95) translateY(2px);
     }
 
-    .finger.clickable {
-      border: 2px solid rgba(255,255,255,0.3);
-      cursor: pointer;
-    }
+    .finger.clickable { cursor: pointer; }
+    .finger.clickable:hover { border-color: rgba(255,255,255,0.2); }
 
-    .finger.clickable:hover {
-      border-color: rgba(255,255,255,0.5);
+    .finger-note {
+      font-size: 0.62rem;
+      font-weight: 500;
+      text-align: center;
+      padding: 4px 2px 6px;
+      letter-spacing: 0.03em;
     }
 
     .finger-label {
-      font-weight: bold;
-      font-size: 0.85rem;
-      opacity: 0.9;
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
-    .finger-name {
-      font-size: 0.7rem;
-      opacity: 0.6;
-      margin-top: 2px;
-    }
-
-    .status-text {
+    .status-line {
       text-align: center;
-      opacity: 0.6;
-      margin-top: 10px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 16px;
+      min-height: 1.2em;
+      transition: all 0.2s;
     }
 
-    .mapping-panel h3 {
-      margin-bottom: 15px;
-    }
-
+    /* Mapping grid */
     .mapping-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .mapping-cell {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 8px;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .mapping-cell.clickable { cursor: pointer; }
+    .mapping-cell.clickable:hover { background: #222230; border-color: rgba(255,255,255,0.15); }
+
+    .mapping-cell .note { font-size: 0.9rem; font-weight: 500; margin-bottom: 3px; }
+    .mapping-cell .fname { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* Settings */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 600px) { .settings-grid { grid-template-columns: 1fr; } }
+
+    .setting-group label {
+      display: block;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .instrument-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .inst-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      padding: 8px 10px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .inst-btn.active {
+      border-color: rgba(249,115,22,0.5);
+      color: #f97316;
+      background: rgba(249,115,22,0.08);
+    }
+
+    .inst-btn:hover:not(.active) { color: var(--text); border-color: rgba(255,255,255,0.15); }
+
+    /* Tutorial */
+    .tutorial-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tutorial-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .tutorial-card:hover { border-color: rgba(255,255,255,0.15); background: #222230; }
+    .tutorial-card.active-tut { border-color: rgba(124,109,250,0.5); background: rgba(124,109,250,0.08); }
+
+    .tut-name { font-size: 0.8rem; margin-bottom: 4px; }
+    .tut-meta { font-size: 0.62rem; color: var(--muted); }
+
+    .difficulty-beginner { color: var(--green); }
+    .difficulty-easy { color: #60a5fa; }
+    .difficulty-medium { color: #f97316; }
+    .difficulty-hard { color: #ef4444; }
+
+    /* Tutorial active view */
+    .tutorial-active {
+      text-align: center;
+    }
+
+    .tut-progress-bar {
+      height: 4px;
+      background: var(--surface2);
+      border-radius: 2px;
+      margin: 16px 0;
+      overflow: hidden;
+    }
+
+    .tut-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .tut-next-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .tut-next-finger {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+    }
+
+    .tut-sequence {
       display: flex;
-      justify-content: space-around;
+      justify-content: center;
+      gap: 4px;
       flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .seq-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      transition: all 0.15s;
+    }
+
+    .seq-dot.done { background: var(--green); border-color: var(--green); }
+    .seq-dot.current { background: var(--accent); border-color: var(--accent); transform: scale(1.4); }
+
+    .tut-complete {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+
+    /* Recording */
+    .rec-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .rec-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: #ef4444;
+    }
+
+    .rec-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ef4444;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .recording-list {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .recording-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       gap: 10px;
     }
 
-    .mapping-item {
-      text-align: center;
-      padding: 10px 15px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-      transition: background 0.2s;
-    }
+    .rec-info { font-size: 0.75rem; }
+    .rec-dur { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
 
-    .mapping-item.clickable {
+    .btn-sm {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
       cursor: pointer;
+      transition: all 0.12s;
+      white-space: nowrap;
     }
 
-    .mapping-item.clickable:hover {
-      background: rgba(255,255,255,0.2);
-    }
-
-    .mapping-chord {
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-
-    .mapping-finger {
-      font-size: 0.8rem;
-      opacity: 0.6;
-    }
+    .btn-sm:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .btn-sm.play { border-color: rgba(74,222,128,0.3); color: var(--green); }
+    .btn-sm.stop { border-color: rgba(239,68,68,0.3); color: #ef4444; }
+    .btn-sm.danger { border-color: rgba(239,68,68,0.2); color: rgba(239,68,68,0.6); }
+    .btn-sm.danger:hover { color: #ef4444; border-color: rgba(239,68,68,0.4); }
 
     /* Modal */
     .modal-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.8);
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(4px);
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 100;
+      z-index: 200;
+      padding: 20px;
     }
 
     .modal {
-      background: #1e293b;
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 30px;
-      max-width: 500px;
-      width: 90%;
+      padding: 28px;
+      max-width: 520px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .modal h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.4rem;
       margin-bottom: 20px;
     }
 
-    .chord-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
+    .modal-section-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 16px 0 8px;
     }
 
-    .chord-btn {
-      padding: 12px;
-      border-radius: 8px;
-      border: 2px solid transparent;
-      background: rgba(255,255,255,0.1);
-      color: white;
+    .chord-category {
+      margin-bottom: 12px;
+    }
+
+    .chord-grid-modal {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chord-btn-modal {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      padding: 7px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
       cursor: pointer;
-      font-size: 0.9rem;
-      transition: all 0.2s;
+      transition: all 0.12s;
     }
 
-    .chord-btn:hover {
-      background: rgba(255,255,255,0.2);
+    .chord-btn-modal:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+    .chord-btn-modal.selected {
+      border-color: rgba(74,222,128,0.5);
+      color: var(--green);
+      background: rgba(74,222,128,0.08);
     }
 
-    .chord-btn.selected {
-      border-color: #4ade80;
-      background: rgba(74, 222, 128, 0.2);
+    .drum-btn-modal {
+      border-color: rgba(249,115,22,0.3);
+      color: #f97316;
     }
 
-    .modal-cancel {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      background: rgba(255,255,255,0.2);
-      color: white;
-      cursor: pointer;
-      font-size: 1rem;
+    .drum-btn-modal.selected {
+      background: rgba(249,115,22,0.12);
+      border-color: rgba(249,115,22,0.6);
     }
 
-    .modal-cancel:hover {
-      background: rgba(255,255,255,0.3);
-    }
-
-    /* Instrument selector */
-    .instrument-row {
+    .modal-footer {
       display: flex;
       gap: 8px;
-      margin-top: 15px;
-      flex-wrap: wrap;
+      margin-top: 20px;
     }
 
-    .instrument-btn {
-      padding: 8px 14px;
+    .modal-footer button {
+      flex: 1;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      padding: 10px;
       border-radius: 8px;
-      border: 2px solid transparent;
-      background: rgba(255,255,255,0.1);
-      color: white;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
       cursor: pointer;
-      font-size: 0.85rem;
+      transition: all 0.12s;
     }
 
-    .instrument-btn.active {
-      border-color: #f97316;
-      background: rgba(249, 115, 22, 0.2);
-    }
+    .modal-footer button:hover { color: var(--text); }
 
-    /* Browser warning */
-    .warning-banner {
-      background: rgba(255, 200, 50, 0.2);
-      border: 1px solid rgba(255, 200, 50, 0.5);
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 25px;
-      text-align: center;
-    }
-
-    .warning-banner a {
-      color: #ffd700;
-    }
-
-    /* Hidden */
-    .hidden {
-      display: none !important;
+    /* Ripple animation on finger press */
+    @keyframes rippleOut {
+      0% { box-shadow: 0 0 0 0 rgba(var(--rc), 0.4); }
+      100% { box-shadow: 0 0 0 18px rgba(var(--rc), 0); }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>🎵 Ripple</h1>
-      <p>Music Therapy System</p>
-    </div>
+<div class="app">
+  <div class="header">
+    <h1>Ripple</h1>
+    <p>Music Therapy System</p>
+  </div>
 
-    <div id="browser-warning" class="warning-banner hidden">
-      ⚠️ Web Serial API not supported.<br>
-      Please use <a href="https://www.google.com/chrome/" target="_blank">Chrome</a> or Edge.
-    </div>
+  <div id="browser-warning" class="warning hidden">
+    ⚠️ Web Serial API not supported. Please use <a href="https://www.google.com/chrome/" target="_blank">Chrome</a> or Edge.
+  </div>
 
-    <!-- Control Buttons -->
-    <div class="button-row">
-      <button id="connect-btn" class="btn btn-connect">Connect</button>
-      <button id="calibrate-btn" class="btn btn-calibrate" disabled>Calibrate</button>
-      <button id="settings-btn" class="btn btn-settings">⚙️ Settings</button>
-    </div>
+  <!-- Controls -->
+  <div class="control-bar">
+    <button id="connect-btn" class="btn btn-connect">Connect</button>
+    <button id="calibrate-btn" class="btn btn-calibrate" disabled>Calibrate</button>
+    <button id="recalibrate-btn" class="btn btn-recalibrate hidden">Re-calibrate</button>
+  </div>
 
-    <!-- Settings Panel -->
-    <div id="settings-panel" class="settings-panel hidden">
-      <h3>Sensitivity: <span id="threshold-value">15</span>%</h3>
-      <input type="range" id="threshold-slider" min="5" max="40" value="15">
-      
-      <h3 style="margin-top: 20px;">Instrument</h3>
-      <div class="instrument-row">
-        <button class="instrument-btn" data-instrument="sine">🎵 Sine</button>
-        <button class="instrument-btn" data-instrument="soft">🎹 Soft</button>
-        <button class="instrument-btn" data-instrument="bell">🔔 Bell</button>
-        <button class="instrument-btn active" data-instrument="pad">🧘 Pad</button>
-      </div>
-    </div>
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" data-tab="play">Play</button>
+    <button class="tab" data-tab="tutorial">Tutorial</button>
+    <button class="tab" data-tab="record">Record</button>
+    <button class="tab" data-tab="settings">Settings</button>
+  </div>
 
-    <!-- Preset Buttons -->
-    <div class="preset-row">
-      <button class="preset-btn active" data-preset="therapy">🧘 Therapy</button>
-      <button class="preset-btn" data-preset="piano">🎹 Piano</button>
-      <button class="preset-btn" data-preset="chords">🎸 Chords</button>
-      <button class="preset-btn" data-preset="custom">✏️ Custom</button>
-    </div>
+  <!-- PLAY TAB -->
+  <div id="tab-play">
+    <!-- Presets -->
+    <div class="preset-strip" id="preset-strip"></div>
 
-    <!-- Hand Visualization -->
+    <!-- Hand -->
     <div class="panel">
-      <div class="hand-container" id="hand-container">
-        <!-- Fingers will be generated by JS -->
-      </div>
-      <p class="status-text" id="status-text">Connect exoskeleton to start</p>
+      <div class="panel-title">Hand Visualization</div>
+      <div class="hand-wrap" id="hand-wrap"></div>
+      <div class="status-line" id="status-line">Connect exoskeleton to start</div>
     </div>
 
-    <!-- Current Mapping -->
-    <div class="panel mapping-panel">
-      <h3>Current Mapping</h3>
-      <div class="mapping-grid" id="mapping-grid">
-        <!-- Mapping items will be generated by JS -->
+    <!-- Mapping -->
+    <div class="panel">
+      <div class="panel-title">Current Mapping</div>
+      <div class="mapping-grid" id="mapping-grid"></div>
+    </div>
+  </div>
+
+  <!-- TUTORIAL TAB -->
+  <div id="tab-tutorial" class="hidden">
+    <div class="panel" id="tut-browser">
+      <div class="panel-title">Choose a Song</div>
+      <div class="tutorial-list" id="tutorial-list"></div>
+    </div>
+
+    <div class="panel hidden" id="tut-active-panel">
+      <div class="tutorial-active" id="tut-active-content"></div>
+      <div style="display:flex; gap:8px; margin-top:16px;">
+        <button class="btn-sm" id="tut-reset-btn">↺ Restart</button>
+        <button class="btn-sm danger" id="tut-exit-btn">Exit Tutorial</button>
       </div>
     </div>
   </div>
 
-  <!-- Chord Selector Modal -->
-  <div id="chord-modal" class="modal-overlay hidden">
-    <div class="modal">
-      <h3>Select Chord for <span id="modal-finger-name"></span></h3>
-      <div class="chord-grid" id="chord-grid">
-        <!-- Chords will be generated by JS -->
+  <!-- RECORD TAB -->
+  <div id="tab-record" class="hidden">
+    <div class="panel">
+      <div class="panel-title">Recording</div>
+      <div class="rec-controls">
+        <button class="btn-sm play" id="rec-start-btn">⏺ Start Recording</button>
+        <button class="btn-sm stop hidden" id="rec-stop-btn">⏹ Stop</button>
+        <span class="rec-indicator hidden" id="rec-indicator"><span class="rec-dot"></span> Recording</span>
       </div>
-      <button id="modal-cancel" class="modal-cancel">Cancel</button>
+      <div class="recording-list" id="recording-list"></div>
     </div>
   </div>
 
-  <script>
-    // ============ CONFIGURATION ============
-    const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
-    
-    const FINGER_COLORS = {
-      thumb: '#ef4444',
-      index: '#f97316',
-      middle: '#eab308',
-      ring: '#22c55e',
-      pinky: '#3b82f6',
-    };
+  <!-- SETTINGS TAB -->
+  <div id="tab-settings" class="hidden">
+    <div class="panel">
+      <div class="panel-title">Configuration</div>
+      <div class="settings-grid">
+        <div class="setting-group">
+          <label>Sensitivity ON threshold: <span id="thresh-on-val">25</span>%</label>
+          <input type="range" id="thresh-on" min="5" max="60" value="25">
+        </div>
+        <div class="setting-group">
+          <label>Release threshold: <span id="thresh-off-val">8</span>%</label>
+          <input type="range" id="thresh-off" min="2" max="40" value="8">
+        </div>
+        <div class="setting-group">
+          <label>Smoothing (filter frames): <span id="filter-val">5</span></label>
+          <input type="range" id="filter-size" min="1" max="15" value="5">
+        </div>
+        <div class="setting-group">
+          <label>Volume: <span id="volume-val">30</span>%</label>
+          <input type="range" id="volume-range" min="5" max="100" value="30">
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Custom Instrument (for Custom preset)</div>
+      <div class="instrument-grid" id="inst-grid"></div>
+    </div>
+  </div>
+</div>
 
-    const FINGER_CONFIG = {
-      thumb:  { idx: 1, range: 139000, width: 55, height: 75,  marginTop: 55 },
-      index:  { idx: 3, range: 184000, width: 45, height: 115, marginTop: 8 },
-      middle: { idx: 4, range: 139000, width: 45, height: 130, marginTop: 0 },
-      ring:   { idx: 5, range: 140000, width: 45, height: 115, marginTop: 8 },
-      pinky:  { idx: 6, range: 168000, width: 45, height: 100, marginTop: 25 },
-    };
+<!-- Chord Selector Modal -->
+<div id="chord-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <h3>Map <span id="modal-finger-label" style="color:var(--accent)"></span></h3>
+    <div id="chord-modal-body"></div>
+    <div class="modal-footer">
+      <button id="modal-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
 
-    const CHORDS = {
-      'C': [261.63], 'D': [293.66], 'E': [329.63], 'F': [349.23], 'G': [392.00], 'A': [440.00], 'B': [493.88],
-      'C_maj': [261.63, 329.63, 392.00], 'D_maj': [293.66, 369.99, 440.00], 'E_maj': [329.63, 415.30, 493.88],
-      'F_maj': [349.23, 440.00, 523.25], 'G_maj': [392.00, 493.88, 587.33], 'A_maj': [440.00, 554.37, 659.25],
-      'Am': [440.00, 523.25, 659.25], 'Dm': [293.66, 349.23, 440.00], 'Em': [329.63, 392.00, 493.88],
-      'C7': [261.63, 329.63, 392.00, 466.16], 'G7': [392.00, 493.88, 587.33, 698.46],
-    };
+<script>
+// ═══════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════
+const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 
-    const PRESETS = {
-      therapy: { name: '🧘 Therapy', instrument: 'pad', mapping: { thumb: 'C_maj', index: 'F_maj', middle: 'G_maj', ring: 'Am', pinky: 'Em' }},
-      piano:   { name: '🎹 Piano',   instrument: 'bell', mapping: { thumb: 'C', index: 'D', middle: 'E', ring: 'F', pinky: 'G' }},
-      chords:  { name: '🎸 Chords',  instrument: 'soft', mapping: { thumb: 'C_maj', index: 'D_maj', middle: 'E_maj', ring: 'G_maj', pinky: 'A_maj' }},
-      custom:  { name: '✏️ Custom',  instrument: 'sine', mapping: { thumb: 'C', index: 'D', middle: 'E', ring: 'F', pinky: 'G' }},
-    };
+const FINGER_CFG = {
+  thumb:  { idx: 1, range: 139000, w: 54, h: 72,  mt: 55, color: '#ef4444', rc: '239,68,68' },
+  index:  { idx: 5, range: 140000, w: 44, h: 112, mt: 8,  color: '#f97316', rc: '249,115,22' },
+  middle: { idx: 4, range: 139000, w: 44, h: 128, mt: 0,  color: '#eab308', rc: '234,179,8' },
+  ring:   { idx: 3, range: 184000, w: 44, h: 112, mt: 8,  color: '#22c55e', rc: '34,197,94' },
+  pinky:  { idx: 6, range: 168000, w: 44, h: 96,  mt: 25, color: '#818cf8', rc: '129,140,248' },
+};
 
-    // ============ AUDIO SYSTEM ============
-    const Audio = {
-      ctx: null,
-      volume: 0.3,
-      currentInstrument: 'pad',
+const CHORDS = {
+  // Single notes oct4
+  'C':[262],'D':[294],'E':[330],'F':[349],'G':[392],'A':[440],'B':[494],
+  'C#':[277],'D#':[311],'F#':[370],'G#':[415],'A#':[466],
+  'Db':[277],'Eb':[311],'Gb':[370],'Ab':[415],'Bb':[466],
+  // Oct 5
+  'C5':[523],'D5':[587],'E5':[659],'F5':[698],'G5':[784],
+  // Major chords
+  'C_maj':[262,330,392],'D_maj':[294,370,440],'E_maj':[330,415,494],
+  'F_maj':[349,440,523],'G_maj':[392,494,587],'A_maj':[440,554,659],'B_maj':[494,622,740],
+  'C#_maj':[277,349,415],'D#_maj':[311,392,466],'F#_maj':[370,466,554],
+  'G#_maj':[415,523,622],'A#_maj':[466,587,698],
+  'Db_maj':[277,349,415],'Eb_maj':[311,392,466],'Gb_maj':[370,466,554],
+  'Ab_maj':[415,523,622],'Bb_maj':[466,587,698],
+  // Minor chords
+  'Am':[440,523,659],'Bm':[494,587,740],'Cm':[262,311,392],
+  'Dm':[294,349,440],'Em':[330,392,494],'Fm':[349,415,523],'Gm':[392,466,587],
+  'C#m':[277,330,415],'D#m':[311,370,466],'F#m':[370,440,554],
+  'G#m':[415,494,622],'A#m':[466,554,698],
+  // 7th chords
+  'C7':[262,330,392,466],'D7':[294,370,440,523],'E7':[330,415,494,587],
+  'F7':[349,440,523,622],'G7':[392,494,587,698],'A7':[440,554,659,784],'B7':[494,622,740,880],
+  'none':[],
+};
 
-      init() {
-        if (!this.ctx) {
-          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+const DRUMS = ['kick','snare','hihat','tom','clap','cymbal'];
+
+const PRESETS = {
+  therapy: { name:'🧘 Therapy', instrument:'pad',   mapping:{thumb:'C_maj',index:'F_maj',middle:'G_maj',ring:'Am',pinky:'Em'} },
+  piano:   { name:'🎹 Piano',   instrument:'bell',  mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'} },
+  chords:  { name:'🎸 Chords',  instrument:'soft',  mapping:{thumb:'C_maj',index:'D_maj',middle:'E_maj',ring:'G_maj',pinky:'A_maj'} },
+  drums:   { name:'🥁 Drums',   instrument:'drums', mapping:{thumb:'kick',index:'snare',middle:'hihat',ring:'tom',pinky:'clap'} },
+  custom:  { name:'✏️ Custom',  instrument:'sine',  mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'} },
+};
+
+const TUTORIALS = {
+  scale:      {name:'Simple Scale',         difficulty:'Beginner', sequence:['thumb','index','middle','ring','pinky','pinky','ring','middle','index','thumb']},
+  hotcross:   {name:'Hot Cross Buns',        difficulty:'Beginner', sequence:['middle','index','thumb','middle','index','thumb','thumb','thumb','thumb','thumb','index','index','index','index','middle','index','thumb']},
+  rain:       {name:'Rain Rain Go Away',     difficulty:'Beginner', sequence:['middle','thumb','middle','middle','thumb','middle','middle','thumb','middle','ring','middle','index','thumb']},
+  mary:       {name:'Mary Had a Little Lamb',difficulty:'Easy',     sequence:['middle','index','thumb','index','middle','middle','middle','index','index','index','middle','pinky','pinky','middle','index','thumb','index','middle','middle','middle','middle','index','index','middle','index','thumb']},
+  happy:      {name:'Happy Birthday',        difficulty:'Easy',     sequence:['thumb','thumb','index','thumb','ring','middle','thumb','thumb','index','thumb','pinky','ring','thumb','thumb','thumb','middle','ring','middle','index']},
+  london:     {name:'London Bridge',         difficulty:'Easy',     sequence:['pinky','ring','middle','ring','pinky','pinky','pinky','ring','ring','ring','pinky','pinky','pinky','pinky','ring','middle','ring','pinky','pinky','pinky','ring','ring','pinky','ring','middle']},
+  twinkle:    {name:'Twinkle Twinkle',       difficulty:'Easy',     sequence:['thumb','thumb','pinky','pinky','pinky','pinky','pinky','ring','ring','middle','middle','index','index','thumb','pinky','pinky','ring','ring','middle','middle','index','pinky','pinky','ring','ring','middle','middle','index','thumb','thumb','pinky','pinky','pinky','pinky','pinky','ring','ring','middle','middle','index','index','thumb']},
+  brother:    {name:'Are You Sleeping',      difficulty:'Medium',   sequence:['thumb','index','middle','thumb','thumb','index','middle','thumb','middle','ring','pinky','middle','ring','pinky','pinky','ring','middle','thumb','pinky','ring','middle','thumb','thumb','pinky','thumb','thumb','pinky','thumb']},
+  jingle:     {name:'Jingle Bells (Chorus)', difficulty:'Medium',   sequence:['middle','middle','middle','middle','middle','middle','middle','pinky','thumb','index','middle','ring','ring','ring','ring','ring','middle','middle','middle','middle','index','index','middle','index','pinky']},
+  ode:        {name:'Ode to Joy',            difficulty:'Medium',   sequence:['middle','middle','ring','pinky','pinky','ring','middle','index','thumb','thumb','index','middle','middle','index','index','middle','middle','ring','pinky','pinky','ring','middle','index','thumb','thumb','index','middle','index','thumb','thumb']},
+  rowboat:    {name:'Row Row Row Your Boat', difficulty:'Medium',   sequence:['thumb','thumb','thumb','index','middle','middle','index','middle','ring','pinky','pinky','pinky','pinky','middle','middle','middle','thumb','thumb','thumb','pinky','ring','middle','index','thumb']},
+  entertainer:{name:'The Entertainer',       difficulty:'Hard',     sequence:['index','middle','index','thumb','index','middle','ring','middle','index','middle','index','thumb','index','middle','ring','pinky','ring','middle','ring','middle','index','thumb','index','middle','middle','ring','pinky','ring','middle','index','thumb','index']},
+  furelise:   {name:'Für Elise (Theme)',     difficulty:'Hard',     sequence:['middle','index','middle','index','middle','thumb','index','thumb','thumb','middle','thumb','middle','index','middle','index','middle','middle','index','middle','index','middle','thumb','index','thumb','thumb','middle','index','thumb','thumb']},
+};
+
+// ═══════════════════════════════════════════════════════
+//  AUDIO ENGINE
+// ═══════════════════════════════════════════════════════
+const AudioEngine = (() => {
+  const SR = 44100;
+  let ctx = null;
+  let masterGain = null;
+  let activeNodes = {}; // finger -> {osc nodes or buffer source}
+  let drumBuffers = {};
+  let volume = 0.3;
+  let instrument = 'pad';
+
+  function init() {
+    if (ctx) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SR });
+    masterGain = ctx.createGain();
+    masterGain.gain.value = volume;
+    masterGain.connect(ctx.destination);
+    buildDrums();
+  }
+
+  function resume() { ctx && ctx.state === 'suspended' && ctx.resume(); }
+
+  // ── Drum synthesis (ported from server.py) ──
+  function buildDrums() {
+    const drums = {
+      kick(sr) {
+        const dur = 0.4, n = Math.floor(sr*dur);
+        const buf = ctx.createBuffer(1, n, sr);
+        const d = buf.getChannelData(0);
+        for (let i=0;i<n;i++) {
+          const t=i/sr;
+          const freq = 55*Math.exp(-2*t);
+          d[i] = Math.sin(2*Math.PI*freq*t)*Math.exp(-3*t)
+               + 0.6*Math.sin(2*Math.PI*35*t)*Math.exp(-4*t)
+               + 0.2*(Math.random()*2-1)*Math.exp(-80*t);
         }
-        if (this.ctx.state === 'suspended') {
-          this.ctx.resume();
-        }
+        normalize(d, 0.75); return buf;
       },
-
-      instruments: {
-        sine: (t, f) => Math.sin(2 * Math.PI * f * t),
-        soft: (t, f) => 0.6 * Math.sin(2 * Math.PI * f * t) + 0.3 * Math.sin(4 * Math.PI * f * t) + 0.1 * Math.sin(6 * Math.PI * f * t),
-        bell: (t, f, dur) => Math.sin(2 * Math.PI * f * t) * Math.exp(-3 * t) + 0.5 * Math.sin(4 * Math.PI * f * t) * Math.exp(-4 * t),
-        pad: (t, f) => 0.4 * Math.sin(2 * Math.PI * f * t) + 0.3 * Math.sin(2 * Math.PI * f * 1.002 * t) + 0.3 * Math.sin(2 * Math.PI * f * 0.998 * t),
+      snare(sr) {
+        const dur=0.3, n=Math.floor(sr*dur);
+        const buf=ctx.createBuffer(1,n,sr); const d=buf.getChannelData(0);
+        for(let i=0;i<n;i++){const t=i/sr;
+          d[i]=0.4*Math.sin(2*Math.PI*180*t)*Math.exp(-25*t)
+              +0.6*(Math.random()*2-1)*Math.exp(-18*t);}
+        normalize(d,0.75); return buf;
       },
-
-      envelope(samples, sampleRate, attack = 0.005, release = 0.02) {
-        const env = new Float32Array(samples.length).fill(1);
-        const attSamples = Math.floor(attack * sampleRate);
-        const relSamples = Math.floor(release * sampleRate);
-        
-        for (let i = 0; i < attSamples && i < env.length; i++) {
-          env[i] = i / attSamples;
-        }
-        for (let i = 0; i < relSamples && i < env.length; i++) {
-          env[env.length - 1 - i] = i / relSamples;
-        }
-        return env;
+      hihat(sr) {
+        const dur=0.12, n=Math.floor(sr*dur);
+        const buf=ctx.createBuffer(1,n,sr); const d=buf.getChannelData(0);
+        for(let i=0;i<n;i++){const t=i/sr; d[i]=(Math.random()*2-1)*Math.exp(-35*t);}
+        normalize(d,0.6); return buf;
       },
-
-      playChord(chordName) {
-        this.init();
-        
-        const frequencies = CHORDS[chordName];
-        if (!frequencies) return;
-
-        const duration = 0.15;
-        const sampleRate = this.ctx.sampleRate;
-        const numSamples = Math.floor(duration * sampleRate);
-        const buffer = this.ctx.createBuffer(1, numSamples, sampleRate);
-        const data = buffer.getChannelData(0);
-
-        const synth = this.instruments[this.currentInstrument] || this.instruments.sine;
-
-        // Generate waveform
-        for (let i = 0; i < numSamples; i++) {
-          const t = i / sampleRate;
-          let sample = 0;
-          for (const freq of frequencies) {
-            sample += synth(t, freq, duration);
+      tom(sr) {
+        const dur=0.4, n=Math.floor(sr*dur);
+        const buf=ctx.createBuffer(1,n,sr); const d=buf.getChannelData(0);
+        for(let i=0;i<n;i++){const t=i/sr;
+          const freq=90*Math.exp(-4*t);
+          d[i]=Math.sin(2*Math.PI*freq*t)*Math.exp(-8*t);}
+        normalize(d,0.75); return buf;
+      },
+      clap(sr) {
+        const dur=0.3, n=Math.floor(sr*dur);
+        const buf=ctx.createBuffer(1,n,sr); const d=buf.getChannelData(0);
+        for(let k=0;k<5;k++){
+          const off=Math.floor((k*0.012+Math.random()*0.005)*sr);
+          for(let i=0;i<n-off;i++){
+            const t=i/sr;
+            d[i+off]+=(Math.random()*2-1)*Math.exp(-60*t)*Math.pow(0.7,k);
           }
-          data[i] = sample / frequencies.length;
         }
-
-        // Apply envelope
-        const env = this.envelope(data, sampleRate);
-        for (let i = 0; i < numSamples; i++) {
-          data[i] *= env[i] * this.volume;
-        }
-
-        // Play
-        const source = this.ctx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(this.ctx.destination);
-        source.start();
+        for(let i=0;i<n;i++){const t=i/sr; d[i]*=Math.exp(-12*t);}
+        normalize(d,0.75); return buf;
       },
+      cymbal(sr) {
+        const dur=0.8, n=Math.floor(sr*dur);
+        const buf=ctx.createBuffer(1,n,sr); const d=buf.getChannelData(0);
+        for(let i=0;i<n;i++){const t=i/sr;
+          d[i]=(Math.random()*2-1)*Math.exp(-2.5*t)
+              +0.4*(Math.random()*2-1)*Math.exp(-1*t);}
+        normalize(d,0.6); return buf;
+      },
+    };
+    for(const [name, fn] of Object.entries(drums)) {
+      drumBuffers[name] = fn(ctx.sampleRate);
+    }
+  }
 
-      playFingers(fingers, mapping) {
-        if (!fingers.length) return;
-        
-        // Collect all frequencies from active fingers
-        const allFreqs = [];
-        for (const finger of fingers) {
-          const chord = mapping[finger];
-          if (chord && CHORDS[chord]) {
-            allFreqs.push(...CHORDS[chord]);
-          }
-        }
-        
-        if (allFreqs.length === 0) return;
+  function normalize(d, peak) {
+    let mx=0; for(let i=0;i<d.length;i++) mx=Math.max(mx,Math.abs(d[i]));
+    if(mx>0) for(let i=0;i<d.length;i++) d[i]=d[i]/mx*peak;
+  }
 
-        this.init();
-        
-        const duration = 0.1;
-        const sampleRate = this.ctx.sampleRate;
-        const numSamples = Math.floor(duration * sampleRate);
-        const buffer = this.ctx.createBuffer(1, numSamples, sampleRate);
-        const data = buffer.getChannelData(0);
+  // ── Sustained tones (ported from server.py audio_callback) ──
+  function startFinger(finger, freqs, inst) {
+    stopFinger(finger);
+    if(!freqs||freqs.length===0) return;
 
-        const synth = this.instruments[this.currentInstrument] || this.instruments.sine;
+    const nodes = [];
+    const gainNode = ctx.createGain();
+    gainNode.gain.setValueAtTime(0, ctx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.3/freqs.length, ctx.currentTime+0.005);
+    gainNode.connect(masterGain);
 
-        for (let i = 0; i < numSamples; i++) {
-          const t = i / sampleRate;
-          let sample = 0;
-          for (const freq of allFreqs) {
-            sample += synth(t, freq, duration);
-          }
-          data[i] = sample / allFreqs.length;
-        }
-
-        const env = this.envelope(data, sampleRate);
-        for (let i = 0; i < numSamples; i++) {
-          data[i] *= env[i] * this.volume;
-        }
-
-        const source = this.ctx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(this.ctx.destination);
-        source.start();
+    for(const freq of freqs) {
+      if(inst==='sine') {
+        const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=freq;
+        o.connect(gainNode); o.start(); nodes.push(o);
+      } else if(inst==='soft') {
+        [1,2,3].forEach((h,i)=>{
+          const o=ctx.createOscillator(); const g=ctx.createGain();
+          o.frequency.value=freq*h; g.gain.value=[0.6,0.3,0.1][i];
+          o.connect(g); g.connect(gainNode); o.start(); nodes.push(o);
+        });
+      } else if(inst==='bell') {
+        [1,2].forEach((h,i)=>{
+          const o=ctx.createOscillator(); const g=ctx.createGain();
+          o.frequency.value=freq*h; g.gain.value=[1,0.5][i];
+          o.connect(g); g.connect(gainNode); o.start(); nodes.push(o);
+        });
+        // bell decays
+        gainNode.gain.cancelScheduledValues(ctx.currentTime);
+        gainNode.gain.setValueAtTime(0.3/freqs.length, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+1.5);
+      } else if(inst==='pad') {
+        [-0.002,0,0.002].forEach(detune=>{
+          const o=ctx.createOscillator(); const g=ctx.createGain();
+          o.frequency.value=freq*(1+detune); g.gain.value=0.33;
+          o.connect(g); g.connect(gainNode); o.start(); nodes.push(o);
+        });
       }
-    };
+    }
 
-    // ============ SERIAL COMMUNICATION ============
-    const Serial = {
-      port: null,
-      reader: null,
-      connected: false,
-      buffer: new Uint8Array(0),
+    activeNodes[finger] = { nodes, gainNode };
+  }
 
-      async connect() {
-        try {
-          this.port = await navigator.serial.requestPort();
-          await this.port.open({ baudRate: 921600 });
-          this.connected = true;
-          this.startReading();
-          return true;
-        } catch (err) {
-          console.error('Connection error:', err);
-          return false;
-        }
-      },
+  function stopFinger(finger) {
+    const entry = activeNodes[finger];
+    if(!entry) return;
+    const { nodes, gainNode } = entry;
+    const now = ctx.currentTime;
+    gainNode.gain.cancelScheduledValues(now);
+    gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+    gainNode.gain.linearRampToValueAtTime(0, now+0.02);
+    setTimeout(()=>{
+      nodes.forEach(n=>{ try{n.stop();}catch(e){} });
+      try{gainNode.disconnect();}catch(e){}
+    }, 50);
+    delete activeNodes[finger];
+  }
 
-      async disconnect() {
-        this.connected = false;
-        if (this.reader) {
-          try {
-            await this.reader.cancel();
-          } catch (e) {}
-          this.reader = null;
-        }
-        if (this.port) {
-          try {
-            await this.port.close();
-          } catch (e) {}
-          this.port = null;
-        }
-      },
+  function playDrum(name) {
+    init(); resume();
+    const buf = drumBuffers[name];
+    if(!buf) return;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.connect(masterGain);
+    src.start();
+  }
 
-      async startReading() {
-        while (this.port && this.port.readable && this.connected) {
-          this.reader = this.port.readable.getReader();
-          try {
-            while (true) {
-              const { value, done } = await this.reader.read();
-              if (done) break;
-              this.processData(value);
-            }
-          } catch (err) {
-            if (this.connected) console.error('Read error:', err);
-          } finally {
-            this.reader.releaseLock();
-          }
-        }
-      },
+  function setVolume(v) {
+    volume = v;
+    if(masterGain) masterGain.gain.value = v;
+  }
 
-      processData(newData) {
-        // Append to buffer
-        const combined = new Uint8Array(this.buffer.length + newData.length);
-        combined.set(this.buffer);
-        combined.set(newData, this.buffer.length);
-        this.buffer = combined;
+  function setInstrument(i) { instrument = i; }
+  function getInstrument() { return instrument; }
 
-        // Look for packets
-        while (this.buffer.length >= 40) {
-          let headerIdx = -1;
-          for (let i = 0; i < this.buffer.length - 1; i++) {
-            if (this.buffer[i] === 0xAA && this.buffer[i + 1] === 0x55) {
-              headerIdx = i;
-              break;
-            }
-          }
+  // Update sustained notes for current active set
+  function updateActive(activeSet, preset) {
+    init(); resume();
+    const inst = preset.instrument;
 
-          if (headerIdx === -1) {
-            this.buffer = this.buffer.slice(-1);
-            break;
-          }
+    // Stop fingers no longer active
+    for(const f of Object.keys(activeNodes)) {
+      if(!activeSet.has(f)) stopFinger(f);
+    }
 
-          if (headerIdx + 40 > this.buffer.length) {
-            this.buffer = this.buffer.slice(headerIdx);
-            break;
-          }
+    if(inst==='drums') return;
 
-          // Parse packet
-          const packet = this.buffer.slice(headerIdx, headerIdx + 40);
-          const values = [];
-          for (let i = 0; i < 10; i++) {
-            const val = packet[i*4] | (packet[i*4+1] << 8) | (packet[i*4+2] << 16) | (packet[i*4+3] << 24);
-            values.push(val >>> 0);
-          }
-
-          App.processEncoderData(values);
-          this.buffer = this.buffer.slice(headerIdx + 40);
-        }
-
-        if (this.buffer.length > 500) {
-          this.buffer = this.buffer.slice(-100);
-        }
+    // Start newly active fingers
+    for(const f of activeSet) {
+      if(!activeNodes[f]) {
+        const sound = preset.mapping[f];
+        const freqs = CHORDS[sound] || [];
+        startFinger(f, freqs, inst);
       }
-    };
+    }
+  }
 
-    // ============ MAIN APP ============
-    const App = {
-      connected: false,
-      calibrated: false,
-      currentPreset: 'therapy',
-      threshold: 0.15,
-      baseline: {},
-      activeFingers: new Set(),
-      selectedFinger: null,
-      showSettings: false,
-      calibrationSamples: {},
+  function triggerDrums(newlyPressed, preset) {
+    init(); resume();
+    if(preset.instrument!=='drums') return;
+    for(const f of newlyPressed) {
+      const sound = preset.mapping[f];
+      if(DRUMS.includes(sound)) playDrum(sound);
+    }
+  }
 
-      init() {
-        // Check Web Serial support
-        if (!('serial' in navigator)) {
-          document.getElementById('browser-warning').classList.remove('hidden');
-          document.getElementById('connect-btn').disabled = true;
-          return;
+  function stopAll() {
+    for(const f of Object.keys(activeNodes)) stopFinger(f);
+  }
+
+  return { init, resume, updateActive, triggerDrums, playDrum, setVolume, setInstrument, getInstrument, stopAll };
+})();
+
+// ═══════════════════════════════════════════════════════
+//  SERIAL
+// ═══════════════════════════════════════════════════════
+const Serial = (() => {
+  let port=null, reader=null, connected=false;
+  let buf = new Uint8Array(0);
+
+  async function connect() {
+    try {
+      port = await navigator.serial.requestPort();
+      await port.open({ baudRate: 921600 });
+      connected = true;
+      readLoop();
+      return true;
+    } catch(e) { console.error(e); return false; }
+  }
+
+  async function disconnect() {
+    connected = false;
+    if(reader) { try{await reader.cancel();}catch(e){} reader=null; }
+    if(port) { try{await port.close();}catch(e){} port=null; }
+    buf = new Uint8Array(0);
+  }
+
+  async function readLoop() {
+    while(port && port.readable && connected) {
+      reader = port.readable.getReader();
+      try {
+        while(true) {
+          const {value, done} = await reader.read();
+          if(done) break;
+          process(value);
         }
+      } catch(e) { if(connected) console.error(e); }
+      finally { reader.releaseLock(); }
+    }
+  }
 
-        this.renderHand();
-        this.renderMapping();
-        this.renderChordGrid();
-        this.setupEventListeners();
-        this.updateUI();
-      },
+  function process(data) {
+    const combined = new Uint8Array(buf.length + data.length);
+    combined.set(buf); combined.set(data, buf.length);
+    buf = combined;
 
-      setupEventListeners() {
-        // Connect/Disconnect
-        document.getElementById('connect-btn').addEventListener('click', () => this.toggleConnection());
-        
-        // Calibrate
-        document.getElementById('calibrate-btn').addEventListener('click', () => this.calibrate());
-        
-        // Settings toggle
-        document.getElementById('settings-btn').addEventListener('click', () => {
-          this.showSettings = !this.showSettings;
-          document.getElementById('settings-panel').classList.toggle('hidden', !this.showSettings);
-        });
-        
-        // Threshold slider
-        document.getElementById('threshold-slider').addEventListener('input', (e) => {
-          this.threshold = parseInt(e.target.value) / 100;
-          document.getElementById('threshold-value').textContent = e.target.value;
-        });
-        
-        // Instrument buttons
-        document.querySelectorAll('.instrument-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            document.querySelectorAll('.instrument-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            Audio.currentInstrument = btn.dataset.instrument;
-            PRESETS[this.currentPreset].instrument = btn.dataset.instrument;
-          });
-        });
-        
-        // Preset buttons
-        document.querySelectorAll('.preset-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            this.currentPreset = btn.dataset.preset;
-            Audio.currentInstrument = PRESETS[this.currentPreset].instrument;
-            this.updatePresetUI();
-            this.renderMapping();
-            this.renderHand();
-          });
-        });
-        
-        // Modal cancel
-        document.getElementById('modal-cancel').addEventListener('click', () => {
-          this.selectedFinger = null;
-          document.getElementById('chord-modal').classList.add('hidden');
-        });
-      },
+    while(buf.length >= 40) {
+      let hi = -1;
+      for(let i=0;i<buf.length-1;i++) {
+        if(buf[i]===0xAA && buf[i+1]===0x55) { hi=i; break; }
+      }
+      if(hi===-1) { buf=buf.slice(-1); break; }
+      if(hi+40>buf.length) { buf=buf.slice(hi); break; }
 
-      async toggleConnection() {
-        const btn = document.getElementById('connect-btn');
-        
-        if (this.connected) {
-          await Serial.disconnect();
-          this.connected = false;
-          this.calibrated = false;
-          this.baseline = {};
-          this.activeFingers.clear();
-          this.updateUI();
-        } else {
-          btn.disabled = true;
-          btn.textContent = 'Connecting...';
-          
-          const success = await Serial.connect();
-          
-          if (success) {
-            this.connected = true;
-            Audio.init(); // Initialize audio on user interaction
-          }
-          
-          this.updateUI();
-        }
-      },
+      const pkt = buf.slice(hi, hi+40);
+      const vals = [];
+      for(let i=0;i<10;i++) {
+        vals.push((pkt[i*4]|(pkt[i*4+1]<<8)|(pkt[i*4+2]<<16)|(pkt[i*4+3]<<24))>>>0);
+      }
+      App.onPacket(vals);
+      buf = buf.slice(hi+40);
+    }
+    if(buf.length>500) buf=buf.slice(-100);
+  }
 
-      async calibrate() {
-        if (!this.connected) return;
-        
-        const btn = document.getElementById('calibrate-btn');
-        btn.disabled = true;
-        btn.textContent = 'Calibrating...';
-        document.getElementById('status-text').textContent = 'Keep hand still...';
-        
-        // Collect samples for 1 second
-        this.calibrationSamples = {};
-        FINGERS.forEach(f => this.calibrationSamples[f] = []);
-        
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Calculate baseline from collected samples
-        for (const finger of FINGERS) {
-          const samples = this.calibrationSamples[finger];
-          if (samples.length > 0) {
-            this.baseline[finger] = samples.reduce((a, b) => a + b, 0) / samples.length;
-          }
-        }
-        
-        this.calibrated = true;
-        this.updateUI();
-      },
+  return { connect, disconnect, isConnected:()=>connected };
+})();
 
-      processEncoderData(values) {
-        // If calibrating, collect samples
-        if (!this.calibrated && this.calibrationSamples) {
-          for (const finger of FINGERS) {
-            const cfg = FINGER_CONFIG[finger];
-            this.calibrationSamples[finger]?.push(values[cfg.idx]);
-          }
-        }
-        
-        if (!this.calibrated) return;
-        
-        const newActive = new Set();
-        
-        for (const finger of FINGERS) {
-          const cfg = FINGER_CONFIG[finger];
-          const value = values[cfg.idx];
-          const base = this.baseline[finger];
-          
-          if (base !== undefined) {
-            const drop = (base - value) / cfg.range;
-            if (drop > this.threshold) {
-              newActive.add(finger);
-            }
-          }
-        }
-        
-        // Check if active fingers changed
-        const changed = newActive.size !== this.activeFingers.size ||
-                        [...newActive].some(f => !this.activeFingers.has(f));
-        
-        if (changed) {
-          const mapping = PRESETS[this.currentPreset].mapping;
-          
-          // Play sound for newly activated fingers
-          if (newActive.size > 0) {
-            Audio.playFingers([...newActive], mapping);
-          }
-          
-          this.activeFingers = newActive;
-          this.updateFingerVisuals();
-          this.updateStatusText();
-        }
-      },
+// ═══════════════════════════════════════════════════════
+//  APP STATE
+// ═══════════════════════════════════════════════════════
+const App = (() => {
+  let connected=false, calibrated=false;
+  let currentPreset='therapy';
+  let activeFingers = new Set();
+  let baseline={};
+  let calibSamples={};
 
-      renderHand() {
-        const container = document.getElementById('hand-container');
-        const mapping = PRESETS[this.currentPreset].mapping;
-        const isCustom = this.currentPreset === 'custom';
-        
-        container.innerHTML = FINGERS.map(finger => {
-          const cfg = FINGER_CONFIG[finger];
-          const color = FINGER_COLORS[finger];
-          const isActive = this.activeFingers.has(finger);
-          
-          return `
-            <div class="finger ${isActive ? 'active' : ''} ${isCustom ? 'clickable' : ''}"
-                 data-finger="${finger}"
-                 style="
-                   width: ${cfg.width}px;
-                   height: ${cfg.height}px;
-                   margin-top: ${cfg.marginTop}px;
-                   background: ${isActive ? `linear-gradient(180deg, ${color} 0%, ${color}99 100%)` : 'rgba(255,255,255,0.15)'};
-                   box-shadow: ${isActive ? `0 0 25px ${color}66` : 'none'};
-                 ">
-              <span class="finger-label">${mapping[finger] || '?'}</span>
-              <span class="finger-name">${finger}</span>
-            </div>
-          `;
-        }).join('');
-        
-        // Add click handlers for custom preset
-        if (isCustom) {
-          container.querySelectorAll('.finger').forEach(el => {
-            el.addEventListener('click', () => this.openChordSelector(el.dataset.finger));
-          });
-        }
-      },
+  // Hysteresis thresholds (match server.py defaults)
+  let threshOn=0.25, threshOff=0.08;
+  let filterSize=5;
+  const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
 
-      renderMapping() {
-        const grid = document.getElementById('mapping-grid');
-        const mapping = PRESETS[this.currentPreset].mapping;
-        const isCustom = this.currentPreset === 'custom';
-        
-        grid.innerHTML = FINGERS.map(finger => `
-          <div class="mapping-item ${isCustom ? 'clickable' : ''}" data-finger="${finger}">
-            <div class="mapping-chord" style="color: ${FINGER_COLORS[finger]}">${mapping[finger]}</div>
-            <div class="mapping-finger">${finger}</div>
+  // Tutorial state
+  let mode='play'; // 'play' | 'tutorial'
+  let tutState={current:null, step:0, completed:false};
+  let tutReady=new Set(FINGERS);
+
+  // Recording state
+  let recording=false, playingBack=false;
+  let recEvents=[], recStart=0;
+  let savedRecordings=[];
+  let pbTimer=null;
+
+  // Custom per-finger type
+  let customTypes={thumb:'note',index:'note',middle:'note',ring:'note',pinky:'note'};
+  let customInstrument='sine';
+
+  // Current active tab
+  let activeTab='play';
+
+  function getPreset() {
+    return PRESETS[currentPreset];
+  }
+
+  // Moving average filter
+  function filterValue(finger, raw) {
+    const arr = fingerBuffers[finger];
+    arr.push(raw);
+    if(arr.length > filterSize) arr.shift();
+    return arr.reduce((a,b)=>a+b,0)/arr.length;
+  }
+
+  function clearBuffers() {
+    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; });
+  }
+
+  // Called by Serial on each 10-value packet
+  function onPacket(vals) {
+    if(!connected) return;
+
+    // Collect calibration samples
+    if(!calibrated && calibSamples && Object.keys(calibSamples).length>0) {
+      FINGERS.forEach(f=>{ calibSamples[f].push(vals[FINGER_CFG[f].idx]); });
+    }
+
+    if(!calibrated) return;
+
+    const newActive = new Set();
+
+    for(const f of FINGERS) {
+      const cfg = FINGER_CFG[f];
+      const raw = vals[cfg.idx];
+      const filtered = filterValue(f, raw);
+      const drop = (baseline[f]-filtered)/cfg.range;
+
+      // Hysteresis
+      if(activeFingers.has(f)) {
+        if(drop > threshOff) newActive.add(f);
+      } else {
+        if(drop > threshOn) newActive.add(f);
+      }
+
+      // Tutorial release tracking
+      if(mode==='tutorial' && drop < 0.05) tutReady.add(f);
+    }
+
+    const changed = newActive.size!==activeFingers.size || [...newActive].some(f=>!activeFingers.has(f));
+
+    if(changed) {
+      const newlyPressed = [...newActive].filter(f=>!activeFingers.has(f));
+
+      // Record
+      if(recording && newlyPressed.length>0) {
+        const ts = (Date.now()-recStart)/1000;
+        recEvents.push({ time:ts, fingers:[...newlyPressed] });
+      }
+
+      // Tutorial progress
+      if(mode==='tutorial' && newlyPressed.length>0) {
+        for(const f of newlyPressed) checkTutorialProgress(f);
+      }
+
+      // Audio
+      AudioEngine.triggerDrums(new Set(newlyPressed), getPreset());
+      AudioEngine.updateActive(newActive, getPreset());
+
+      activeFingers = newActive;
+      UI.updateFingers(activeFingers, currentPreset);
+      UI.updateStatus(activeFingers, currentPreset);
+    }
+  }
+
+  function checkTutorialProgress(finger) {
+    if(!tutState.current || tutState.completed) return;
+    const tut = TUTORIALS[tutState.current];
+    const expected = tut.sequence[tutState.step];
+    if(finger===expected && tutReady.has(finger)) {
+      tutReady.delete(finger);
+      tutState.step++;
+      if(tutState.step>=tut.sequence.length) {
+        tutState.completed=true;
+        UI.renderTutorialActive();
+      } else {
+        UI.renderTutorialActive();
+      }
+    }
+  }
+
+  async function doConnect() {
+    const ok = await Serial.connect();
+    if(ok) {
+      connected=true;
+      AudioEngine.init();
+      UI.syncAll();
+    } else {
+      UI.syncAll();
+    }
+  }
+
+  async function doDisconnect() {
+    AudioEngine.stopAll();
+    await Serial.disconnect();
+    connected=false; calibrated=false;
+    baseline={}; calibSamples={};
+    activeFingers=new Set();
+    clearBuffers();
+    UI.syncAll();
+  }
+
+  async function doCalibrate() {
+    if(!connected) return;
+    calibrated=false;
+    calibSamples={};
+    FINGERS.forEach(f=>{ calibSamples[f]=[]; });
+    clearBuffers();
+    UI.setStatus('Keep hand still…');
+    await new Promise(r=>setTimeout(r,1200));
+    for(const f of FINGERS) {
+      const s=calibSamples[f];
+      if(s.length>0) baseline[f]=s.reduce((a,b)=>a+b,0)/s.length;
+    }
+    calibrated=true;
+    calibSamples={};
+    UI.syncAll();
+  }
+
+  function setPreset(p) {
+    currentPreset=p;
+    AudioEngine.stopAll();
+    activeFingers=new Set();
+    UI.syncAll();
+  }
+
+  function setMapping(finger, sound, type='note') {
+    PRESETS.custom.mapping[finger]=sound;
+    customTypes[finger]=type;
+    currentPreset='custom';
+    UI.syncAll();
+  }
+
+  function startTutorial(id) {
+    if(!connected||!calibrated) { alert('Please connect and calibrate first.'); return; }
+    tutState={current:id, step:0, completed:false};
+    tutReady=new Set(FINGERS);
+    mode='tutorial';
+    currentPreset='piano';
+    AudioEngine.stopAll();
+    activeFingers=new Set();
+    UI.renderTutorialActive();
+    document.getElementById('tut-browser').classList.add('hidden');
+    document.getElementById('tut-active-panel').classList.remove('hidden');
+  }
+
+  function resetTutorial() {
+    if(!tutState.current) return;
+    tutState.step=0; tutState.completed=false;
+    tutReady=new Set(FINGERS);
+    AudioEngine.stopAll();
+    activeFingers=new Set();
+    UI.renderTutorialActive();
+  }
+
+  function exitTutorial() {
+    mode='play'; tutState={current:null,step:0,completed:false};
+    AudioEngine.stopAll(); activeFingers=new Set();
+    document.getElementById('tut-browser').classList.remove('hidden');
+    document.getElementById('tut-active-panel').classList.add('hidden');
+    UI.renderTutorialList();
+  }
+
+  function startRecording() {
+    recording=true; recEvents=[]; recStart=Date.now();
+    document.getElementById('rec-start-btn').classList.add('hidden');
+    document.getElementById('rec-stop-btn').classList.remove('hidden');
+    document.getElementById('rec-indicator').classList.remove('hidden');
+  }
+
+  function stopRecording() {
+    recording=false;
+    const dur = (Date.now()-recStart)/1000;
+    savedRecordings.push({ events:[...recEvents], duration:dur, preset:currentPreset, id:Date.now() });
+    document.getElementById('rec-start-btn').classList.remove('hidden');
+    document.getElementById('rec-stop-btn').classList.add('hidden');
+    document.getElementById('rec-indicator').classList.add('hidden');
+    UI.renderRecordingList();
+  }
+
+  function playbackRecording(rec) {
+    if(playingBack) return;
+    playingBack=true;
+    const events=[...rec.events];
+    const savedPreset=currentPreset;
+    currentPreset=rec.preset||currentPreset;
+    let ei=0;
+    const start=Date.now();
+
+    function tick() {
+      if(!playingBack||ei>=events.length) {
+        playingBack=false;
+        AudioEngine.stopAll();
+        activeFingers=new Set();
+        currentPreset=savedPreset;
+        UI.renderRecordingList();
+        return;
+      }
+      const elapsed=(Date.now()-start)/1000;
+      while(ei<events.length && events[ei].time<=elapsed) {
+        const ev=events[ei];
+        const newSet=new Set(ev.fingers);
+        AudioEngine.triggerDrums(newSet, getPreset());
+        AudioEngine.updateActive(newSet, getPreset());
+        activeFingers=newSet;
+        UI.updateFingers(activeFingers, currentPreset);
+        ei++;
+      }
+      pbTimer=setTimeout(tick, 16);
+    }
+    tick();
+    UI.renderRecordingList();
+  }
+
+  function stopPlayback() {
+    playingBack=false;
+    clearTimeout(pbTimer);
+    AudioEngine.stopAll();
+    activeFingers=new Set();
+    UI.updateFingers(activeFingers, currentPreset);
+    UI.renderRecordingList();
+  }
+
+  function deleteRecording(id) {
+    savedRecordings=savedRecordings.filter(r=>r.id!==id);
+    UI.renderRecordingList();
+  }
+
+  return {
+    onPacket,
+    doConnect, doDisconnect, doCalibrate,
+    setPreset, setMapping,
+    startTutorial, resetTutorial, exitTutorial,
+    startRecording, stopRecording,
+    playbackRecording, stopPlayback, deleteRecording,
+    get connected(){return connected},
+    get calibrated(){return calibrated},
+    get currentPreset(){return currentPreset},
+    get activeFingers(){return activeFingers},
+    get mode(){return mode},
+    get tutState(){return tutState},
+    get savedRecordings(){return savedRecordings},
+    get isPlayingBack(){return playingBack},
+    get customTypes(){return customTypes},
+    get customInstrument(){return customInstrument},
+    set customInstrument(v){ customInstrument=v; AudioEngine.setInstrument(v); },
+    setThreshOn(v){threshOn=v},
+    setThreshOff(v){threshOff=v},
+    setFilterSize(v){filterSize=v},
+  };
+})();
+
+// ═══════════════════════════════════════════════════════
+//  UI
+// ═══════════════════════════════════════════════════════
+const UI = (() => {
+
+  function syncAll() {
+    renderConnectBtn();
+    renderPresets();
+    renderHand();
+    renderMapping();
+    renderRecordingList();
+  }
+
+  function renderConnectBtn() {
+    const cb = document.getElementById('connect-btn');
+    const cal = document.getElementById('calibrate-btn');
+    const recal = document.getElementById('recalibrate-btn');
+
+    if(App.connected) {
+      cb.textContent='Disconnect'; cb.className='btn btn-disconnect';
+      if(App.calibrated) {
+        cal.classList.add('hidden');
+        recal.classList.remove('hidden');
+        recal.textContent='Re-calibrate'; recal.className='btn btn-recalibrate';
+      } else {
+        cal.disabled=false; cal.textContent='Calibrate'; cal.className='btn btn-calibrate';
+        cal.classList.remove('hidden'); recal.classList.add('hidden');
+      }
+    } else {
+      cb.textContent='Connect'; cb.className='btn btn-connect';
+      cal.disabled=true; cal.textContent='Calibrate'; cal.className='btn btn-calibrate';
+      cal.classList.remove('hidden'); recal.classList.add('hidden');
+    }
+  }
+
+  function renderPresets() {
+    const strip = document.getElementById('preset-strip');
+    strip.innerHTML = Object.entries(PRESETS).map(([k,v])=>`
+      <button class="preset-btn ${App.currentPreset===k?'active':''}" data-p="${k}">${v.name}</button>
+    `).join('');
+    strip.querySelectorAll('.preset-btn').forEach(b=>{
+      b.addEventListener('click',()=>App.setPreset(b.dataset.p));
+    });
+  }
+
+  function renderHand() {
+    const wrap = document.getElementById('hand-wrap');
+    const preset = PRESETS[App.currentPreset];
+    const isCustom = App.currentPreset==='custom';
+    wrap.innerHTML = FINGERS.map(f=>{
+      const cfg=FINGER_CFG[f];
+      const active=App.activeFingers.has(f);
+      const sound=preset.mapping[f];
+      return `
+        <div class="finger-col">
+          <div class="finger ${active?'active':''} ${isCustom?'clickable':''}"
+               data-f="${f}"
+               style="
+                 width:${cfg.w}px;height:${cfg.h}px;
+                 background:${active?`linear-gradient(180deg,${cfg.color},${cfg.color}88)`:'var(--surface2)'};
+                 border-color:${active?cfg.color+'66':'var(--border)'};
+                 box-shadow:${active?`0 0 20px ${cfg.color}44`:'none'};
+               ">
+            <span class="finger-note" style="color:${active?'#fff':cfg.color}">${sound}</span>
           </div>
-        `).join('');
-        
-        if (isCustom) {
-          grid.querySelectorAll('.mapping-item').forEach(el => {
-            el.addEventListener('click', () => this.openChordSelector(el.dataset.finger));
-          });
-        }
-      },
+          <span class="finger-label">${f}</span>
+        </div>
+      `;
+    }).join('');
+    if(isCustom) {
+      wrap.querySelectorAll('.finger').forEach(el=>{
+        el.addEventListener('click',()=>openChordModal(el.dataset.f));
+      });
+    }
+  }
 
-      renderChordGrid() {
-        const grid = document.getElementById('chord-grid');
-        grid.innerHTML = Object.keys(CHORDS).map(chord => `
-          <button class="chord-btn" data-chord="${chord}">${chord}</button>
-        `).join('');
-        
-        grid.querySelectorAll('.chord-btn').forEach(btn => {
-          btn.addEventListener('click', () => this.selectChord(btn.dataset.chord));
-        });
-      },
+  function updateFingers(activeSet, preset) {
+    const p = PRESETS[preset];
+    document.querySelectorAll('.finger[data-f]').forEach(el=>{
+      const f=el.dataset.f; const cfg=FINGER_CFG[f]; const active=activeSet.has(f);
+      el.classList.toggle('active', active);
+      el.style.background=active?`linear-gradient(180deg,${cfg.color},${cfg.color}88)`:'var(--surface2)';
+      el.style.borderColor=active?cfg.color+'66':'var(--border)';
+      el.style.boxShadow=active?`0 0 20px ${cfg.color}44`:'none';
+    });
+    updateStatus(activeSet, preset);
+    if(App.mode==='tutorial') renderTutorialActive();
+  }
 
-      openChordSelector(finger) {
-        if (this.currentPreset !== 'custom') return;
-        
-        this.selectedFinger = finger;
-        document.getElementById('modal-finger-name').textContent = finger;
-        
-        const currentChord = PRESETS.custom.mapping[finger];
-        document.querySelectorAll('.chord-btn').forEach(btn => {
-          btn.classList.toggle('selected', btn.dataset.chord === currentChord);
-        });
-        
-        document.getElementById('chord-modal').classList.remove('hidden');
-      },
+  function updateStatus(activeSet, preset) {
+    const line = document.getElementById('status-line');
+    if(!App.connected) { line.textContent='Connect exoskeleton to start'; return; }
+    if(!App.calibrated) { line.textContent='Click Calibrate and keep hand still'; return; }
+    if(activeSet.size>0) {
+      const p=PRESETS[preset];
+      line.textContent='Playing: '+[...activeSet].map(f=>p.mapping[f]).join(' + ');
+    } else {
+      line.textContent='Bend fingers to play';
+    }
+  }
 
-      selectChord(chord) {
-        if (!this.selectedFinger) return;
-        
-        PRESETS.custom.mapping[this.selectedFinger] = chord;
-        this.selectedFinger = null;
-        document.getElementById('chord-modal').classList.add('hidden');
-        
-        this.renderHand();
-        this.renderMapping();
-      },
+  function setStatus(msg) {
+    const line = document.getElementById('status-line');
+    if(line) line.textContent=msg;
+  }
 
-      updateFingerVisuals() {
-        const mapping = PRESETS[this.currentPreset].mapping;
-        
-        document.querySelectorAll('.finger').forEach(el => {
-          const finger = el.dataset.finger;
-          const cfg = FINGER_CONFIG[finger];
-          const color = FINGER_COLORS[finger];
-          const isActive = this.activeFingers.has(finger);
-          
-          el.classList.toggle('active', isActive);
-          el.style.background = isActive 
-            ? `linear-gradient(180deg, ${color} 0%, ${color}99 100%)`
-            : 'rgba(255,255,255,0.15)';
-          el.style.boxShadow = isActive ? `0 0 25px ${color}66` : 'none';
-        });
-      },
+  function renderMapping() {
+    const grid = document.getElementById('mapping-grid');
+    const preset = PRESETS[App.currentPreset];
+    const isCustom = App.currentPreset==='custom';
+    grid.innerHTML = FINGERS.map(f=>`
+      <div class="mapping-cell ${isCustom?'clickable':''}" data-f="${f}">
+        <div class="note" style="color:${FINGER_CFG[f].color}">${preset.mapping[f]}</div>
+        <div class="fname">${f}</div>
+      </div>
+    `).join('');
+    if(isCustom) {
+      grid.querySelectorAll('.mapping-cell').forEach(el=>{
+        el.addEventListener('click',()=>openChordModal(el.dataset.f));
+      });
+    }
+  }
 
-      updateStatusText() {
-        const status = document.getElementById('status-text');
-        const mapping = PRESETS[this.currentPreset].mapping;
-        
-        if (this.activeFingers.size > 0) {
-          const chords = [...this.activeFingers].map(f => mapping[f]).join(' + ');
-          status.textContent = `Playing: ${chords}`;
-        } else if (this.currentPreset === 'custom') {
-          status.textContent = 'Click a finger to customize';
-        } else {
-          status.textContent = 'Bend fingers to play';
-        }
-      },
+  function openChordModal(finger) {
+    document.getElementById('modal-finger-label').textContent=finger;
+    const current=PRESETS.custom.mapping[finger];
+    const body=document.getElementById('chord-modal-body');
 
-      updatePresetUI() {
-        document.querySelectorAll('.preset-btn').forEach(btn => {
-          btn.classList.toggle('active', btn.dataset.preset === this.currentPreset);
-        });
-        
-        // Update instrument buttons
-        const currentInstrument = PRESETS[this.currentPreset].instrument;
-        document.querySelectorAll('.instrument-btn').forEach(btn => {
-          btn.classList.toggle('active', btn.dataset.instrument === currentInstrument);
-        });
-        
-        this.updateStatusText();
-      },
+    const groups=[
+      {label:'Single Notes', keys:['C','D','E','F','G','A','B','C#','D#','F#','G#','A#','C5','D5','E5','F5','G5'], cls:''},
+      {label:'Major Chords', keys:Object.keys(CHORDS).filter(k=>k.includes('_maj')), cls:''},
+      {label:'Minor Chords', keys:Object.keys(CHORDS).filter(k=>k.endsWith('m')&&!k.includes('_')), cls:''},
+      {label:'7th Chords',   keys:Object.keys(CHORDS).filter(k=>k.endsWith('7')), cls:''},
+      {label:'Drums',        keys:DRUMS, cls:'drum-btn-modal'},
+      {label:'None',         keys:['none'], cls:''},
+    ];
 
-      updateUI() {
-        const connectBtn = document.getElementById('connect-btn');
-        const calibrateBtn = document.getElementById('calibrate-btn');
-        const statusText = document.getElementById('status-text');
-        
-        // Connect button
-        connectBtn.disabled = false;
-        if (this.connected) {
-          connectBtn.textContent = 'Disconnect';
-          connectBtn.classList.remove('btn-connect');
-          connectBtn.classList.add('btn-disconnect');
-        } else {
-          connectBtn.textContent = 'Connect';
-          connectBtn.classList.remove('btn-disconnect');
-          connectBtn.classList.add('btn-connect');
-        }
-        
-        // Calibrate button
-        if (this.calibrated) {
-          calibrateBtn.textContent = '✓ Calibrated';
-          calibrateBtn.classList.remove('btn-calibrate');
-          calibrateBtn.classList.add('btn-calibrated');
-          calibrateBtn.disabled = true;
-        } else if (this.connected) {
-          calibrateBtn.textContent = 'Calibrate';
-          calibrateBtn.classList.remove('btn-calibrated');
-          calibrateBtn.classList.add('btn-calibrate');
-          calibrateBtn.disabled = false;
-        } else {
-          calibrateBtn.textContent = 'Calibrate';
-          calibrateBtn.classList.remove('btn-calibrated');
-          calibrateBtn.classList.add('btn-calibrate');
-          calibrateBtn.disabled = true;
-        }
-        
-        // Status text
-        if (!this.connected) {
-          statusText.textContent = 'Connect exoskeleton to start';
-        } else if (!this.calibrated) {
-          statusText.textContent = 'Click Calibrate and keep hand still';
-        } else {
-          this.updateStatusText();
-        }
-        
-        this.renderHand();
-      }
-    };
+    body.innerHTML=groups.map(g=>`
+      <div class="modal-section-title">${g.label}</div>
+      <div class="chord-grid-modal">
+        ${g.keys.map(k=>`
+          <button class="chord-btn-modal ${g.cls} ${k===current?'selected':''}" data-k="${k}" data-drum="${g.cls?'1':'0'}">${k}</button>
+        `).join('')}
+      </div>
+    `).join('');
 
-    // Initialize on load
-    document.addEventListener('DOMContentLoaded', () => App.init());
-  </script>
+    body.querySelectorAll('.chord-btn-modal').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const isDrum=btn.dataset.drum==='1';
+        App.setMapping(finger, btn.dataset.k, isDrum?'drum':'note');
+        closeModal();
+      });
+    });
+
+    document.getElementById('chord-modal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('chord-modal').classList.add('hidden');
+  }
+
+  function renderTutorialList() {
+    const list=document.getElementById('tutorial-list');
+    list.innerHTML=Object.entries(TUTORIALS).map(([id,t])=>`
+      <div class="tutorial-card" data-id="${id}">
+        <div class="tut-name">${t.name}</div>
+        <div class="tut-meta difficulty-${t.difficulty.toLowerCase()}">${t.difficulty} · ${t.sequence.length} notes</div>
+      </div>
+    `).join('');
+    list.querySelectorAll('.tutorial-card').forEach(c=>{
+      c.addEventListener('click',()=>App.startTutorial(c.dataset.id));
+    });
+  }
+
+  function renderTutorialActive() {
+    const ts=App.tutState;
+    if(!ts.current) return;
+    const tut=TUTORIALS[ts.current];
+    const content=document.getElementById('tut-active-content');
+
+    if(ts.completed) {
+      content.innerHTML=`
+        <div class="tut-complete">🎉 Complete!</div>
+        <div style="color:var(--muted);font-size:0.8rem;margin-bottom:16px;">You played <em>${tut.name}</em></div>
+      `;
+      return;
+    }
+
+    const nextF=tut.sequence[ts.step];
+    const cfg=FINGER_CFG[nextF];
+    const pct=Math.round(ts.step/tut.sequence.length*100);
+
+    const dots=tut.sequence.map((f,i)=>{
+      let cls='seq-dot';
+      if(i<ts.step) cls+=' done';
+      else if(i===ts.step) cls+=' current';
+      return `<div class="${cls}" style="${i===ts.step?`background:${cfg.color};border-color:${cfg.color}`:''}"></div>`;
+    }).join('');
+
+    content.innerHTML=`
+      <div class="tut-next-label">${tut.name} · Step ${ts.step+1} / ${tut.sequence.length}</div>
+      <div class="tut-progress-bar"><div class="tut-progress-fill" style="width:${pct}%"></div></div>
+      <div style="color:var(--muted);font-size:0.75rem;margin-bottom:8px;">Press this finger:</div>
+      <div class="tut-next-finger" style="color:${cfg.color}">${nextF}</div>
+      <div class="tut-sequence">${dots}</div>
+    `;
+  }
+
+  function renderRecordingList() {
+    const list=document.getElementById('recording-list');
+    if(App.savedRecordings.length===0) {
+      list.innerHTML=`<div style="color:var(--muted);font-size:0.75rem;margin-top:8px;">No recordings yet.</div>`;
+      return;
+    }
+    list.innerHTML=App.savedRecordings.map(r=>`
+      <div class="recording-item">
+        <div>
+          <div class="rec-info">${PRESETS[r.preset]?.name||r.preset} · ${r.events.length} events</div>
+          <div class="rec-dur">${r.duration.toFixed(1)}s</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          ${App.isPlayingBack
+            ? `<button class="btn-sm stop" data-stop="1">⏹ Stop</button>`
+            : `<button class="btn-sm play" data-id="${r.id}">▶ Play</button>`
+          }
+          <button class="btn-sm danger" data-del="${r.id}">✕</button>
+        </div>
+      </div>
+    `).join('');
+    list.querySelectorAll('[data-id]').forEach(b=>{
+      b.addEventListener('click',()=>{
+        const rec=App.savedRecordings.find(r=>r.id===parseInt(b.dataset.id));
+        if(rec) App.playbackRecording(rec);
+      });
+    });
+    list.querySelectorAll('[data-stop]').forEach(b=>{
+      b.addEventListener('click',()=>App.stopPlayback());
+    });
+    list.querySelectorAll('[data-del]').forEach(b=>{
+      b.addEventListener('click',()=>App.deleteRecording(parseInt(b.dataset.del)));
+    });
+  }
+
+  return {
+    syncAll, renderConnectBtn, renderPresets, renderHand,
+    updateFingers, updateStatus, setStatus,
+    renderMapping, openChordModal, closeModal,
+    renderTutorialList, renderTutorialActive,
+    renderRecordingList,
+  };
+})();
+
+// ═══════════════════════════════════════════════════════
+//  BOOTSTRAP
+// ═══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Browser check
+  if(!('serial' in navigator)) {
+    document.getElementById('browser-warning').classList.remove('hidden');
+    document.getElementById('connect-btn').disabled=true;
+  }
+
+  // Initial render
+  UI.syncAll();
+  UI.renderTutorialList();
+
+  // Connect / Disconnect
+  document.getElementById('connect-btn').addEventListener('click', async ()=>{
+    if(App.connected) { await App.doDisconnect(); }
+    else {
+      document.getElementById('connect-btn').disabled=true;
+      document.getElementById('connect-btn').textContent='Connecting…';
+      await App.doConnect();
+    }
+  });
+
+  // Calibrate
+  document.getElementById('calibrate-btn').addEventListener('click', async ()=>{
+    document.getElementById('calibrate-btn').disabled=true;
+    document.getElementById('calibrate-btn').textContent='Calibrating…';
+    UI.setStatus('Keep hand still…');
+    await App.doCalibrate();
+  });
+
+  // Re-calibrate
+  document.getElementById('recalibrate-btn').addEventListener('click', async ()=>{
+    document.getElementById('recalibrate-btn').disabled=true;
+    document.getElementById('recalibrate-btn').textContent='Calibrating…';
+    UI.setStatus('Keep hand still…');
+    await App.doCalibrate();
+  });
+
+  // Tabs
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      ['play','tutorial','record','settings'].forEach(id=>{
+        document.getElementById('tab-'+id).classList.toggle('hidden', id!==t.dataset.tab);
+      });
+    });
+  });
+
+  // Tutorial buttons
+  document.getElementById('tut-reset-btn').addEventListener('click', ()=>App.resetTutorial());
+  document.getElementById('tut-exit-btn').addEventListener('click', ()=>App.exitTutorial());
+
+  // Recording
+  document.getElementById('rec-start-btn').addEventListener('click', ()=>App.startRecording());
+  document.getElementById('rec-stop-btn').addEventListener('click', ()=>App.stopRecording());
+
+  // Modal cancel
+  document.getElementById('modal-cancel').addEventListener('click', ()=>UI.closeModal());
+  document.getElementById('chord-modal').addEventListener('click', e=>{
+    if(e.target.id==='chord-modal') UI.closeModal();
+  });
+
+  // Settings sliders
+  document.getElementById('thresh-on').addEventListener('input', e=>{
+    const v=parseInt(e.target.value)/100;
+    App.setThreshOn(v);
+    document.getElementById('thresh-on-val').textContent=e.target.value;
+  });
+  document.getElementById('thresh-off').addEventListener('input', e=>{
+    const v=parseInt(e.target.value)/100;
+    App.setThreshOff(v);
+    document.getElementById('thresh-off-val').textContent=e.target.value;
+  });
+  document.getElementById('filter-size').addEventListener('input', e=>{
+    App.setFilterSize(parseInt(e.target.value));
+    document.getElementById('filter-val').textContent=e.target.value;
+  });
+  document.getElementById('volume-range').addEventListener('input', e=>{
+    AudioEngine.setVolume(parseInt(e.target.value)/100);
+    document.getElementById('volume-val').textContent=e.target.value;
+  });
+
+  // Instrument buttons
+  const instGrid=document.getElementById('inst-grid');
+  const insts=[['sine','🎵 Sine'],['soft','🎹 Soft'],['bell','🔔 Bell'],['pad','🧘 Pad']];
+  instGrid.innerHTML=insts.map(([k,l])=>`
+    <button class="inst-btn ${App.customInstrument===k?'active':''}" data-i="${k}">${l}</button>
+  `).join('');
+  instGrid.querySelectorAll('.inst-btn').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      instGrid.querySelectorAll('.inst-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      App.customInstrument=b.dataset.i;
+    });
+  });
+});
+</script>
 </body>
 </html>
