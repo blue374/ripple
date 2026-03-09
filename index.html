@@ -733,7 +733,9 @@
 
     <div class="panel hidden" id="tut-active-panel">
       <div class="tutorial-active" id="tut-active-content"></div>
-      <div style="display:flex; gap:8px; margin-top:16px;">
+      <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap; align-items:center;">
+        <button class="btn-sm" id="tut-demo-btn">▶ Demo</button>
+        <button class="btn-sm hidden" id="tut-demo-stop-btn" style="border-color:rgba(255,107,107,0.6);color:#ff6b6b;">⏹ Stop Demo</button>
         <button class="btn-sm" id="tut-reset-btn">↺ Restart</button>
         <button class="btn-sm danger" id="tut-exit-btn">Exit Tutorial</button>
       </div>
@@ -1376,6 +1378,97 @@ const App = (() => {
     UI.syncAll();
   }
 
+  // ── Manual finger press/release (clicking finger tabs) ──
+  function manualPress(finger) {
+    AudioEngine.init();
+    const preset = getPreset();
+    const newActive = new Set(activeFingers);
+    newActive.add(finger);
+    AudioEngine.triggerDrums(new Set([finger]), preset);
+    AudioEngine.updateActive(newActive, preset);
+    activeFingers = newActive;
+    UI.updateFingers(activeFingers, currentPreset);
+    if(mode==='tutorial') checkTutorialProgress(finger);
+  }
+
+  function manualRelease(finger) {
+    const newActive = new Set(activeFingers);
+    newActive.delete(finger);
+    AudioEngine.updateActive(newActive, getPreset());
+    activeFingers = newActive;
+    UI.updateFingers(activeFingers, currentPreset);
+  }
+
+  // ── Demo playback ──
+  // BPM per song (quarter note = 1 beat, each sequence step = 1 beat unless noted)
+  const DEMO_BPM = {
+    scale:       120, hotcross: 120, rain:    120,
+    mary:        120, happy:    160, london:  130,
+    twinkle:     120, brother:  120, jingle:  160,
+    ode:         120, rowboat:  120, entertainer: 180,
+    furelise:    108,
+  };
+
+  let demoTimer = null;
+  let demoPlaying = false;
+
+  function startDemo(id) {
+    stopDemo();
+    const tut = TUTORIALS[id];
+    if(!tut) return;
+
+    // Apply this song's mapping
+    PRESETS.piano.mapping = {...tut.mapping};
+    currentPreset = 'piano';
+    AudioEngine.init();
+    activeFingers = new Set();
+    UI.syncAll();
+
+    const bpm = DEMO_BPM[id] || 120;
+    const beatMs = (60 / bpm) * 1000;
+    const noteOnMs = beatMs * 0.55;   // note held for 55% of beat
+    const noteOffMs = beatMs * 0.45;  // gap 45%
+
+    demoPlaying = true;
+    let step = 0;
+    const seq = tut.sequence;
+
+    UI.setDemoPlaying(true);
+
+    function playStep() {
+      if(!demoPlaying || step >= seq.length) {
+        stopDemo();
+        return;
+      }
+      const finger = seq[step];
+      manualPress(finger);
+      step++;
+
+      // Advance tutorial step highlight too
+      if(tutState.current === id) {
+        tutState.step = step;
+        if(tutState.step >= seq.length) tutState.completed = true;
+        UI.renderTutorialActive();
+      }
+
+      demoTimer = setTimeout(()=>{
+        manualRelease(finger);
+        demoTimer = setTimeout(playStep, noteOffMs);
+      }, noteOnMs);
+    }
+
+    playStep();
+  }
+
+  function stopDemo() {
+    demoPlaying = false;
+    if(demoTimer) { clearTimeout(demoTimer); demoTimer = null; }
+    AudioEngine.stopAll();
+    activeFingers = new Set();
+    UI.updateFingers(activeFingers, currentPreset);
+    UI.setDemoPlaying(false);
+  }
+
   function startTutorial(id) {
     if(!connected||!calibrated) { alert('Please connect and calibrate first.'); return; }
     tutState={current:id, step:0, completed:false};
@@ -1404,6 +1497,7 @@ const App = (() => {
   }
 
   function exitTutorial() {
+    stopDemo();
     mode='play'; tutState={current:null,step:0,completed:false};
     // Restore piano preset to default
     PRESETS.piano.mapping={thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'};
@@ -1509,6 +1603,9 @@ const App = (() => {
     setThreshOn(v){threshOn=v},
     setThreshOff(v){threshOff=v},
     setFilterSize(v){filterSize=v},
+    manualPress, manualRelease,
+    startDemo, stopDemo,
+    get demoPlaying(){return demoPlaying},
   };
 })();
 
@@ -1568,7 +1665,7 @@ const UI = (() => {
       const sound=preset.mapping[f];
       return `
         <div class="finger-col">
-          <div class="finger ${active?'active':''} ${isCustom?'clickable':''}"
+          <div class="finger ${active?'active':''} clickable"
                data-f="${f}"
                style="
                  width:${cfg.w}px;height:${cfg.h}px;
@@ -1582,11 +1679,27 @@ const UI = (() => {
         </div>
       `;
     }).join('');
-    if(isCustom) {
-      wrap.querySelectorAll('.finger').forEach(el=>{
-        el.addEventListener('click',()=>openChordModal(el.dataset.f));
-      });
-    }
+
+    // All fingers: mousedown/touchstart = press, mouseup/touchend = release
+    wrap.querySelectorAll('.finger').forEach(el=>{
+      const f = el.dataset.f;
+
+      const press = (e) => {
+        e.preventDefault();
+        if(isCustom) { openChordModal(f); return; }
+        App.manualPress(f);
+      };
+      const release = (e) => {
+        e.preventDefault();
+        if(!isCustom) App.manualRelease(f);
+      };
+
+      el.addEventListener('mousedown', press);
+      el.addEventListener('mouseup', release);
+      el.addEventListener('mouseleave', release);
+      el.addEventListener('touchstart', press, {passive:false});
+      el.addEventListener('touchend', release, {passive:false});
+    });
   }
 
   function updateFingers(activeSet, preset) {
@@ -1765,12 +1878,21 @@ const UI = (() => {
     });
   }
 
+  function setDemoPlaying(playing) {
+    const btn = document.getElementById('tut-demo-btn');
+    const stop = document.getElementById('tut-demo-stop-btn');
+    if(!btn || !stop) return;
+    btn.classList.toggle('hidden', playing);
+    stop.classList.toggle('hidden', !playing);
+  }
+
   return {
     syncAll, renderConnectBtn, renderPresets, renderHand,
     updateFingers, updateStatus, setStatus,
     renderMapping, openChordModal, closeModal,
     renderTutorialList, renderTutorialActive,
     renderRecordingList,
+    setDemoPlaying,
   };
 })();
 
@@ -1827,7 +1949,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Tutorial buttons
   document.getElementById('tut-reset-btn').addEventListener('click', ()=>App.resetTutorial());
-  document.getElementById('tut-exit-btn').addEventListener('click', ()=>App.exitTutorial());
+  document.getElementById('tut-exit-btn').addEventListener('click', ()=>{ App.stopDemo(); App.exitTutorial(); });
+  document.getElementById('tut-demo-btn').addEventListener('click', ()=>{
+    const id = App.tutState.current;
+    if(id) App.startDemo(id);
+  });
+  document.getElementById('tut-demo-stop-btn').addEventListener('click', ()=>App.stopDemo());
 
   // Recording (record tab)
   document.getElementById('rec-start-btn').addEventListener('click', ()=>App.startRecording());
