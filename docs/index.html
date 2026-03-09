@@ -547,6 +547,190 @@
     .rec-info { font-size: 0.75rem; }
     .rec-dur { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
 
+    /* Piano Roll Editor */
+    .pianoroll-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .pianoroll-modal {
+      background: rgba(20,20,35,0.97);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 860px;
+      max-height: 90vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    }
+    .pianoroll-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      flex-shrink: 0;
+    }
+    .pianoroll-header h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem;
+      color: var(--text);
+    }
+    .pianoroll-toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 12px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .pr-tool-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .pr-tool-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .pr-tool-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(155,140,255,0.12); }
+    .pr-tool-btn.play { border-color: rgba(74,222,128,0.4); color: var(--green); }
+    .pr-tool-btn.stop { border-color: rgba(239,68,68,0.4); color: #ef4444; }
+    .pr-tool-btn.danger { border-color: rgba(239,68,68,0.3); color: rgba(239,68,68,0.7); }
+    .pr-tool-btn.save { border-color: rgba(155,140,255,0.5); color: var(--accent); }
+    .pianoroll-body {
+      flex: 1;
+      overflow: auto;
+      padding: 16px 24px;
+    }
+    .pr-track {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+      gap: 0;
+    }
+    .pr-track-label {
+      width: 64px;
+      flex-shrink: 0;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding-right: 10px;
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 1px;
+    }
+    .pr-track-name { font-weight: 500; }
+    .pr-track-note { color: var(--muted); font-size: 0.6rem; }
+    .pr-lane {
+      flex: 1;
+      height: 36px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+    .pr-lane:hover { background: rgba(255,255,255,0.04); }
+    .pr-note-block {
+      position: absolute;
+      top: 4px;
+      height: calc(100% - 8px);
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.55rem;
+      font-family: 'DM Mono', monospace;
+      color: rgba(255,255,255,0.9);
+      transition: filter 0.1s;
+      user-select: none;
+      min-width: 18px;
+      box-sizing: border-box;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .pr-note-block:hover { filter: brightness(1.3); }
+    .pr-note-block.selected { outline: 2px solid #fff; outline-offset: 1px; }
+    .pr-note-block .pr-note-del {
+      position: absolute;
+      top: -4px; right: -4px;
+      width: 14px; height: 14px;
+      background: #ef4444;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.55rem;
+      color: #fff;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .pr-note-block:hover .pr-note-del { display: flex; }
+    .pr-timeline {
+      position: relative;
+      height: 18px;
+      margin-left: 64px;
+      margin-bottom: 4px;
+    }
+    .pr-tick {
+      position: absolute;
+      top: 0;
+      font-size: 0.55rem;
+      color: var(--muted);
+      transform: translateX(-50%);
+    }
+    .pr-note-popup {
+      position: fixed;
+      background: rgba(20,20,35,0.98);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      padding: 10px;
+      z-index: 300;
+      min-width: 180px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    .pr-note-popup-title {
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .pr-chord-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      max-width: 220px;
+    }
+    .pr-chord-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      padding: 3px 7px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .pr-chord-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.25); }
+    .pr-chord-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(155,140,255,0.15); }
+
     .btn-sm {
       font-family: 'DM Mono', monospace;
       font-size: 0.68rem;
@@ -784,6 +968,27 @@
     </div>
   </div>
 </div>
+
+<!-- Piano Roll Editor -->
+<div id="pianoroll-overlay" class="pianoroll-overlay hidden">
+  <div class="pianoroll-modal">
+    <div class="pianoroll-header">
+      <h3 id="pr-title">Edit Recording</h3>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="pr-tool-btn save" id="pr-save-btn">💾 Save</button>
+        <button class="pr-tool-btn danger" id="pr-close-btn">✕ Close</button>
+      </div>
+    </div>
+    <div class="pianoroll-toolbar">
+      <button class="pr-tool-btn play" id="pr-play-btn">▶ Play</button>
+      <button class="pr-tool-btn stop hidden" id="pr-stop-btn">⏹ Stop</button>
+      <span style="color:var(--muted);font-size:0.65rem;margin-left:4px;">Click lane to add note · Click note to change pitch · Hover note → ✕ to delete</span>
+    </div>
+    <div class="pianoroll-body" id="pr-body"></div>
+  </div>
+</div>
+<!-- Note pitch popup -->
+<div id="pr-note-popup" class="pr-note-popup hidden"></div>
 
 <!-- Chord Selector Modal -->
 <div id="chord-modal" class="modal-overlay hidden">
@@ -1860,6 +2065,7 @@ const UI = (() => {
             ? `<button class="btn-sm stop" data-stop="1">⏹ Stop</button>`
             : `<button class="btn-sm play" data-id="${r.id}">▶ Play</button>`
           }
+          <button class="btn-sm" data-edit="${r.id}" style="border-color:rgba(155,140,255,0.4);color:var(--accent);">✏️ Edit</button>
           <button class="btn-sm danger" data-del="${r.id}">✕</button>
         </div>
       </div>
@@ -1875,6 +2081,12 @@ const UI = (() => {
     });
     list.querySelectorAll('[data-del]').forEach(b=>{
       b.addEventListener('click',()=>App.deleteRecording(parseInt(b.dataset.del)));
+    });
+    list.querySelectorAll('[data-edit]').forEach(b=>{
+      b.addEventListener('click',()=>{
+        const rec=App.savedRecordings.find(r=>r.id===parseInt(b.dataset.edit));
+        if(rec) PianoRoll.open(rec);
+      });
     });
   }
 
@@ -1894,6 +2106,252 @@ const UI = (() => {
     renderRecordingList,
     setDemoPlaying,
   };
+})();
+
+// ═══════════════════════════════════════════════════════
+//  PIANO ROLL EDITOR
+// ═══════════════════════════════════════════════════════
+const PianoRoll = (() => {
+  let rec = null;          // working copy of recording
+  let editEvents = [];     // deep copy of events being edited
+  let prPlayTimer = null;
+  let prPlaying = false;
+  let pxPerSec = 120;      // zoom level
+  let activePopup = null;
+
+  const FINGER_COLORS = {
+    thumb:  '#ff6b6b', index: '#ff9f43',
+    middle: '#ffd93d', ring:  '#6bcb77', pinky: '#9b8cff'
+  };
+
+  function open(recording) {
+    rec = recording;
+    editEvents = JSON.parse(JSON.stringify(recording.events)); // deep copy
+    document.getElementById('pr-title').textContent = `Edit · ${PRESETS[rec.preset]?.name || rec.preset}`;
+    document.getElementById('pianoroll-overlay').classList.remove('hidden');
+    render();
+  }
+
+  function close() {
+    stopPlay();
+    closePopup();
+    document.getElementById('pianoroll-overlay').classList.add('hidden');
+    rec = null; editEvents = [];
+  }
+
+  function save() {
+    if(!rec) return;
+    const original = App.savedRecordings.find(r => r.id === rec.id);
+    if(original) {
+      original.events = JSON.parse(JSON.stringify(editEvents));
+      original.duration = editEvents.length > 0
+        ? editEvents[editEvents.length-1].time + 0.3
+        : original.duration;
+    }
+    UI.renderRecordingList();
+    close();
+  }
+
+  function render() {
+    const body = document.getElementById('pr-body');
+    const dur = Math.max(rec.duration, editEvents.length ? editEvents[editEvents.length-1].time + 1 : 2);
+    const totalW = dur * pxPerSec;
+
+    // Build timeline ticks
+    const ticks = [];
+    for(let t = 0; t <= dur; t += 0.5) {
+      ticks.push(`<div class="pr-tick" style="left:${t*pxPerSec}px">${t.toFixed(1)}s</div>`);
+    }
+
+    // Build lanes per finger
+    const lanes = FINGERS.map(f => {
+      const cfg = FINGER_CFG[f];
+      const color = FINGER_COLORS[f];
+      const preset = PRESETS[rec.preset];
+      const noteName = preset?.mapping[f] || '—';
+
+      // Find all events for this finger
+      const blocks = editEvents
+        .map((ev, evIdx) => ({ ev, evIdx }))
+        .filter(({ ev }) => ev.fingers.includes(f))
+        .map(({ ev, evIdx }) => {
+          const x = Math.round(ev.time * pxPerSec);
+          const w = Math.max(18, Math.round(pxPerSec * 0.35));
+          return `
+            <div class="pr-note-block"
+              data-evidx="${evIdx}" data-finger="${f}"
+              style="left:${x}px;width:${w}px;background:${color}99;border-color:${color};"
+              title="${noteName}">
+              <span class="pr-note-del" data-del-ev="${evIdx}" data-del-f="${f}">✕</span>
+            </div>`;
+        }).join('');
+
+      return `
+        <div class="pr-track">
+          <div class="pr-track-label" style="color:${color}">
+            <span class="pr-track-name">${f}</span>
+            <span class="pr-track-note">${noteName}</span>
+          </div>
+          <div class="pr-lane" data-lane-f="${f}" style="width:${totalW}px">
+            ${blocks}
+          </div>
+        </div>`;
+    }).join('');
+
+    body.innerHTML = `
+      <div style="overflow-x:auto;overflow-y:visible;padding-bottom:8px;">
+        <div style="min-width:${totalW+80}px;">
+          <div class="pr-timeline" style="width:${totalW}px">${ticks.join('')}</div>
+          ${lanes}
+          <div style="margin-top:12px;display:flex;align-items:center;gap:12px;">
+            <span style="font-size:0.65rem;color:var(--muted);">Zoom:</span>
+            <input type="range" min="40" max="400" value="${pxPerSec}" id="pr-zoom" style="width:120px;">
+            <span style="font-size:0.65rem;color:var(--muted);" id="pr-zoom-label">${pxPerSec}px/s</span>
+          </div>
+        </div>
+      </div>`;
+
+    // Zoom
+    body.querySelector('#pr-zoom').addEventListener('input', e => {
+      pxPerSec = parseInt(e.target.value);
+      body.querySelector('#pr-zoom-label').textContent = pxPerSec + 'px/s';
+      render();
+    });
+
+    // Click lane = add note
+    body.querySelectorAll('.pr-lane').forEach(lane => {
+      lane.addEventListener('click', e => {
+        if(e.target.closest('.pr-note-block')) return;
+        const f = lane.dataset.laneF;
+        const rect = lane.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const t = parseFloat((x / pxPerSec).toFixed(3));
+        // Insert event sorted by time
+        const newEv = { time: t, fingers: [f] };
+        editEvents.push(newEv);
+        editEvents.sort((a,b) => a.time - b.time);
+        render();
+      });
+    });
+
+    // Click note block = open pitch editor
+    body.querySelectorAll('.pr-note-block').forEach(block => {
+      block.addEventListener('click', e => {
+        if(e.target.closest('.pr-note-del')) return;
+        e.stopPropagation();
+        const evIdx = parseInt(block.dataset.evidx);
+        const finger = block.dataset.finger;
+        openPitchPopup(block, evIdx, finger);
+      });
+    });
+
+    // Delete finger from event
+    body.querySelectorAll('.pr-note-del').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const evIdx = parseInt(btn.dataset.delEv);
+        const f = btn.dataset.delF;
+        editEvents[evIdx].fingers = editEvents[evIdx].fingers.filter(x => x !== f);
+        // Remove event entirely if no fingers left
+        if(editEvents[evIdx].fingers.length === 0) editEvents.splice(evIdx, 1);
+        closePopup();
+        render();
+      });
+    });
+  }
+
+  function openPitchPopup(blockEl, evIdx, finger) {
+    closePopup();
+    const preset = PRESETS[rec.preset];
+    const currentNote = preset?.mapping[finger] || 'C';
+    const popup = document.getElementById('pr-note-popup');
+
+    // Group chords for display
+    const groups = [
+      { label: 'Single Notes', keys: ['C','D','E','F','G','A','B','C5','D5','E5','F5','G5','C#','D#','F#','G#','A#','Bb','Eb'] },
+      { label: 'Major', keys: Object.keys(CHORDS).filter(k=>k.endsWith('_maj')) },
+      { label: 'Minor', keys: Object.keys(CHORDS).filter(k=>k.endsWith('m') && !k.endsWith('_maj') && !k.includes('7')) },
+      { label: '7th', keys: Object.keys(CHORDS).filter(k=>k.endsWith('7')) },
+    ];
+
+    popup.innerHTML = `
+      <div class="pr-note-popup-title">Change note for <span style="color:${FINGER_COLORS[finger]}">${finger}</span></div>
+      <div style="font-size:0.6rem;color:var(--muted);margin-bottom:8px;">Current: <strong style="color:var(--text)">${currentNote}</strong></div>
+      ${groups.map(g=>`
+        <div style="font-size:0.58rem;color:var(--muted);margin:6px 0 3px;text-transform:uppercase;letter-spacing:0.08em;">${g.label}</div>
+        <div class="pr-chord-grid">
+          ${g.keys.map(k=>`<button class="pr-chord-btn ${k===currentNote?'active':''}" data-note="${k}">${k.replace('_maj',' maj').replace('_','')} </button>`).join('')}
+        </div>
+      `).join('')}
+    `;
+
+    // Position popup near block
+    const rect = blockEl.getBoundingClientRect();
+    popup.style.left = Math.min(rect.left, window.innerWidth - 240) + 'px';
+    popup.style.top = (rect.bottom + 6) + 'px';
+    popup.classList.remove('hidden');
+    activePopup = popup;
+
+    popup.querySelectorAll('.pr-chord-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const note = btn.dataset.note;
+        // Update the mapping for this finger in this recording's preset snapshot
+        if(preset) preset.mapping[finger] = note;
+        closePopup();
+        render();
+      });
+    });
+  }
+
+  function closePopup() {
+    const popup = document.getElementById('pr-note-popup');
+    popup.classList.add('hidden');
+    activePopup = null;
+  }
+
+  function startPlay() {
+    stopPlay();
+    if(!editEvents.length) return;
+    AudioEngine.init();
+    prPlaying = true;
+    document.getElementById('pr-play-btn').classList.add('hidden');
+    document.getElementById('pr-stop-btn').classList.remove('hidden');
+
+    const preset = PRESETS[rec.preset];
+    let ei = 0;
+    const start = Date.now();
+
+    function tick() {
+      if(!prPlaying || ei >= editEvents.length) { stopPlay(); return; }
+      const elapsed = (Date.now() - start) / 1000;
+      while(ei < editEvents.length && editEvents[ei].time <= elapsed) {
+        const ev = editEvents[ei];
+        const newSet = new Set(ev.fingers);
+        AudioEngine.triggerDrums(newSet, preset.instrument || rec.preset);
+        AudioEngine.updateActive(newSet, preset.instrument || rec.preset);
+        ei++;
+      }
+      prPlayTimer = setTimeout(tick, 16);
+    }
+    tick();
+  }
+
+  function stopPlay() {
+    prPlaying = false;
+    if(prPlayTimer) { clearTimeout(prPlayTimer); prPlayTimer = null; }
+    AudioEngine.stopAll();
+    document.getElementById('pr-play-btn')?.classList.remove('hidden');
+    document.getElementById('pr-stop-btn')?.classList.add('hidden');
+  }
+
+  // Close popup on outside click
+  document.addEventListener('click', e => {
+    if(activePopup && !activePopup.contains(e.target) && !e.target.closest('.pr-note-block')) {
+      closePopup();
+    }
+  });
+
+  return { open, close, save, startPlay, stopPlay };
 })();
 
 // ═══════════════════════════════════════════════════════
@@ -2003,6 +2461,12 @@ document.addEventListener('DOMContentLoaded', () => {
       App.customInstrument=b.dataset.i;
     });
   });
+
+  // Piano Roll
+  document.getElementById('pr-close-btn').addEventListener('click', ()=>PianoRoll.close());
+  document.getElementById('pr-save-btn').addEventListener('click', ()=>PianoRoll.save());
+  document.getElementById('pr-play-btn').addEventListener('click', ()=>PianoRoll.startPlay());
+  document.getElementById('pr-stop-btn').addEventListener('click', ()=>PianoRoll.stopPlay());
 });
 </script>
 </body>
