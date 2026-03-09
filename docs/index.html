@@ -924,6 +924,12 @@
         <button class="btn-sm danger" id="tut-exit-btn">Exit Tutorial</button>
       </div>
     </div>
+
+    <div class="panel hidden" id="tut-hand-panel">
+      <div class="panel-title">Hand Visualization</div>
+      <div class="hand-wrap" id="tut-hand-wrap"></div>
+      <div class="status-line" id="tut-status-line">Connect exoskeleton to start</div>
+    </div>
   </div>
 
   <!-- RECORD TAB -->
@@ -1050,7 +1056,7 @@ const DRUMS = ['kick','snare','hihat','tom','clap','cymbal'];
 
 const PRESETS = {
   therapy: { name:'🧘 Therapy', instrument:'pad',   mapping:{thumb:'C_maj',index:'F_maj',middle:'G_maj',ring:'Am',pinky:'Em'} },
-  piano:   { name:'🎹 Piano',   instrument:'bell',  mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'} },
+  piano:   { name:'🎹 Piano',   instrument:'soft',  mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'} },
   chords:  { name:'🎸 Chords',  instrument:'soft',  mapping:{thumb:'C_maj',index:'D_maj',middle:'E_maj',ring:'G_maj',pinky:'A_maj'} },
   drums:   { name:'🥁 Drums',   instrument:'drums', mapping:{thumb:'kick',index:'snare',middle:'hihat',ring:'tom',pinky:'clap'} },
   custom:  { name:'✏️ Custom',  instrument:'sine',  mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'} },
@@ -1825,17 +1831,16 @@ const App = (() => {
     tutState={current:id, step:0, completed:false};
     tutReady=new Set(FINGERS);
     mode='tutorial';
-    // Apply this song's specific note mapping to the piano preset
     const tut = TUTORIALS[id];
-    if(tut.mapping) {
-      PRESETS.piano.mapping = {...tut.mapping};
-    }
+    if(tut.mapping) PRESETS.piano.mapping = {...tut.mapping};
     currentPreset='piano';
     AudioEngine.stopAll();
     activeFingers=new Set();
     UI.renderTutorialActive();
+    UI.renderTutorialHand();
     document.getElementById('tut-browser').classList.add('hidden');
     document.getElementById('tut-active-panel').classList.remove('hidden');
+    document.getElementById('tut-hand-panel').classList.remove('hidden');
   }
 
   function resetTutorial() {
@@ -1845,16 +1850,17 @@ const App = (() => {
     AudioEngine.stopAll();
     activeFingers=new Set();
     UI.renderTutorialActive();
+    UI.renderTutorialHand();
   }
 
   function exitTutorial() {
     stopDemo();
     mode='play'; tutState={current:null,step:0,completed:false};
-    // Restore piano preset to default
     PRESETS.piano.mapping={thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'};
     AudioEngine.stopAll(); activeFingers=new Set();
     document.getElementById('tut-browser').classList.remove('hidden');
     document.getElementById('tut-active-panel').classList.add('hidden');
+    document.getElementById('tut-hand-panel').classList.add('hidden');
     UI.renderTutorialList();
   }
 
@@ -2066,6 +2072,39 @@ const UI = (() => {
     });
   }
 
+  function renderTutorialHand() {
+    const wrap = document.getElementById('tut-hand-wrap');
+    if(!wrap) return;
+    const preset = PRESETS[App.currentPreset];
+    wrap.innerHTML = FINGERS.map(f=>{
+      const cfg=FINGER_CFG[f];
+      const active=App.activeFingers.has(f);
+      const sound=preset?.mapping[f]||'';
+      // Highlight the expected next finger in tutorial
+      const ts=App.tutState;
+      const tut=ts.current?TUTORIALS[ts.current]:null;
+      const nextItem=tut&&!ts.completed?tut.sequence[ts.step]:null;
+      const nextF=nextItem?(nextItem.f||nextItem):null;
+      const isNext=nextF===f;
+      return `
+        <div class="finger-col">
+          <div class="finger ${active?'active':''}"
+               data-tut-f="${f}"
+               style="
+                 width:${cfg.w}px;height:${cfg.h}px;
+                 background:${active?`linear-gradient(180deg,${cfg.color},${cfg.color}88)`:'var(--surface2)'};
+                 border-color:${active?cfg.color+'66':isNext?cfg.color+'99':'var(--border)'};
+                 box-shadow:${active?`0 0 20px ${cfg.color}44`:isNext?`0 0 12px ${cfg.color}55`:'none'};
+                 outline:${isNext&&!active?`2px solid ${cfg.color}66`:'none'};
+               ">
+            <span class="finger-note" style="color:${active?'#fff':cfg.color}">${sound}</span>
+          </div>
+          <span class="finger-label">${f}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
   function updateFingers(activeSet, preset) {
     const p = PRESETS[preset];
     document.querySelectorAll('.finger[data-f]').forEach(el=>{
@@ -2076,7 +2115,39 @@ const UI = (() => {
       el.style.boxShadow=active?`0 0 20px ${cfg.color}44`:'none';
     });
     updateStatus(activeSet, preset);
-    if(App.mode==='tutorial') renderTutorialActive();
+    if(App.mode==='tutorial') {
+      renderTutorialActive();
+      updateTutorialFingers(activeSet);
+    }
+  }
+
+  function updateTutorialFingers(activeSet) {
+    const wrap = document.getElementById('tut-hand-wrap');
+    if(!wrap) return;
+    const preset = PRESETS[App.currentPreset];
+    const ts=App.tutState;
+    const tut=ts.current?TUTORIALS[ts.current]:null;
+    const nextItem=tut&&!ts.completed?tut.sequence[ts.step]:null;
+    const nextF=nextItem?(nextItem.f||nextItem):null;
+
+    wrap.querySelectorAll('.finger[data-tut-f]').forEach(el=>{
+      const f=el.dataset.tutF; const cfg=FINGER_CFG[f]; const active=activeSet.has(f);
+      const isNext=nextF===f;
+      el.classList.toggle('active', active);
+      el.style.background=active?`linear-gradient(180deg,${cfg.color},${cfg.color}88)`:'var(--surface2)';
+      el.style.borderColor=active?cfg.color+'66':isNext?cfg.color+'99':'var(--border)';
+      el.style.boxShadow=active?`0 0 20px ${cfg.color}44`:isNext?`0 0 12px ${cfg.color}55`:'none';
+      el.style.outline=isNext&&!active?`2px solid ${cfg.color}66`:'none';
+    });
+
+    // update tut status line
+    const line=document.getElementById('tut-status-line');
+    if(line) {
+      if(!App.connected) line.textContent='Connect exoskeleton to start';
+      else if(!App.calibrated) line.textContent='Click Calibrate and keep hand still';
+      else if(activeSet.size>0) line.textContent='Playing: '+[...activeSet].map(f=>preset?.mapping[f]||f).join(' + ');
+      else line.textContent='Bend fingers to play';
+    }
   }
 
   function updateStatus(activeSet, preset) {
@@ -2175,6 +2246,7 @@ const UI = (() => {
         <div class="tut-complete">🎉 Complete!</div>
         <div style="color:var(--muted);font-size:0.8rem;margin-bottom:16px;">You played <em>${tut.name}</em></div>
       `;
+      updateTutorialFingers(App.activeFingers);
       return;
     }
 
@@ -2208,6 +2280,7 @@ const UI = (() => {
         `).join('')}
       </div>
     `;
+    updateTutorialFingers(App.activeFingers);
   }
 
   function renderRecordingList() {
@@ -2264,7 +2337,7 @@ const UI = (() => {
     syncAll, renderConnectBtn, renderPresets, renderHand,
     updateFingers, updateStatus, setStatus,
     renderMapping, openChordModal, closeModal,
-    renderTutorialList, renderTutorialActive,
+    renderTutorialList, renderTutorialActive, renderTutorialHand,
     renderRecordingList,
     setDemoPlaying,
   };
