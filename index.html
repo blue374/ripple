@@ -1016,12 +1016,18 @@ const FINGER_CFG = {
 };
 
 const CHORDS = {
+  // Single notes oct3
+  'A3':[220],'B3':[247],'Bb3':[233],'C3':[131],'D3':[147],'E3':[165],'Eb3':[156],
   // Single notes oct4
+  'C4':[262],'D4':[294],'E4':[330],'F4':[349],'G4':[392],'A4':[440],'B4':[494],
+  'C#4':[277],'D#4':[311],'F#4':[370],'G#4':[415],'A#4':[466],
+  'Db4':[277],'Eb4':[311],'Gb4':[370],'Ab4':[415],'Bb4':[466],
+  // Keep old plain names as aliases for oct4
   'C':[262],'D':[294],'E':[330],'F':[349],'G':[392],'A':[440],'B':[494],
   'C#':[277],'D#':[311],'F#':[370],'G#':[415],'A#':[466],
   'Db':[277],'Eb':[311],'Gb':[370],'Ab':[415],'Bb':[466],
   // Oct 5
-  'C5':[523],'D5':[587],'E5':[659],'F5':[698],'G5':[784],
+  'C5':[523],'D5':[587],'E5':[659],'F5':[698],'G5':[784],'A5':[880],
   // Major chords
   'C_maj':[262,330,392],'D_maj':[294,370,440],'E_maj':[330,415,494],
   'F_maj':[349,440,523],'G_maj':[392,494,587],'A_maj':[440,554,659],'B_maj':[494,622,740],
@@ -1051,90 +1057,209 @@ const PRESETS = {
 };
 
 const TUTORIALS = {
-  // mapping: the finger->note assignment that gets applied when this tutorial starts
-  // sequence: finger presses in order
+  // sequence: [{f: finger, d: duration_in_beats}]
+  // d=1 quarter, d=0.5 eighth, d=1.5 dotted quarter, d=2 half, d=0.75 dotted eighth
 
   scale: {
     name:'Simple Scale', difficulty:'Beginner',
-    mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'},
-    // C D E F G G F E D C
-    sequence:['thumb','index','middle','ring','pinky','pinky','ring','middle','index','thumb'],
+    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
+    sequence:[
+      {f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},{f:'ring',d:1},
+      {f:'pinky',d:1},{f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},
+      {f:'index',d:1},{f:'thumb',d:2},
+    ],
   },
+
   hotcross: {
     name:'Hot Cross Buns', difficulty:'Beginner',
-    mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'},
-    // E D C  E D C  C C C C D D  D D E  E D C
-    sequence:['middle','index','thumb','middle','index','thumb','thumb','thumb','thumb','thumb','index','index','index','index','middle','index','thumb'],
+    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
+    // E D C (q q h)  E D C (q q h)  C C C C D D D D (8x8th)  E D C (q q h)
+    sequence:[
+      {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:2},
+      {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:2},
+      {f:'thumb',d:0.5},{f:'thumb',d:0.5},{f:'thumb',d:0.5},{f:'thumb',d:0.5},
+      {f:'index',d:0.5},{f:'index',d:0.5},{f:'index',d:0.5},{f:'index',d:0.5},
+      {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:2},
+    ],
   },
+
   rain: {
     name:'Rain Rain Go Away', difficulty:'Beginner',
-    mapping:{thumb:'C',index:'D',middle:'E',ring:'G',pinky:'A'},
-    // E C E E C E E C E G E D C
-    sequence:['middle','thumb','middle','middle','thumb','middle','middle','thumb','middle','ring','middle','index','thumb'],
+    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
+    // Rain rain go a-way: E E G E | E E G E | E G A G | E D C
+    sequence:[
+      {f:'middle',d:1},{f:'middle',d:1},{f:'ring',d:1},{f:'middle',d:1},
+      {f:'middle',d:1},{f:'middle',d:1},{f:'ring',d:1},{f:'middle',d:1},
+      {f:'middle',d:1},{f:'ring',d:1},{f:'pinky',d:1},{f:'ring',d:1},
+      {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:2},
+    ],
   },
+
   mary: {
     name:'Mary Had a Little Lamb', difficulty:'Easy',
-    mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'},
-    // E D C D E E E  D D D  E G G  E D C D E E E E D D E D C
-    sequence:['middle','index','thumb','index','middle','middle','middle','index','index','index','middle','pinky','pinky','middle','index','thumb','index','middle','middle','middle','middle','index','index','middle','index','thumb'],
+    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
+    // E D C D E E E (q q q q q q h)  D D D (q q h)  E G G (q q h)
+    // E D C D E E E E (q q q q q q q q)  D D E D C (q q q q h)
+    sequence:[
+      {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:1},{f:'index',d:1},
+      {f:'middle',d:1},{f:'middle',d:1},{f:'middle',d:2},
+      {f:'index',d:1},{f:'index',d:1},{f:'index',d:2},
+      {f:'middle',d:1},{f:'pinky',d:1},{f:'pinky',d:2},
+      {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:1},{f:'index',d:1},
+      {f:'middle',d:1},{f:'middle',d:1},{f:'middle',d:1},{f:'middle',d:1},
+      {f:'index',d:1},{f:'index',d:1},{f:'middle',d:1},{f:'index',d:1},
+      {f:'thumb',d:2},
+    ],
   },
+
   happy: {
     name:'Happy Birthday', difficulty:'Easy',
-    mapping:{thumb:'F',index:'G',middle:'A',ring:'Bb',pinky:'C5'},
-    // F F G F Bb A  F F G F C5 Bb  F F F A Bb A G
-    sequence:['thumb','thumb','index','thumb','ring','middle','thumb','thumb','index','thumb','pinky','ring','thumb','thumb','thumb','middle','ring','middle','index'],
+    mapping:{thumb:'F4',index:'G4',middle:'A4',ring:'Bb4',pinky:'C5'},
+    // Hap-py birth-day to you (3/4): q. 8th q | q. 8th q | q. 8th q q | h.
+    sequence:[
+      {f:'thumb',d:0.75},{f:'thumb',d:0.25},{f:'index',d:1},
+      {f:'thumb',d:1},{f:'ring',d:1},{f:'middle',d:2},
+      {f:'thumb',d:0.75},{f:'thumb',d:0.25},{f:'index',d:1},
+      {f:'thumb',d:1},{f:'pinky',d:1},{f:'ring',d:2},
+      {f:'thumb',d:0.75},{f:'thumb',d:0.25},{f:'middle',d:1},
+      {f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},
+      {f:'pinky',d:0.75},{f:'pinky',d:0.25},{f:'ring',d:1},
+      {f:'middle',d:1},{f:'index',d:3},
+    ],
   },
+
   london: {
     name:'London Bridge', difficulty:'Easy',
-    mapping:{thumb:'G',index:'A',middle:'B',ring:'C5',pinky:'D5'},
-    // G A B A G G  G A A A G G  G G A B A G G G A A G A B
-    sequence:['pinky','ring','middle','ring','pinky','pinky','pinky','ring','ring','ring','pinky','pinky','pinky','pinky','ring','middle','ring','pinky','pinky','pinky','ring','ring','pinky','ring','middle'],
+    mapping:{thumb:'G4',index:'A4',middle:'B4',ring:'C5',pinky:'D5'},
+    // Lon-don Bridge is fall-ing down: q q q q | q. 8 q | q q q q | q. 8 q
+    sequence:[
+      {f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'ring',d:1},
+      {f:'pinky',d:1.5},{f:'pinky',d:0.5},{f:'pinky',d:1},
+      {f:'ring',d:1},{f:'ring',d:1},{f:'ring',d:1},{f:'pinky',d:1},
+      {f:'ring',d:1.5},{f:'ring',d:0.5},{f:'middle',d:1},
+      {f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'ring',d:1},
+      {f:'pinky',d:1.5},{f:'pinky',d:0.5},{f:'pinky',d:2},
+    ],
   },
+
   twinkle: {
     name:'Twinkle Twinkle', difficulty:'Easy',
-    mapping:{thumb:'C',index:'D',middle:'E',ring:'G',pinky:'A'},
-    // C C G G A A G  E E D D C  G G E E D D C  G G E E D D C  C C G G A A G  E E D D C
-    // (F notes in original approximated as E — nearest available)
-    sequence:['thumb','thumb','ring','ring','pinky','pinky','ring','middle','middle','index','index','thumb','ring','ring','middle','middle','index','index','thumb','ring','ring','middle','middle','index','index','thumb','thumb','thumb','ring','ring','pinky','pinky','ring','middle','middle','index','index','thumb'],
+    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
+    // C C G G A A G(h)  F F E E D D C(h)  G G F F E E D(h)  G G F F E E D(h)  C C G G A A G(h)  F F E E D D C(h)
+    // F→E approximation kept, all quarters except half notes
+    sequence:[
+      {f:'thumb',d:1},{f:'thumb',d:1},{f:'ring',d:1},{f:'ring',d:1},
+      {f:'pinky',d:1},{f:'pinky',d:1},{f:'ring',d:2},
+      {f:'middle',d:1},{f:'middle',d:1},{f:'index',d:1},{f:'index',d:1},
+      {f:'thumb',d:1},{f:'thumb',d:1},{f:'thumb',d:2},
+      {f:'ring',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'middle',d:1},
+      {f:'index',d:1},{f:'index',d:1},{f:'thumb',d:2},
+      {f:'ring',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'middle',d:1},
+      {f:'index',d:1},{f:'index',d:1},{f:'thumb',d:2},
+      {f:'thumb',d:1},{f:'thumb',d:1},{f:'ring',d:1},{f:'ring',d:1},
+      {f:'pinky',d:1},{f:'pinky',d:1},{f:'ring',d:2},
+      {f:'middle',d:1},{f:'middle',d:1},{f:'index',d:1},{f:'index',d:1},
+      {f:'thumb',d:1},{f:'thumb',d:1},{f:'thumb',d:2},
+    ],
   },
+
   brother: {
     name:'Are You Sleeping', difficulty:'Medium',
-    mapping:{thumb:'C',index:'D',middle:'E',ring:'G',pinky:'A'},
-    // C D E C  C D E C  E G A  E G A  A G E C  A G E C  C G C  C G C
-    // (F notes approximated as E)
-    sequence:['thumb','index','middle','thumb','thumb','index','middle','thumb','middle','ring','pinky','middle','ring','pinky','pinky','ring','middle','thumb','pinky','ring','middle','thumb','thumb','ring','thumb','thumb','ring','thumb'],
+    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
+    // C D E C (q q q q) × 2 | E F G. (q q h.) × 2 | G A G F E C (8 8 8 8 q q) × 2 | C G C (q q h) × 2
+    // F→E approximation
+    sequence:[
+      {f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},{f:'thumb',d:1},
+      {f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},{f:'thumb',d:1},
+      {f:'middle',d:1},{f:'ring',d:1},{f:'ring',d:2},
+      {f:'middle',d:1},{f:'ring',d:1},{f:'ring',d:2},
+      {f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'middle',d:1},{f:'thumb',d:1},
+      {f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'middle',d:1},{f:'thumb',d:1},
+      {f:'thumb',d:1},{f:'ring',d:1},{f:'thumb',d:2},
+      {f:'thumb',d:1},{f:'ring',d:1},{f:'thumb',d:2},
+    ],
   },
+
   jingle: {
     name:'Jingle Bells (Chorus)', difficulty:'Medium',
-    mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'},
-    // E E E  E E E  E G C D E  F F F F  F E E E  E D D E D G
-    sequence:['middle','middle','middle','middle','middle','middle','middle','pinky','thumb','index','middle','ring','ring','ring','ring','ring','middle','middle','middle','middle','index','index','middle','index','pinky'],
+    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
+    // Jin-gle bells: E E E(h) | E E E(h) | E G C D E(h) | F F F F(tied) F E E E | E D D E D G(h)
+    sequence:[
+      {f:'middle',d:1},{f:'middle',d:1},{f:'middle',d:2},
+      {f:'middle',d:1},{f:'middle',d:1},{f:'middle',d:2},
+      {f:'middle',d:1},{f:'pinky',d:1},{f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:2},
+      {f:'ring',d:1},{f:'ring',d:1},{f:'ring',d:1},{f:'ring',d:1},
+      {f:'ring',d:1},{f:'middle',d:1},{f:'middle',d:1},{f:'middle',d:1},
+      {f:'middle',d:1},{f:'index',d:1},{f:'index',d:1},{f:'middle',d:1},
+      {f:'index',d:1},{f:'pinky',d:2},
+    ],
   },
+
   ode: {
     name:'Ode to Joy', difficulty:'Medium',
-    mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'},
-    // E E F G  G F E D  C C D E  E D D  (repeat)
-    sequence:['middle','middle','ring','pinky','pinky','ring','middle','index','thumb','thumb','index','middle','middle','index','index','middle','middle','ring','pinky','pinky','ring','middle','index','thumb','thumb','index','middle','index','thumb','thumb'],
+    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
+    // E E F G | G F E D | C C D E | E. D D (repeat)
+    sequence:[
+      {f:'middle',d:1},{f:'middle',d:1},{f:'ring',d:1},{f:'pinky',d:1},
+      {f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},
+      {f:'thumb',d:1},{f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},
+      {f:'middle',d:1.5},{f:'index',d:0.5},{f:'index',d:2},
+      {f:'middle',d:1},{f:'middle',d:1},{f:'ring',d:1},{f:'pinky',d:1},
+      {f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},
+      {f:'thumb',d:1},{f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},
+      {f:'index',d:1.5},{f:'thumb',d:0.5},{f:'thumb',d:2},
+    ],
   },
+
   rowboat: {
     name:'Row Row Row Your Boat', difficulty:'Medium',
-    mapping:{thumb:'C',index:'D',middle:'E',ring:'G',pinky:'C5'},
-    // C C C D E  E D E G C5  C5 C5 C5 G G  G E E E C C  C C5 G E C
-    // (F notes approximated as E)
-    sequence:['thumb','thumb','thumb','index','middle','middle','index','middle','ring','pinky','pinky','pinky','pinky','ring','ring','ring','middle','middle','middle','thumb','thumb','thumb','pinky','ring','middle','index','thumb'],
+    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'C5'},
+    // Row row row your boat: C. C. C 8D 8E | E. 8D E. 8F G(h.) | 8C5 8C5 8C5 8G4 8G4 8G4 8E4 8E4 8E4 8C4 8C4 8C4 | G. 8F E. 8D C(h.)
+    sequence:[
+      {f:'thumb',d:1.5},{f:'thumb',d:1.5},{f:'thumb',d:0.75},{f:'index',d:0.25},{f:'middle',d:1},
+      {f:'middle',d:1.5},{f:'index',d:0.5},{f:'middle',d:1.5},{f:'middle',d:0.5},{f:'ring',d:3},
+      {f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'pinky',d:0.5},
+      {f:'ring',d:0.5},{f:'ring',d:0.5},{f:'ring',d:0.5},
+      {f:'middle',d:0.5},{f:'middle',d:0.5},{f:'middle',d:0.5},
+      {f:'thumb',d:0.5},{f:'thumb',d:0.5},{f:'thumb',d:0.5},
+      {f:'ring',d:1.5},{f:'middle',d:0.5},{f:'middle',d:1.5},{f:'index',d:0.5},{f:'thumb',d:3},
+    ],
   },
+
   entertainer: {
     name:'The Entertainer', difficulty:'Hard',
-    mapping:{thumb:'Bb',index:'D',middle:'F',ring:'G',pinky:'A'},
-    // D F D Bb D F G F  D F D Bb D F A Bb  A G A G F D F G A Bb A F D
-    sequence:['index','middle','index','thumb','index','middle','ring','middle','index','middle','index','thumb','index','middle','pinky','thumb','pinky','ring','pinky','ring','middle','index','middle','ring','pinky','thumb','pinky','middle','index','thumb','index'],
+    mapping:{thumb:'Bb3',index:'D4',middle:'F4',ring:'G4',pinky:'A4'},
+    // Ragtime feel - mostly 8th notes with some quarters
+    sequence:[
+      {f:'index',d:0.5},{f:'middle',d:0.5},{f:'index',d:0.5},{f:'thumb',d:0.5},
+      {f:'index',d:0.5},{f:'middle',d:0.5},{f:'ring',d:1},{f:'middle',d:0.5},{f:'index',d:0.5},
+      {f:'middle',d:0.5},{f:'index',d:0.5},{f:'thumb',d:0.5},{f:'index',d:0.5},
+      {f:'middle',d:0.5},{f:'pinky',d:1},{f:'thumb',d:0.5},
+      {f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},
+      {f:'middle',d:0.5},{f:'index',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},
+      {f:'pinky',d:1},{f:'thumb',d:0.5},{f:'pinky',d:0.5},
+      {f:'middle',d:0.5},{f:'index',d:0.5},{f:'thumb',d:1},
+    ],
   },
+
   furelise: {
     name:'Für Elise (Theme)', difficulty:'Hard',
-    mapping:{thumb:'A',index:'C',middle:'E',ring:'Eb',pinky:'B'},
-    // E Eb E Eb E B D C A  C E A B  E Ab B C  (repeat)
-    // D approximated as C (nearest), Ab approximated as A (nearest)
-    sequence:['middle','ring','middle','ring','middle','pinky','index','thumb','thumb','index','middle','thumb','pinky','middle','pinky','index','middle','ring','middle','ring','middle','pinky','index','thumb','thumb','middle','index','thumb','thumb'],
+    mapping:{thumb:'A3',index:'C4',middle:'E4',ring:'Eb4',pinky:'B3'},
+    // E Eb E Eb E B D C A (all 8th notes except last A is quarter)
+    // C E A B (8th 8th 8th quarter)
+    // E Ab B C (8th 8th 8th quarter) -- Ab≈A
+    // repeat
+    sequence:[
+      {f:'middle',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},
+      {f:'middle',d:0.5},{f:'pinky',d:0.5},{f:'index',d:0.5},{f:'thumb',d:0.5},
+      {f:'thumb',d:1},
+      {f:'index',d:0.5},{f:'middle',d:0.5},{f:'thumb',d:0.5},{f:'pinky',d:1},
+      {f:'middle',d:0.5},{f:'thumb',d:0.5},{f:'pinky',d:0.5},{f:'index',d:1},
+      {f:'middle',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},
+      {f:'middle',d:0.5},{f:'pinky',d:0.5},{f:'index',d:0.5},{f:'thumb',d:0.5},
+      {f:'thumb',d:1},
+      {f:'middle',d:0.5},{f:'index',d:0.5},{f:'thumb',d:1},{f:'thumb',d:1},
+    ],
   },
 };
 
@@ -1518,7 +1643,8 @@ const App = (() => {
   function checkTutorialProgress(finger) {
     if(!tutState.current || tutState.completed) return;
     const tut = TUTORIALS[tutState.current];
-    const expected = tut.sequence[tutState.step];
+    const item = tut.sequence[tutState.step];
+    const expected = item.f || item; // support both old strings and new {f,d}
     if(finger===expected && tutReady.has(finger)) {
       tutReady.delete(finger);
       tutState.step++;
@@ -1607,11 +1733,11 @@ const App = (() => {
   // ── Demo playback ──
   // BPM per song (quarter note = 1 beat, each sequence step = 1 beat unless noted)
   const DEMO_BPM = {
-    scale:       120, hotcross: 120, rain:    120,
-    mary:        120, happy:    160, london:  130,
-    twinkle:     120, brother:  120, jingle:  160,
-    ode:         120, rowboat:  120, entertainer: 180,
-    furelise:    108,
+    scale:120, hotcross:110, rain:110,
+    mary:110, happy:140, london:120,
+    twinkle:110, brother:110, jingle:150,
+    ode:116, rowboat:108, entertainer:168,
+    furelise:100,
   };
 
   let demoTimer = null;
@@ -1631,8 +1757,6 @@ const App = (() => {
 
     const bpm = DEMO_BPM[id] || 120;
     const beatMs = (60 / bpm) * 1000;
-    const noteOnMs = beatMs * 0.55;   // note held for 55% of beat
-    const noteOffMs = beatMs * 0.45;  // gap 45%
 
     demoPlaying = true;
     let step = 0;
@@ -1645,11 +1769,16 @@ const App = (() => {
         stopDemo();
         return;
       }
-      const finger = seq[step];
+      const item = seq[step];
+      const finger = item.f;
+      const dur = item.d;
+      const noteOnMs  = beatMs * dur * 0.80;
+      const noteOffMs = beatMs * dur * 0.20;
+
       manualPress(finger);
       step++;
 
-      // Advance tutorial step highlight too
+      // Advance tutorial step highlight
       if(tutState.current === id) {
         tutState.step = step;
         if(tutState.step >= seq.length) tutState.completed = true;
@@ -2019,15 +2148,18 @@ const UI = (() => {
       return;
     }
 
-    const nextF=tut.sequence[ts.step];
+    const nextItem=tut.sequence[ts.step];
+    const nextF = nextItem.f || nextItem;
     const cfg=FINGER_CFG[nextF];
     const pct=Math.round(ts.step/tut.sequence.length*100);
 
-    const dots=tut.sequence.map((f,i)=>{
+    const dots=tut.sequence.map((item,i)=>{
+      const f = item.f || item;
+      const fCfg = FINGER_CFG[f];
       let cls='seq-dot';
       if(i<ts.step) cls+=' done';
       else if(i===ts.step) cls+=' current';
-      return `<div class="${cls}" style="${i===ts.step?`background:${cfg.color};border-color:${cfg.color}`:''}"></div>`;
+      return `<div class="${cls}" style="${i===ts.step?`background:${fCfg.color};border-color:${fCfg.color}`:''}"></div>`;
     }).join('');
 
     content.innerHTML=`
