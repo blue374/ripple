@@ -777,19 +777,91 @@ const PRESETS = {
 };
 
 const TUTORIALS = {
-  scale:      {name:'Simple Scale',         difficulty:'Beginner', sequence:['thumb','index','middle','ring','pinky','pinky','ring','middle','index','thumb']},
-  hotcross:   {name:'Hot Cross Buns',        difficulty:'Beginner', sequence:['middle','index','thumb','middle','index','thumb','thumb','thumb','thumb','thumb','index','index','index','index','middle','index','thumb']},
-  rain:       {name:'Rain Rain Go Away',     difficulty:'Beginner', sequence:['middle','thumb','middle','middle','thumb','middle','middle','thumb','middle','ring','middle','index','thumb']},
-  mary:       {name:'Mary Had a Little Lamb',difficulty:'Easy',     sequence:['middle','index','thumb','index','middle','middle','middle','index','index','index','middle','pinky','pinky','middle','index','thumb','index','middle','middle','middle','middle','index','index','middle','index','thumb']},
-  happy:      {name:'Happy Birthday',        difficulty:'Easy',     sequence:['thumb','thumb','index','thumb','ring','middle','thumb','thumb','index','thumb','pinky','ring','thumb','thumb','thumb','middle','ring','middle','index']},
-  london:     {name:'London Bridge',         difficulty:'Easy',     sequence:['pinky','ring','middle','ring','pinky','pinky','pinky','ring','ring','ring','pinky','pinky','pinky','pinky','ring','middle','ring','pinky','pinky','pinky','ring','ring','pinky','ring','middle']},
-  twinkle:    {name:'Twinkle Twinkle',       difficulty:'Easy',     sequence:['thumb','thumb','pinky','pinky','pinky','pinky','pinky','ring','ring','middle','middle','index','index','thumb','pinky','pinky','ring','ring','middle','middle','index','pinky','pinky','ring','ring','middle','middle','index','thumb','thumb','pinky','pinky','pinky','pinky','pinky','ring','ring','middle','middle','index','index','thumb']},
-  brother:    {name:'Are You Sleeping',      difficulty:'Medium',   sequence:['thumb','index','middle','thumb','thumb','index','middle','thumb','middle','ring','pinky','middle','ring','pinky','pinky','ring','middle','thumb','pinky','ring','middle','thumb','thumb','pinky','thumb','thumb','pinky','thumb']},
-  jingle:     {name:'Jingle Bells (Chorus)', difficulty:'Medium',   sequence:['middle','middle','middle','middle','middle','middle','middle','pinky','thumb','index','middle','ring','ring','ring','ring','ring','middle','middle','middle','middle','index','index','middle','index','pinky']},
-  ode:        {name:'Ode to Joy',            difficulty:'Medium',   sequence:['middle','middle','ring','pinky','pinky','ring','middle','index','thumb','thumb','index','middle','middle','index','index','middle','middle','ring','pinky','pinky','ring','middle','index','thumb','thumb','index','middle','index','thumb','thumb']},
-  rowboat:    {name:'Row Row Row Your Boat', difficulty:'Medium',   sequence:['thumb','thumb','thumb','index','middle','middle','index','middle','ring','pinky','pinky','pinky','pinky','middle','middle','middle','thumb','thumb','thumb','pinky','ring','middle','index','thumb']},
-  entertainer:{name:'The Entertainer',       difficulty:'Hard',     sequence:['index','middle','index','thumb','index','middle','ring','middle','index','middle','index','thumb','index','middle','ring','pinky','ring','middle','ring','middle','index','thumb','index','middle','middle','ring','pinky','ring','middle','index','thumb','index']},
-  furelise:   {name:'Für Elise (Theme)',     difficulty:'Hard',     sequence:['middle','index','middle','index','middle','thumb','index','thumb','thumb','middle','thumb','middle','index','middle','index','middle','middle','index','middle','index','middle','thumb','index','thumb','thumb','middle','index','thumb','thumb']},
+  // mapping: the finger->note assignment that gets applied when this tutorial starts
+  // sequence: finger presses in order
+
+  scale: {
+    name:'Simple Scale', difficulty:'Beginner',
+    mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'},
+    // C D E F G G F E D C
+    sequence:['thumb','index','middle','ring','pinky','pinky','ring','middle','index','thumb'],
+  },
+  hotcross: {
+    name:'Hot Cross Buns', difficulty:'Beginner',
+    mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'},
+    // E D C  E D C  C C C C D D  D D E  E D C
+    sequence:['middle','index','thumb','middle','index','thumb','thumb','thumb','thumb','thumb','index','index','index','index','middle','index','thumb'],
+  },
+  rain: {
+    name:'Rain Rain Go Away', difficulty:'Beginner',
+    mapping:{thumb:'C',index:'D',middle:'E',ring:'G',pinky:'A'},
+    // E C E E C E E C E G E D C
+    sequence:['middle','thumb','middle','middle','thumb','middle','middle','thumb','middle','ring','middle','index','thumb'],
+  },
+  mary: {
+    name:'Mary Had a Little Lamb', difficulty:'Easy',
+    mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'},
+    // E D C D E E E  D D D  E G G  E D C D E E E E D D E D C
+    sequence:['middle','index','thumb','index','middle','middle','middle','index','index','index','middle','pinky','pinky','middle','index','thumb','index','middle','middle','middle','middle','index','index','middle','index','thumb'],
+  },
+  happy: {
+    name:'Happy Birthday', difficulty:'Easy',
+    mapping:{thumb:'F',index:'G',middle:'A',ring:'Bb',pinky:'C5'},
+    // F F G F Bb A  F F G F C5 Bb  F F F A Bb A G
+    sequence:['thumb','thumb','index','thumb','ring','middle','thumb','thumb','index','thumb','pinky','ring','thumb','thumb','thumb','middle','ring','middle','index'],
+  },
+  london: {
+    name:'London Bridge', difficulty:'Easy',
+    mapping:{thumb:'G',index:'A',middle:'B',ring:'C5',pinky:'D5'},
+    // G A B A G G  G A A A G G  G G A B A G G G A A G A B
+    sequence:['pinky','ring','middle','ring','pinky','pinky','pinky','ring','ring','ring','pinky','pinky','pinky','pinky','ring','middle','ring','pinky','pinky','pinky','ring','ring','pinky','ring','middle'],
+  },
+  twinkle: {
+    name:'Twinkle Twinkle', difficulty:'Easy',
+    mapping:{thumb:'C',index:'D',middle:'E',ring:'G',pinky:'A'},
+    // C C G G A A G  E E D D C  G G E E D D C  G G E E D D C  C C G G A A G  E E D D C
+    // (F notes in original approximated as E — nearest available)
+    sequence:['thumb','thumb','ring','ring','pinky','pinky','ring','middle','middle','index','index','thumb','ring','ring','middle','middle','index','index','thumb','ring','ring','middle','middle','index','index','thumb','thumb','thumb','ring','ring','pinky','pinky','ring','middle','middle','index','index','thumb'],
+  },
+  brother: {
+    name:'Are You Sleeping', difficulty:'Medium',
+    mapping:{thumb:'C',index:'D',middle:'E',ring:'G',pinky:'A'},
+    // C D E C  C D E C  E G A  E G A  A G E C  A G E C  C G C  C G C
+    // (F notes approximated as E)
+    sequence:['thumb','index','middle','thumb','thumb','index','middle','thumb','middle','ring','pinky','middle','ring','pinky','pinky','ring','middle','thumb','pinky','ring','middle','thumb','thumb','ring','thumb','thumb','ring','thumb'],
+  },
+  jingle: {
+    name:'Jingle Bells (Chorus)', difficulty:'Medium',
+    mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'},
+    // E E E  E E E  E G C D E  F F F F  F E E E  E D D E D G
+    sequence:['middle','middle','middle','middle','middle','middle','middle','pinky','thumb','index','middle','ring','ring','ring','ring','ring','middle','middle','middle','middle','index','index','middle','index','pinky'],
+  },
+  ode: {
+    name:'Ode to Joy', difficulty:'Medium',
+    mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'},
+    // E E F G  G F E D  C C D E  E D D  (repeat)
+    sequence:['middle','middle','ring','pinky','pinky','ring','middle','index','thumb','thumb','index','middle','middle','index','index','middle','middle','ring','pinky','pinky','ring','middle','index','thumb','thumb','index','middle','index','thumb','thumb'],
+  },
+  rowboat: {
+    name:'Row Row Row Your Boat', difficulty:'Medium',
+    mapping:{thumb:'C',index:'D',middle:'E',ring:'G',pinky:'C5'},
+    // C C C D E  E D E G C5  C5 C5 C5 G G  G E E E C C  C C5 G E C
+    // (F notes approximated as E)
+    sequence:['thumb','thumb','thumb','index','middle','middle','index','middle','ring','pinky','pinky','pinky','pinky','ring','ring','ring','middle','middle','middle','thumb','thumb','thumb','pinky','ring','middle','index','thumb'],
+  },
+  entertainer: {
+    name:'The Entertainer', difficulty:'Hard',
+    mapping:{thumb:'Bb',index:'D',middle:'F',ring:'G',pinky:'A'},
+    // D F D Bb D F G F  D F D Bb D F A Bb  A G A G F D F G A Bb A F D
+    sequence:['index','middle','index','thumb','index','middle','ring','middle','index','middle','index','thumb','index','middle','pinky','thumb','pinky','ring','pinky','ring','middle','index','middle','ring','pinky','thumb','pinky','middle','index','thumb','index'],
+  },
+  furelise: {
+    name:'Für Elise (Theme)', difficulty:'Hard',
+    mapping:{thumb:'A',index:'C',middle:'E',ring:'Eb',pinky:'B'},
+    // E Eb E Eb E B D C A  C E A B  E Ab B C  (repeat)
+    // D approximated as C (nearest), Ab approximated as A (nearest)
+    sequence:['middle','ring','middle','ring','middle','pinky','index','thumb','thumb','index','middle','thumb','pinky','middle','pinky','index','middle','ring','middle','ring','middle','pinky','index','thumb','thumb','middle','index','thumb','thumb'],
+  },
 };
 
 // ═══════════════════════════════════════════════════════
@@ -1242,6 +1314,11 @@ const App = (() => {
     tutState={current:id, step:0, completed:false};
     tutReady=new Set(FINGERS);
     mode='tutorial';
+    // Apply this song's specific note mapping to the piano preset
+    const tut = TUTORIALS[id];
+    if(tut.mapping) {
+      PRESETS.piano.mapping = {...tut.mapping};
+    }
     currentPreset='piano';
     AudioEngine.stopAll();
     activeFingers=new Set();
@@ -1261,6 +1338,8 @@ const App = (() => {
 
   function exitTutorial() {
     mode='play'; tutState={current:null,step:0,completed:false};
+    // Restore piano preset to default
+    PRESETS.piano.mapping={thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'};
     AudioEngine.stopAll(); activeFingers=new Set();
     document.getElementById('tut-browser').classList.remove('hidden');
     document.getElementById('tut-active-panel').classList.add('hidden');
@@ -1560,7 +1639,16 @@ const UI = (() => {
       <div class="tut-progress-bar"><div class="tut-progress-fill" style="width:${pct}%"></div></div>
       <div style="color:var(--muted);font-size:0.75rem;margin-bottom:8px;">Press this finger:</div>
       <div class="tut-next-finger" style="color:${cfg.color}">${nextF}</div>
+      <div style="font-size:0.7rem;color:${cfg.color};opacity:0.8;margin-bottom:12px;">${tut.mapping[nextF]}</div>
       <div class="tut-sequence">${dots}</div>
+      <div style="display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap;">
+        ${FINGERS.map(f=>`
+          <div style="text-align:center;font-size:0.65rem;">
+            <div style="color:${FINGER_CFG[f].color};font-weight:500;">${tut.mapping[f]}</div>
+            <div style="color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;">${f}</div>
+          </div>
+        `).join('')}
+      </div>
     `;
   }
 
