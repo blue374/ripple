@@ -1531,17 +1531,18 @@ const UI = (() => {
     const recal = document.getElementById('recalibrate-btn');
 
     if(App.connected) {
-      cb.textContent='Disconnect'; cb.className='btn btn-disconnect';
+      cb.textContent='Disconnect'; cb.className='btn btn-disconnect'; cb.disabled=false;
       if(App.calibrated) {
         cal.classList.add('hidden');
         recal.classList.remove('hidden');
+        recal.disabled=false;
         recal.textContent='Re-calibrate'; recal.className='btn btn-recalibrate';
       } else {
         cal.disabled=false; cal.textContent='Calibrate'; cal.className='btn btn-calibrate';
         cal.classList.remove('hidden'); recal.classList.add('hidden');
       }
     } else {
-      cb.textContent='Connect'; cb.className='btn btn-connect';
+      cb.textContent='Connect'; cb.className='btn btn-connect'; cb.disabled=false;
       cal.disabled=true; cal.textContent='Calibrate'; cal.className='btn btn-calibrate';
       cal.classList.remove('hidden'); recal.classList.add('hidden');
     }
