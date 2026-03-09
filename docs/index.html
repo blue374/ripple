@@ -1214,10 +1214,11 @@ const TUTORIALS = {
   rowboat: {
     name:'Row Row Row Your Boat', difficulty:'Medium',
     mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'C5'},
-    // Row row row your boat: C. C. C 8D 8E | E. 8D E. 8F G(h.) | 8C5 8C5 8C5 8G4 8G4 8G4 8E4 8E4 8E4 8C4 8C4 8C4 | G. 8F E. 8D C(h.)
+    // Row row row your boat: C. C. C D E | E. D E. G C5(h.) | 8C5×3 8G4×3 8E4×3 8C4×3 | G. F E. D C(h.)
+    // thumb=C4, pinky=C5 — no same-finger octave conflict here
     sequence:[
       {f:'thumb',d:1.5},{f:'thumb',d:1.5},{f:'thumb',d:0.75},{f:'index',d:0.25},{f:'middle',d:1},
-      {f:'middle',d:1.5},{f:'index',d:0.5},{f:'middle',d:1.5},{f:'middle',d:0.5},{f:'ring',d:3},
+      {f:'middle',d:1.5},{f:'index',d:0.5},{f:'middle',d:1.5},{f:'ring',d:0.5},{f:'pinky',d:3},
       {f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'pinky',d:0.5},
       {f:'ring',d:0.5},{f:'ring',d:0.5},{f:'ring',d:0.5},
       {f:'middle',d:0.5},{f:'middle',d:0.5},{f:'middle',d:0.5},
@@ -1363,8 +1364,10 @@ const AudioEngine = (() => {
 
     const nodes = [];
     const gainNode = ctx.createGain();
+    const attackTime = inst==='pad' ? 0.06 : inst==='bell' ? 0.01 : 0.02;
+    const peakGain = inst==='pad' ? 0.22/Math.max(freqs.length,1) : 0.30/Math.max(freqs.length,1);
     gainNode.gain.setValueAtTime(0, ctx.currentTime);
-    gainNode.gain.linearRampToValueAtTime(0.3/freqs.length, ctx.currentTime+0.005);
+    gainNode.gain.linearRampToValueAtTime(peakGain, ctx.currentTime + attackTime);
     gainNode.connect(masterGain);
 
     for(const freq of freqs) {
@@ -1378,17 +1381,18 @@ const AudioEngine = (() => {
           o.connect(g); g.connect(gainNode); o.start(); nodes.push(o);
         });
       } else if(inst==='bell') {
-        [1,2].forEach((h,i)=>{
+        [1,2.756,5.404].forEach((h,i)=>{
           const o=ctx.createOscillator(); const g=ctx.createGain();
-          o.frequency.value=freq*h; g.gain.value=[1,0.5][i];
+          o.type = i===0?'sine':'sine';
+          o.frequency.value=freq*h; g.gain.value=[1,0.4,0.15][i];
           o.connect(g); g.connect(gainNode); o.start(); nodes.push(o);
         });
-        // bell decays
+        // bell decays naturally over 2.5s
         gainNode.gain.cancelScheduledValues(ctx.currentTime);
-        gainNode.gain.setValueAtTime(0.3/freqs.length, ctx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+1.5);
+        gainNode.gain.setValueAtTime(peakGain, ctx.currentTime + attackTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5);
       } else if(inst==='pad') {
-        [-0.002,0,0.002].forEach(detune=>{
+        [-0.003,0,0.003].forEach(detune=>{
           const o=ctx.createOscillator(); const g=ctx.createGain();
           o.frequency.value=freq*(1+detune); g.gain.value=0.33;
           o.connect(g); g.connect(gainNode); o.start(); nodes.push(o);
@@ -1396,21 +1400,23 @@ const AudioEngine = (() => {
       }
     }
 
-    activeNodes[finger] = { nodes, gainNode };
+    activeNodes[finger] = { nodes, gainNode, inst };
   }
 
   function stopFinger(finger) {
     const entry = activeNodes[finger];
     if(!entry) return;
-    const { nodes, gainNode } = entry;
+    const { nodes, gainNode, inst } = entry;
     const now = ctx.currentTime;
+    // Natural release time varies by instrument
+    const releaseTime = inst==='pad' ? 0.35 : inst==='bell' ? 0.8 : inst==='soft' ? 0.25 : 0.18;
     gainNode.gain.cancelScheduledValues(now);
     gainNode.gain.setValueAtTime(gainNode.gain.value, now);
-    gainNode.gain.linearRampToValueAtTime(0, now+0.02);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + releaseTime);
     setTimeout(()=>{
       nodes.forEach(n=>{ try{n.stop();}catch(e){} });
       try{gainNode.disconnect();}catch(e){}
-    }, 50);
+    }, (releaseTime + 0.05) * 1000);
     delete activeNodes[finger];
   }
 
@@ -1444,11 +1450,12 @@ const AudioEngine = (() => {
 
     if(inst==='drums') return;
 
-    // Start newly active fingers
+    // Start newly active fingers (always restart so repeated same note re-attacks cleanly)
     for(const f of activeSet) {
+      const sound = preset.mapping[f];
+      const freqs = CHORDS[sound] || [];
+      // Always re-trigger if the finger is newly active (stopFinger called above for inactive)
       if(!activeNodes[f]) {
-        const sound = preset.mapping[f];
-        const freqs = CHORDS[sound] || [];
         startFinger(f, freqs, inst);
       }
     }
@@ -1467,7 +1474,12 @@ const AudioEngine = (() => {
     for(const f of Object.keys(activeNodes)) stopFinger(f);
   }
 
-  return { init, resume, updateActive, triggerDrums, playDrum, setVolume, setInstrument, getInstrument, stopAll };
+  function startFingerFreqs(finger, freqs, inst) {
+    init(); resume();
+    startFinger(finger, freqs, inst);
+  }
+
+  return { init, resume, updateActive, triggerDrums, playDrum, setVolume, setInstrument, getInstrument, stopAll, startFingerFreqs };
 })();
 
 // ═══════════════════════════════════════════════════════
@@ -1710,13 +1722,17 @@ const App = (() => {
   }
 
   // ── Manual finger press/release (clicking finger tabs) ──
-  function manualPress(finger) {
+  function manualPress(finger, freqOverride) {
     AudioEngine.init();
     const preset = getPreset();
     const newActive = new Set(activeFingers);
     newActive.add(finger);
     AudioEngine.triggerDrums(new Set([finger]), preset);
-    AudioEngine.updateActive(newActive, preset);
+    if(freqOverride) {
+      AudioEngine.startFingerFreqs(finger, freqOverride, preset.instrument);
+    } else {
+      AudioEngine.updateActive(newActive, preset);
+    }
     activeFingers = newActive;
     UI.updateFingers(activeFingers, currentPreset);
     if(mode==='tutorial') checkTutorialProgress(finger);
@@ -1772,10 +1788,11 @@ const App = (() => {
       const item = seq[step];
       const finger = item.f;
       const dur = item.d;
-      const noteOnMs  = beatMs * dur * 0.80;
-      const noteOffMs = beatMs * dur * 0.20;
+      const freqOverride = item.hz ? item.hz : null;
+      const noteOnMs  = beatMs * dur * 0.92;   // hold 92% of beat — legato feel
+      const noteOffMs = beatMs * dur * 0.08;   // tiny gap before next note
 
-      manualPress(finger);
+      manualPress(finger, freqOverride);
       step++;
 
       // Advance tutorial step highlight
@@ -1875,30 +1892,43 @@ const App = (() => {
     const savedPreset=currentPreset;
     currentPreset=rec.preset||currentPreset;
     let ei=0;
-    const start=Date.now();
 
-    function tick() {
-      if(!playingBack||ei>=events.length) {
+    function scheduleNext() {
+      if(!playingBack || ei>=events.length) {
         playingBack=false;
         AudioEngine.stopAll();
         activeFingers=new Set();
         currentPreset=savedPreset;
+        UI.updateFingers(activeFingers, currentPreset);
         UI.renderRecordingList();
         return;
       }
-      const elapsed=(Date.now()-start)/1000;
-      while(ei<events.length && events[ei].time<=elapsed) {
-        const ev=events[ei];
-        const newSet=new Set(ev.fingers);
-        AudioEngine.triggerDrums(newSet, getPreset());
-        AudioEngine.updateActive(newSet, getPreset());
-        activeFingers=newSet;
-        UI.updateFingers(activeFingers, currentPreset);
-        ei++;
+      const ev=events[ei];
+      const nextTime=events[ei+1] ? events[ei+1].time : ev.time+0.5;
+      const holdMs=Math.max(80, (nextTime-ev.time)*1000*0.88);
+      const gapMs =Math.max(20, (nextTime-ev.time)*1000*0.12);
+      const preset=getPreset();
+
+      const newSet=new Set(ev.fingers);
+      AudioEngine.triggerDrums(newSet, preset);
+      for(const f of newSet) {
+        const sound=preset.mapping?.[f];
+        const freqs=CHORDS[sound]||[];
+        AudioEngine.startFingerFreqs(f, freqs, preset.instrument||'bell');
       }
-      pbTimer=setTimeout(tick, 16);
+      activeFingers=newSet;
+      UI.updateFingers(activeFingers, currentPreset);
+      ei++;
+
+      pbTimer=setTimeout(()=>{
+        AudioEngine.stopAll();
+        activeFingers=new Set();
+        UI.updateFingers(activeFingers, currentPreset);
+        pbTimer=setTimeout(scheduleNext, gapMs);
+      }, holdMs);
     }
-    tick();
+
+    scheduleNext();
     UI.renderRecordingList();
   }
 
@@ -2451,21 +2481,30 @@ const PianoRoll = (() => {
 
     const preset = PRESETS[rec.preset];
     let ei = 0;
-    const start = Date.now();
 
-    function tick() {
+    function scheduleNext() {
       if(!prPlaying || ei >= editEvents.length) { stopPlay(); return; }
-      const elapsed = (Date.now() - start) / 1000;
-      while(ei < editEvents.length && editEvents[ei].time <= elapsed) {
-        const ev = editEvents[ei];
-        const newSet = new Set(ev.fingers);
-        AudioEngine.triggerDrums(newSet, preset.instrument || rec.preset);
-        AudioEngine.updateActive(newSet, preset.instrument || rec.preset);
-        ei++;
+      const ev = editEvents[ei];
+      const nextTime = editEvents[ei+1] ? editEvents[ei+1].time : ev.time + 0.5;
+      const holdMs = Math.max(80, (nextTime - ev.time) * 1000 * 0.90);
+      const gapMs  = Math.max(20, (nextTime - ev.time) * 1000 * 0.10);
+
+      // Start notes
+      for(const f of ev.fingers) {
+        const sound = preset.mapping?.[f];
+        const freqs = CHORDS[sound] || [];
+        AudioEngine.startFingerFreqs(f, freqs, preset.instrument || 'bell');
       }
-      prPlayTimer = setTimeout(tick, 16);
+
+      ei++;
+      // Release after hold
+      prPlayTimer = setTimeout(()=>{
+        AudioEngine.stopAll();
+        prPlayTimer = setTimeout(scheduleNext, gapMs);
+      }, holdMs);
     }
-    tick();
+
+    scheduleNext();
   }
 
   function stopPlay() {
