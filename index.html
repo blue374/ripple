@@ -275,57 +275,60 @@
     }
 
     .btn:hover:not(:disabled) {
-      border-color: rgba(255,255,255,0.2);
-      background: #222230;
+      border-color: var(--accent);
+      background: var(--surface2);
+      opacity: 0.9;
     }
 
-    .btn:disabled { opacity: 0.35; cursor: default; }
+    .btn:disabled { opacity: 0.3; cursor: default; }
 
+    /* All colored buttons use var(--text) so they're readable on every theme */
     .btn-connect { 
-      border-color: rgba(155,140,255,0.6); 
-      color: #fff;
-      background: linear-gradient(135deg, rgba(155,140,255,0.4), rgba(155,140,255,0.2));
-      box-shadow: 0 0 20px rgba(155,140,255,0.25);
+      border-color: rgba(var(--orb1),0.55); 
+      color: var(--text);
+      background: linear-gradient(135deg, rgba(var(--orb1),0.22), rgba(var(--orb1),0.08));
+      box-shadow: 0 0 16px rgba(var(--orb1),0.15);
     }
     .btn-connect:hover:not(:disabled) { 
-      background: linear-gradient(135deg, rgba(155,140,255,0.6), rgba(155,140,255,0.3));
-      box-shadow: 0 0 30px rgba(155,140,255,0.4);
+      background: linear-gradient(135deg, rgba(var(--orb1),0.38), rgba(var(--orb1),0.18));
+      box-shadow: 0 0 24px rgba(var(--orb1),0.3);
+      opacity: 1;
     }
     .btn-disconnect { 
-      border-color: rgba(255,107,107,0.6); 
-      color: #fff;
-      background: linear-gradient(135deg, rgba(255,107,107,0.4), rgba(255,107,107,0.2));
-      box-shadow: 0 0 20px rgba(255,107,107,0.25);
+      border-color: rgba(200,60,60,0.5); 
+      color: var(--text);
+      background: linear-gradient(135deg, rgba(200,60,60,0.22), rgba(200,60,60,0.08));
+      box-shadow: 0 0 16px rgba(200,60,60,0.12);
     }
     .btn-disconnect:hover:not(:disabled) { 
-      background: linear-gradient(135deg, rgba(255,107,107,0.6), rgba(255,107,107,0.3));
-      box-shadow: 0 0 30px rgba(255,107,107,0.4);
+      background: linear-gradient(135deg, rgba(200,60,60,0.36), rgba(200,60,60,0.18));
+      opacity: 1;
     }
     .btn-calibrate { 
-      border-color: rgba(255,140,200,0.6); 
-      color: #fff;
-      background: linear-gradient(135deg, rgba(255,140,200,0.4), rgba(255,140,200,0.2));
-      box-shadow: 0 0 20px rgba(255,140,200,0.25);
+      border-color: rgba(var(--orb2),0.5); 
+      color: var(--text);
+      background: linear-gradient(135deg, rgba(var(--orb2),0.2), rgba(var(--orb2),0.07));
+      box-shadow: 0 0 16px rgba(var(--orb2),0.12);
     }
     .btn-calibrate:hover:not(:disabled) { 
-      background: linear-gradient(135deg, rgba(255,140,200,0.6), rgba(255,140,200,0.3));
-      box-shadow: 0 0 30px rgba(255,140,200,0.4);
+      background: linear-gradient(135deg, rgba(var(--orb2),0.35), rgba(var(--orb2),0.16));
+      opacity: 1;
     }
     .btn-calibrated { 
-      border-color: rgba(74,222,128,0.6); 
-      color: #fff;
-      background: linear-gradient(135deg, rgba(74,222,128,0.4), rgba(74,222,128,0.2));
-      box-shadow: 0 0 20px rgba(74,222,128,0.25);
+      border-color: rgba(60,180,100,0.5); 
+      color: var(--text);
+      background: linear-gradient(135deg, rgba(60,180,100,0.22), rgba(60,180,100,0.08));
+      box-shadow: 0 0 16px rgba(60,180,100,0.12);
     }
     .btn-recalibrate { 
-      border-color: rgba(255,217,61,0.6); 
-      color: #fff;
-      background: linear-gradient(135deg, rgba(255,217,61,0.4), rgba(255,217,61,0.2));
-      box-shadow: 0 0 20px rgba(255,217,61,0.2);
+      border-color: rgba(180,140,20,0.5); 
+      color: var(--text);
+      background: linear-gradient(135deg, rgba(180,140,20,0.22), rgba(180,140,20,0.08));
+      box-shadow: 0 0 14px rgba(180,140,20,0.1);
     }
     .btn-recalibrate:hover:not(:disabled) { 
-      background: linear-gradient(135deg, rgba(255,217,61,0.5), rgba(255,217,61,0.3));
-      box-shadow: 0 0 30px rgba(255,217,61,0.35);
+      background: linear-gradient(135deg, rgba(180,140,20,0.36), rgba(180,140,20,0.16));
+      opacity: 1;
     }
 
     /* Tabs */
@@ -358,6 +361,7 @@
       background: var(--surface2);
       color: var(--text);
       border: 1px solid var(--border);
+      box-shadow: inset 0 0 0 1px rgba(var(--orb1),0.15);
     }
 
     /* Preset strip */
@@ -381,20 +385,20 @@
       transition: all 0.15s;
     }
 
-    .preset-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+    .preset-btn:hover { color: var(--text); border-color: var(--accent); }
 
     .preset-btn.active {
-      background: rgba(124,109,250,0.15);
-      border-color: rgba(124,109,250,0.5);
+      background: rgba(var(--orb1),0.14);
+      border-color: rgba(var(--orb1),0.5);
       color: var(--accent);
     }
 
     /* Panel */
     .panel {
-      background: rgba(255,255,255,0.04);
+      background: var(--surface);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid var(--border);
       border-radius: 16px;
       padding: 28px;
       margin-bottom: 20px;
@@ -448,14 +452,20 @@
     }
 
     .finger.clickable { cursor: pointer; }
-    .finger.clickable:hover { border-color: rgba(255,255,255,0.2); }
+    .finger.clickable:hover { border-color: var(--accent); }
 
     .finger-note {
-      font-size: 0.62rem;
-      font-weight: 500;
+      font-size: 0.64rem;
+      font-weight: 600;
       text-align: center;
-      padding: 4px 2px 6px;
+      padding: 4px 2px 5px;
       letter-spacing: 0.03em;
+      line-height: 1.3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
     }
 
     .finger-label {
@@ -474,27 +484,48 @@
       transition: all 0.2s;
     }
 
-    /* Mapping grid */
+    /* Mapping grid — 2 columns on mobile, 5 on wider screens */
     .mapping-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
+      gap: 10px;
     }
+    @media (max-width: 480px) { .mapping-grid { grid-template-columns: repeat(3, 1fr); } }
 
     .mapping-cell {
       background: var(--surface2);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 8px;
+      border-radius: 12px;
+      padding: 14px 8px 10px;
       text-align: center;
       transition: all 0.15s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
     }
 
     .mapping-cell.clickable { cursor: pointer; }
-    .mapping-cell.clickable:hover { background: #222230; border-color: rgba(255,255,255,0.15); }
+    .mapping-cell.clickable:hover {
+      border-color: var(--accent);
+      background: rgba(var(--orb1),0.1);
+    }
 
-    .mapping-cell .note { font-size: 0.9rem; font-weight: 500; margin-bottom: 3px; }
-    .mapping-cell .fname { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    /* Two-line chord display */
+    .mapping-cell .note-root {
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .mapping-cell .note-quality {
+      font-size: 0.58rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.75;
+      line-height: 1;
+      min-height: 0.8em;
+    }
+    .mapping-cell .fname { font-size: 0.58rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
 
     /* Settings */
     .settings-grid {
@@ -562,8 +593,8 @@
       transition: all 0.15s;
     }
 
-    .tutorial-card:hover { border-color: rgba(255,255,255,0.15); background: #222230; }
-    .tutorial-card.active-tut { border-color: rgba(124,109,250,0.5); background: rgba(124,109,250,0.08); }
+    .tutorial-card:hover { border-color: var(--accent); background: rgba(var(--orb1),0.06); }
+    .tutorial-card.active-tut { border-color: rgba(var(--orb1),0.5); background: rgba(var(--orb1),0.08); }
 
     .tut-name { font-size: 0.8rem; margin-bottom: 4px; }
     .tut-meta { font-size: 0.62rem; color: var(--muted); }
@@ -881,11 +912,11 @@
       white-space: nowrap;
     }
 
-    .btn-sm:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
-    .btn-sm.play { border-color: rgba(74,222,128,0.3); color: var(--green); }
-    .btn-sm.stop { border-color: rgba(239,68,68,0.3); color: #ef4444; }
-    .btn-sm.danger { border-color: rgba(239,68,68,0.2); color: rgba(239,68,68,0.6); }
-    .btn-sm.danger:hover { color: #ef4444; border-color: rgba(239,68,68,0.4); }
+    .btn-sm:hover { color: var(--text); border-color: var(--accent); }
+    .btn-sm.play { border-color: rgba(60,180,100,0.4); color: #3db870; }
+    .btn-sm.stop { border-color: rgba(200,60,60,0.4); color: #c84040; }
+    .btn-sm.danger { border-color: rgba(200,60,60,0.25); color: rgba(200,60,60,0.7); }
+    .btn-sm.danger:hover { color: #c84040; border-color: rgba(200,60,60,0.5); }
 
     /* Modal */
     .modal-overlay {
@@ -947,22 +978,22 @@
       transition: all 0.12s;
     }
 
-    .chord-btn-modal:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .chord-btn-modal:hover { color: var(--text); border-color: var(--accent); }
 
     .chord-btn-modal.selected {
-      border-color: rgba(74,222,128,0.5);
-      color: var(--green);
-      background: rgba(74,222,128,0.08);
+      border-color: rgba(var(--orb1),0.6);
+      color: var(--accent);
+      background: rgba(var(--orb1),0.1);
     }
 
     .drum-btn-modal {
-      border-color: rgba(249,115,22,0.3);
-      color: #f97316;
+      border-color: rgba(var(--orb2),0.35);
+      color: var(--accent2);
     }
 
     .drum-btn-modal.selected {
-      background: rgba(249,115,22,0.12);
-      border-color: rgba(249,115,22,0.6);
+      background: rgba(var(--orb2),0.12);
+      border-color: rgba(var(--orb2),0.6);
     }
 
     .modal-footer {
@@ -1078,7 +1109,7 @@
       <div class="tutorial-active" id="tut-active-content"></div>
       <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap; align-items:center;">
         <button class="btn-sm" id="tut-demo-btn">▶ Demo</button>
-        <button class="btn-sm hidden" id="tut-demo-stop-btn" style="border-color:rgba(255,107,107,0.6);color:#ff6b6b;">⏹ Stop Demo</button>
+        <button class="btn-sm hidden stop" id="tut-demo-stop-btn">⏹ Stop Demo</button>
         <button class="btn-sm" id="tut-reset-btn">↺ Restart</button>
         <button class="btn-sm danger" id="tut-exit-btn">Exit Tutorial</button>
       </div>
@@ -1363,6 +1394,31 @@ function initSplash() {
 // ═══════════════════════════════════════════════════════
 //  DATA
 // ═══════════════════════════════════════════════════════
+
+// Returns {root, quality} for two-line display
+function formatChord(key) {
+  if (!key || key === 'none') return { root: '—', quality: '' };
+  // Drums
+  const drumNames = { kick:'Kick', snare:'Snare', hihat:'Hi-Hat', tom:'Tom', clap:'Clap', cymbal:'Cymbal' };
+  if (drumNames[key]) return { root: drumNames[key], quality: 'drum' };
+  // Major chord: e.g. C_maj, Bb3_maj
+  if (key.includes('_maj')) {
+    const root = key.replace('_maj','');
+    return { root, quality: 'major' };
+  }
+  // Minor chord: ends with 'm' but not 'dim', e.g. Am, Cm
+  if (/^[A-G][b#]?m$/.test(key)) {
+    return { root: key.slice(0,-1), quality: 'minor' };
+  }
+  // 7th chord: e.g. G7, Bb7
+  if (/^[A-G][b#]?\d?7$/.test(key)) {
+    const root = key.replace('7','');
+    return { root, quality: '7th' };
+  }
+  // Plain note (C, D4, Bb3, etc.)
+  return { root: key, quality: '' };
+}
+
 const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 
 const FINGER_CFG = {
@@ -2385,6 +2441,7 @@ const UI = (() => {
       const cfg=FINGER_CFG[f];
       const active=App.activeFingers.has(f);
       const sound=preset.mapping[f];
+      const ch = formatChord(sound);
       return `
         <div class="finger-col">
           <div class="finger ${active?'active':''} clickable"
@@ -2395,7 +2452,7 @@ const UI = (() => {
                  border-color:${active?cfg.color+'66':'var(--border)'};
                  box-shadow:${active?`0 0 20px ${cfg.color}44`:'none'};
                ">
-            <span class="finger-note" style="color:${active?'#fff':cfg.color}">${sound}</span>
+            <span class="finger-note" style="color:${active?'#fff':cfg.color}">${ch.root}${ch.quality?`<br><span style="font-size:0.48rem;opacity:0.8;letter-spacing:0.04em">${ch.quality}</span>`:''}</span>
           </div>
           <span class="finger-label">${f}</span>
         </div>
@@ -2523,12 +2580,15 @@ const UI = (() => {
     const grid = document.getElementById('mapping-grid');
     const preset = PRESETS[App.currentPreset];
     const isCustom = App.currentPreset==='custom';
-    grid.innerHTML = FINGERS.map(f=>`
+    grid.innerHTML = FINGERS.map(f=>{
+      const ch = formatChord(preset.mapping[f]);
+      return `
       <div class="mapping-cell ${isCustom?'clickable':''}" data-f="${f}">
-        <div class="note" style="color:${FINGER_CFG[f].color}">${preset.mapping[f]}</div>
+        <div class="note-root" style="color:${FINGER_CFG[f].color}">${ch.root}</div>
+        <div class="note-quality" style="color:${FINGER_CFG[f].color}">${ch.quality}</div>
         <div class="fname">${f}</div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
     if(isCustom) {
       grid.querySelectorAll('.mapping-cell').forEach(el=>{
         el.addEventListener('click',()=>openChordModal(el.dataset.f));
@@ -2553,9 +2613,11 @@ const UI = (() => {
     body.innerHTML=groups.map(g=>`
       <div class="modal-section-title">${g.label}</div>
       <div class="chord-grid-modal">
-        ${g.keys.map(k=>`
-          <button class="chord-btn-modal ${g.cls} ${k===current?'selected':''}" data-k="${k}" data-drum="${g.cls?'1':'0'}">${k}</button>
-        `).join('')}
+        ${g.keys.map(k=>{
+          const ch = formatChord(k);
+          const label = ch.quality ? `${ch.root} <span style="font-size:0.58em;opacity:0.7">${ch.quality}</span>` : ch.root;
+          return `<button class="chord-btn-modal ${g.cls} ${k===current?'selected':''}" data-k="${k}" data-drum="${g.cls?'1':'0'}">${label}</button>`;
+        }).join('')}
       </div>
     `).join('');
 
@@ -2867,7 +2929,7 @@ const PianoRoll = (() => {
       ${groups.map(g=>`
         <div style="font-size:0.58rem;color:var(--muted);margin:6px 0 3px;text-transform:uppercase;letter-spacing:0.08em;">${g.label}</div>
         <div class="pr-chord-grid">
-          ${g.keys.map(k=>`<button class="pr-chord-btn ${k===currentNote?'active':''}" data-note="${k}">${k.replace('_maj',' maj').replace('_','')} </button>`).join('')}
+          ${g.keys.map(k=>{const ch=formatChord(k);return `<button class="pr-chord-btn ${k===currentNote?'active':''}" data-note="${k}">${ch.root}${ch.quality?` <span style="font-size:0.8em;opacity:0.7">${ch.quality}</span>`:''}</button>`;}).join('')}
         </div>
       `).join('')}
     `;
