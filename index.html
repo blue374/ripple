@@ -1581,11 +1581,11 @@ const CHORDS = {
 const DRUMS = ['kick','snare','hihat','tom','clap','cymbal'];
 
 const PRESETS = {
-  therapy: { name:'🧘 Therapy', instrument:'pad',   mapping:{thumb:'C_maj',index:'F_maj',middle:'G_maj',ring:'Am',pinky:'Em'} },
-  piano:   { name:'🎹 Piano',   instrument:'soft',  mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'} },
-  chords:  { name:'🎸 Chords',  instrument:'soft',  mapping:{thumb:'C_maj',index:'D_maj',middle:'E_maj',ring:'G_maj',pinky:'A_maj'} },
-  drums:   { name:'🥁 Drums',   instrument:'drums', mapping:{thumb:'kick',index:'snare',middle:'hihat',ring:'tom',pinky:'clap'} },
-  custom:  { name:'✏️ Custom',  instrument:'sine',  mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'} },
+  therapy: { name:'🧘 Therapy', nameZh:'🧘 治疗', instrument:'pad',   mapping:{thumb:'C_maj',index:'F_maj',middle:'G_maj',ring:'Am',pinky:'Em'} },
+  piano:   { name:'🎹 Piano',   nameZh:'🎹 钢琴', instrument:'soft',  mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'} },
+  chords:  { name:'🎸 Chords',  nameZh:'🎸 和弦', instrument:'soft',  mapping:{thumb:'C_maj',index:'D_maj',middle:'E_maj',ring:'G_maj',pinky:'A_maj'} },
+  drums:   { name:'🥁 Drums',   nameZh:'🥁 打击乐', instrument:'drums', mapping:{thumb:'kick',index:'snare',middle:'hihat',ring:'tom',pinky:'clap'} },
+  custom:  { name:'✏️ Custom',  nameZh:'✏️ 自定义', instrument:'sine',  mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'} },
 };
 
 const TUTORIALS = {
@@ -2570,7 +2570,7 @@ const UI = (() => {
   function renderPresets() {
     const strip = document.getElementById('preset-strip');
     strip.innerHTML = Object.entries(PRESETS).map(([k,v])=>`
-      <button class="preset-btn ${App.currentPreset===k?'active':''}" data-p="${k}">${v.name}</button>
+      <button class="preset-btn ${App.currentPreset===k?'active':''}" data-p="${k}">${currentLang==='zh' && v.nameZh ? v.nameZh : v.name}</button>
     `).join('');
     strip.querySelectorAll('.preset-btn').forEach(b=>{
       b.addEventListener('click',()=>App.setPreset(b.dataset.p));
