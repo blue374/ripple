@@ -33,39 +33,176 @@
       overflow-x: hidden;
     }
 
-    /* Ambient gradient background */
+    /* ── THEMES ── */
+    body.theme-midnight { --bg:#0d0d1a; --surface:rgba(255,255,255,0.05); --surface2:rgba(255,255,255,0.07); --border:rgba(255,255,255,0.1); --text:#eeeef5; --muted:rgba(238,238,245,0.45); --accent:#9b8cff; --accent2:#ff8cc8; --orb1:155,140,255; --orb2:255,140,200; --grad1:#0d0d1a; --grad2:#131326; }
+    body.theme-ocean    { --bg:#071a2e; --surface:rgba(255,255,255,0.06); --surface2:rgba(255,255,255,0.09); --border:rgba(255,255,255,0.1); --text:#e8f4ff; --muted:rgba(200,230,255,0.5); --accent:#38bdf8; --accent2:#67e8f9; --orb1:56,189,248; --orb2:103,232,249; --grad1:#071a2e; --grad2:#0d2640; }
+    body.theme-forest   { --bg:#071a0f; --surface:rgba(255,255,255,0.05); --surface2:rgba(255,255,255,0.08); --border:rgba(255,255,255,0.09); --text:#e8f5ec; --muted:rgba(200,240,210,0.5); --accent:#4ade80; --accent2:#86efac; --orb1:74,222,128; --orb2:134,239,172; --grad1:#071a0f; --grad2:#0d2618; }
+    body.theme-rose     { --bg:#1a0a12; --surface:rgba(255,255,255,0.05); --surface2:rgba(255,255,255,0.08); --border:rgba(255,255,255,0.1); --text:#fff0f5; --muted:rgba(255,210,225,0.5); --accent:#fb7185; --accent2:#fda4af; --orb1:251,113,133; --orb2:253,164,175; --grad1:#1a0a12; --grad2:#27101c; }
+    body.theme-dusk     { --bg:#1a1206; --surface:rgba(255,255,255,0.05); --surface2:rgba(255,255,255,0.08); --border:rgba(255,255,255,0.1); --text:#fff8ee; --muted:rgba(255,230,180,0.5); --accent:#fb923c; --accent2:#fbbf24; --orb1:251,146,60; --orb2:251,191,36; --grad1:#1a1206; --grad2:#271c0d; }
+    /* Light themes */
+    body.theme-cloud    { --bg:#f0f4ff; --surface:rgba(255,255,255,0.7); --surface2:rgba(255,255,255,0.85); --border:rgba(100,100,180,0.12); --text:#1a1a3a; --muted:rgba(30,30,80,0.45); --accent:#6366f1; --accent2:#a78bfa; --orb1:99,102,241; --orb2:167,139,250; --grad1:#f0f4ff; --grad2:#e8eeff; }
+    body.theme-blossom  { --bg:#fff0f5; --surface:rgba(255,255,255,0.7); --surface2:rgba(255,255,255,0.85); --border:rgba(200,80,120,0.12); --text:#2d0a18; --muted:rgba(100,20,50,0.45); --accent:#e11d73; --accent2:#f472b6; --orb1:225,29,115; --orb2:244,114,182; --grad1:#fff0f5; --grad2:#ffe4ef; }
+    body.theme-mint     { --bg:#f0fff8; --surface:rgba(255,255,255,0.7); --surface2:rgba(255,255,255,0.85); --border:rgba(20,160,100,0.12); --text:#052e1c; --muted:rgba(10,80,50,0.45); --accent:#059669; --accent2:#34d399; --orb1:5,150,105; --orb2:52,211,153; --grad1:#f0fff8; --grad2:#e0faf0; }
+    body.theme-sand     { --bg:#fdf8f0; --surface:rgba(255,255,255,0.65); --surface2:rgba(255,255,255,0.8); --border:rgba(160,120,60,0.12); --text:#2c1a08; --muted:rgba(80,50,10,0.45); --accent:#b45309; --accent2:#f59e0b; --orb1:180,83,9; --orb2:245,158,11; --grad1:#fdf8f0; --grad2:#f8f0e0; }
+
+    /* Dynamic background using theme vars */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background:
-        radial-gradient(ellipse at 15% 10%, rgba(155,140,255,0.18) 0%, transparent 45%),
-        radial-gradient(ellipse at 85% 15%, rgba(255,140,200,0.14) 0%, transparent 40%),
-        radial-gradient(ellipse at 50% 60%, rgba(107,203,119,0.08) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 90%, rgba(255,159,67,0.10) 0%, transparent 40%),
-        linear-gradient(160deg, #0d0d1a 0%, #131326 50%, #0f0f1e 100%);
       pointer-events: none;
       z-index: 0;
+      background:
+        radial-gradient(ellipse at 15% 10%, rgba(var(--orb1),0.18) 0%, transparent 45%),
+        radial-gradient(ellipse at 85% 15%, rgba(var(--orb2),0.14) 0%, transparent 40%),
+        radial-gradient(ellipse at 50% 60%, rgba(var(--orb1),0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 90%, rgba(var(--orb2),0.10) 0%, transparent 40%),
+        linear-gradient(160deg, var(--grad1) 0%, var(--grad2) 50%, var(--grad1) 100%);
     }
-
-    /* Animated floating orb */
     body::after {
       content: '';
       position: fixed;
       width: 600px;
       height: 600px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(155,140,255,0.07) 0%, transparent 70%);
       top: -100px;
       right: -100px;
       animation: drift 12s ease-in-out infinite alternate;
       pointer-events: none;
       z-index: 0;
+      background: radial-gradient(circle, rgba(var(--orb1),0.07) 0%, transparent 70%);
+    }
+    @keyframes drift {
+      0%   { transform: translate(0,0) scale(1); }
+      100% { transform: translate(-60px,80px) scale(1.15); }
     }
 
-    @keyframes drift {
-      0%   { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(-60px, 80px) scale(1.15); }
+    /* ── SPLASH SCREEN ── */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, #0a0a18 0%, #12122a 50%, #0a0a18 100%);
+      overflow: auto;
+    }
+    #splash::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(155,140,255,0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(255,140,200,0.15) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .splash-inner {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 40px 24px;
+      max-width: 640px;
+      width: 100%;
+    }
+    .splash-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 3.5rem;
+      color: #fff;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+    .splash-tagline {
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 40px;
+    }
+    .splash-section-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 14px;
+    }
+    /* Language picker */
+    .lang-picker {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 36px;
+    }
+    .lang-btn {
+      font-family: 'DM Mono', monospace;
+      padding: 10px 28px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.6);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.18s;
+    }
+    .lang-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .lang-btn.active { border-color: rgba(155,140,255,0.7); color: #fff; background: rgba(155,140,255,0.18); box-shadow: 0 0 16px rgba(155,140,255,0.2); }
+    /* Theme grid */
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 36px;
+    }
+    @media(max-width:420px){ .theme-grid { grid-template-columns: repeat(2,1fr); } }
+    .theme-card {
+      border-radius: 12px;
+      padding: 14px 10px 10px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.18s;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .theme-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.3); }
+    .theme-card.selected { border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+    .theme-card .theme-preview {
+      width: 100%;
+      height: 44px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .theme-card .theme-name {
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+    }
+    .theme-card.selected .theme-name { color: #fff; font-weight: 500; }
+    /* Enter button */
+    .splash-enter-btn {
+      font-family: 'DM Mono', monospace;
+      padding: 14px 48px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(155,140,255,0.2);
+      color: #fff;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 30px rgba(155,140,255,0.2);
+    }
+    .splash-enter-btn:hover {
+      background: rgba(155,140,255,0.35);
+      box-shadow: 0 0 40px rgba(155,140,255,0.35);
+      transform: translateY(-1px);
+    }
+    .splash-fade-out {
+      animation: splashFade 0.5s ease forwards;
+    }
+    @keyframes splashFade {
+      to { opacity: 0; pointer-events: none; }
     }
 
     .app {
@@ -856,11 +993,33 @@
     }
   </style>
 </head>
-<body>
+<body class="theme-midnight">
+
+<!-- ── SPLASH SCREEN ── -->
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-logo">Ripple</div>
+    <div class="splash-tagline" id="splash-tagline">Music Therapy System</div>
+
+    <!-- Language -->
+    <div class="splash-section-title" id="splash-lang-label">Language / 语言</div>
+    <div class="lang-picker">
+      <button class="lang-btn active" data-lang="en">English</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+    </div>
+
+    <!-- Theme -->
+    <div class="splash-section-title" id="splash-theme-label">Choose a Theme</div>
+    <div class="theme-grid" id="theme-grid"></div>
+
+    <button class="splash-enter-btn" id="splash-enter">Enter →</button>
+  </div>
+</div>
+
 <div class="app">
   <div class="header">
     <h1>Ripple</h1>
-    <p>Music Therapy System</p>
+    <p id="app-tagline">Music Therapy System</p>
   </div>
 
   <div id="browser-warning" class="warning hidden">
@@ -896,14 +1055,14 @@
 
     <!-- Hand -->
     <div class="panel">
-      <div class="panel-title">Hand Visualization</div>
+      <div class="panel-title" data-i18n="handViz">Hand Visualization</div>
       <div class="hand-wrap" id="hand-wrap"></div>
       <div class="status-line" id="status-line">Connect exoskeleton to start</div>
     </div>
 
     <!-- Mapping -->
     <div class="panel">
-      <div class="panel-title">Current Mapping</div>
+      <div class="panel-title" data-i18n="currentMapping">Current Mapping</div>
       <div class="mapping-grid" id="mapping-grid"></div>
     </div>
   </div>
@@ -911,7 +1070,7 @@
   <!-- TUTORIAL TAB -->
   <div id="tab-tutorial" class="hidden">
     <div class="panel" id="tut-browser">
-      <div class="panel-title">Choose a Song</div>
+      <div class="panel-title" data-i18n="chooseSong">Choose a Song</div>
       <div class="tutorial-list" id="tutorial-list"></div>
     </div>
 
@@ -926,7 +1085,7 @@
     </div>
 
     <div class="panel hidden" id="tut-hand-panel">
-      <div class="panel-title">Hand Visualization</div>
+      <div class="panel-title" data-i18n="handViz">Hand Visualization</div>
       <div class="hand-wrap" id="tut-hand-wrap"></div>
       <div class="status-line" id="tut-status-line">Connect exoskeleton to start</div>
     </div>
@@ -935,7 +1094,7 @@
   <!-- RECORD TAB -->
   <div id="tab-record" class="hidden">
     <div class="panel">
-      <div class="panel-title">Recording</div>
+      <div class="panel-title" data-i18n="tabRecord">Recording</div>
       <div class="rec-controls">
         <button class="btn-sm play" id="rec-start-btn">⏺ Start Recording</button>
         <button class="btn-sm stop hidden" id="rec-stop-btn">⏹ Stop</button>
@@ -948,7 +1107,7 @@
   <!-- SETTINGS TAB -->
   <div id="tab-settings" class="hidden">
     <div class="panel">
-      <div class="panel-title">Configuration</div>
+      <div class="panel-title" data-i18n="configuration">Configuration</div>
       <div class="settings-grid">
         <div class="setting-group">
           <label>Sensitivity ON threshold: <span id="thresh-on-val">25</span>%</label>
@@ -1008,6 +1167,199 @@
 </div>
 
 <script>
+// ═══════════════════════════════════════════════════════
+//  I18N
+// ═══════════════════════════════════════════════════════
+const I18N = {
+  en: {
+    tagline: 'Music Therapy System',
+    connect: 'Connect', disconnect: 'Disconnect',
+    calibrate: 'Calibrate', recalibrate: 'Re-calibrate',
+    tabPlay: 'Play', tabTutorial: 'Tutorial', tabRecord: 'Record', tabSettings: 'Settings',
+    handViz: 'Hand Visualization', currentMapping: 'Current Mapping',
+    chooseSong: 'Choose a Song',
+    startRecording: '⏺ Start Recording', stopRecording: '⏹ Stop Recording',
+    recording: 'Recording',
+    demo: '▶ Demo', stopDemo: '⏹ Stop Demo', restart: '↺ Restart', exitTutorial: 'Exit Tutorial',
+    connectToStart: 'Connect exoskeleton to start',
+    bendToPlay: 'Bend fingers to play',
+    playing: 'Playing',
+    configuration: 'Configuration',
+    sensOn: 'Sensitivity ON threshold', sensOff: 'Release threshold',
+    smoothing: 'Smoothing (filter frames)', volume: 'Volume',
+    customInstrument: 'Custom Instrument (for Custom preset)',
+    browserWarning: '⚠️ Web Serial API not supported. Please use Chrome or Edge.',
+    pressThis: 'Press this finger:',
+    step: 'Step',
+    splashTheme: 'Choose a Theme',
+    splashLang: 'Language / 语言',
+    enter: 'Enter →',
+    darkThemes: '— Dark —',
+    lightThemes: '— Light —',
+  },
+  zh: {
+    tagline: '音乐治疗系统',
+    connect: '连接', disconnect: '断开连接',
+    calibrate: '校准', recalibrate: '重新校准',
+    tabPlay: '演奏', tabTutorial: '教程', tabRecord: '录音', tabSettings: '设置',
+    handViz: '手部可视化', currentMapping: '当前音符映射',
+    chooseSong: '选择歌曲',
+    startRecording: '⏺ 开始录音', stopRecording: '⏹ 停止录音',
+    recording: '录音中',
+    demo: '▶ 示范', stopDemo: '⏹ 停止示范', restart: '↺ 重新开始', exitTutorial: '退出教程',
+    connectToStart: '请连接外骨骼设备',
+    bendToPlay: '弯曲手指以演奏',
+    playing: '正在演奏',
+    configuration: '配置',
+    sensOn: '触发灵敏度', sensOff: '释放阈值',
+    smoothing: '平滑帧数', volume: '音量',
+    customInstrument: '自定义乐器（用于自定义预设）',
+    browserWarning: '⚠️ 浏览器不支持 Web Serial API，请使用 Chrome 或 Edge。',
+    pressThis: '请按此手指：',
+    step: '步骤',
+    splashTheme: '选择主题',
+    splashLang: 'Language / 语言',
+    enter: '进入 →',
+    darkThemes: '— 深色 —',
+    lightThemes: '— 浅色 —',
+  }
+};
+
+let currentLang = 'en';
+function t(key) { return I18N[currentLang][key] || I18N.en[key] || key; }
+
+function applyLang() {
+  // Header
+  const appTagline = document.getElementById('app-tagline');
+  if(appTagline) appTagline.textContent = t('tagline');
+  // Buttons
+  const map = {
+    'connect-btn':    el => { if(el.textContent.trim()==='Connect'||el.textContent.trim()==='连接'||el.textContent.trim()==='Disconnect'||el.textContent.trim()==='断开连接') {} },
+    'browser-warning': el => { el.textContent = t('browserWarning'); }
+  };
+  // Tabs
+  document.querySelectorAll('.tab[data-tab]').forEach(tab => {
+    const key = { play:'tabPlay', tutorial:'tabTutorial', record:'tabRecord', settings:'tabSettings' }[tab.dataset.tab];
+    if(key) tab.textContent = t(key);
+  });
+  // Panel titles
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  // Status lines
+  ['status-line','tut-status-line'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el && (el.textContent===I18N.en.connectToStart||el.textContent===I18N.zh.connectToStart))
+      el.textContent = t('connectToStart');
+  });
+  // Record buttons
+  const rsb = document.getElementById('rec-start-btn'); if(rsb) rsb.textContent = t('startRecording');
+  const prsb = document.getElementById('play-rec-start-btn'); if(prsb) prsb.textContent = t('startRecording');
+  const rspb = document.getElementById('rec-stop-btn'); if(rspb) rspb.textContent = '⏹ ' + (currentLang==='zh'?'停止':'Stop');
+  const prspb = document.getElementById('play-rec-stop-btn'); if(prspb) prspb.textContent = t('stopRecording');
+  // Tutorial buttons
+  const db = document.getElementById('tut-demo-btn'); if(db) db.textContent = t('demo');
+  const dsb = document.getElementById('tut-demo-stop-btn'); if(dsb) dsb.textContent = t('stopDemo');
+  const rb = document.getElementById('tut-reset-btn'); if(rb) rb.textContent = t('restart');
+  const eb = document.getElementById('tut-exit-btn'); if(eb) eb.textContent = t('exitTutorial');
+  // Settings labels
+  const cfg = document.querySelector('[data-i18n="configuration"]'); // handled by data-i18n
+  // Re-render connect/calibrate buttons via UI if available
+  if(typeof UI !== 'undefined') {
+    UI.renderConnectBtn();
+    UI.syncAll();
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  THEMES
+// ═══════════════════════════════════════════════════════
+const THEMES = [
+  { id:'midnight', nameEn:'Midnight',  nameZh:'午夜',   dark:true,  colors:['#0d0d1a','#9b8cff','#ff8cc8'] },
+  { id:'ocean',    nameEn:'Ocean',     nameZh:'海洋',   dark:true,  colors:['#071a2e','#38bdf8','#67e8f9'] },
+  { id:'forest',   nameEn:'Forest',    nameZh:'森林',   dark:true,  colors:['#071a0f','#4ade80','#86efac'] },
+  { id:'rose',     nameEn:'Rose',      nameZh:'玫瑰',   dark:true,  colors:['#1a0a12','#fb7185','#fda4af'] },
+  { id:'dusk',     nameEn:'Dusk',      nameZh:'黄昏',   dark:true,  colors:['#1a1206','#fb923c','#fbbf24'] },
+  { id:'cloud',    nameEn:'Cloud',     nameZh:'云朵',   dark:false, colors:['#f0f4ff','#6366f1','#a78bfa'] },
+  { id:'blossom',  nameEn:'Blossom',   nameZh:'樱花',   dark:false, colors:['#fff0f5','#e11d73','#f472b6'] },
+  { id:'mint',     nameEn:'Mint',      nameZh:'薄荷',   dark:false, colors:['#f0fff8','#059669','#34d399'] },
+  { id:'sand',     nameEn:'Sand',      nameZh:'沙漠',   dark:false, colors:['#fdf8f0','#b45309','#f59e0b'] },
+];
+
+let currentTheme = 'midnight';
+
+function applyTheme(id) {
+  currentTheme = id;
+  document.body.className = `theme-${id}`;
+}
+
+// ── Splash logic ──
+function initSplash() {
+  const grid = document.getElementById('theme-grid');
+  let selectedLang = 'en';
+  let selectedTheme = 'midnight';
+
+  function renderGrid() {
+    const darkLabel = selectedLang==='zh' ? '— 深色 —' : '— Dark —';
+    const lightLabel = selectedLang==='zh' ? '— 浅色 —' : '— Light —';
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);text-align:left;padding-left:2px;margin-bottom:-4px;">${darkLabel}</div>
+      ${THEMES.filter(t=>t.dark).map(th => themeCard(th, selectedTheme, selectedLang)).join('')}
+      <div style="grid-column:1/-1;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);text-align:left;padding-left:2px;margin-top:4px;margin-bottom:-4px;">${lightLabel}</div>
+      ${THEMES.filter(t=>!t.dark).map(th => themeCard(th, selectedTheme, selectedLang)).join('')}
+    `;
+    grid.querySelectorAll('.theme-card').forEach(card => {
+      card.addEventListener('click', () => {
+        selectedTheme = card.dataset.theme;
+        applyTheme(selectedTheme);
+        renderGrid();
+      });
+    });
+  }
+
+  function themeCard(th, sel, lang) {
+    const name = lang==='zh' ? th.nameZh : th.nameEn;
+    const [bg, c1, c2] = th.colors;
+    return `
+      <div class="theme-card ${sel===th.id?'selected':''}" data-theme="${th.id}">
+        <div class="theme-preview" style="background:linear-gradient(135deg,${bg} 0%,${c1}55 60%,${c2}44 100%);border:1px solid ${th.dark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.08)'}"></div>
+        <div class="theme-name">${name}</div>
+      </div>`;
+  }
+
+  function updateSplashText() {
+    document.getElementById('splash-tagline').textContent = I18N[selectedLang].tagline;
+    document.getElementById('splash-theme-label').textContent = I18N[selectedLang].splashTheme;
+    document.getElementById('splash-lang-label').textContent = I18N[selectedLang].splashLang;
+    document.getElementById('splash-enter').textContent = I18N[selectedLang].enter;
+    renderGrid();
+  }
+
+  // Language buttons
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedLang = btn.dataset.lang;
+      currentLang = selectedLang;
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateSplashText();
+    });
+  });
+
+  // Enter button
+  document.getElementById('splash-enter').addEventListener('click', () => {
+    currentLang = selectedLang;
+    applyTheme(selectedTheme);
+    const splash = document.getElementById('splash');
+    splash.classList.add('splash-fade-out');
+    setTimeout(() => { splash.style.display='none'; applyLang(); }, 500);
+  });
+
+  // Init preview theme as midnight
+  applyTheme('midnight');
+  updateSplashText();
+}
+
 // ═══════════════════════════════════════════════════════
 //  DATA
 // ═══════════════════════════════════════════════════════
@@ -1998,19 +2350,19 @@ const UI = (() => {
     const recal = document.getElementById('recalibrate-btn');
 
     if(App.connected) {
-      cb.textContent='Disconnect'; cb.className='btn btn-disconnect'; cb.disabled=false;
+      cb.textContent=t('disconnect'); cb.className='btn btn-disconnect'; cb.disabled=false;
       if(App.calibrated) {
         cal.classList.add('hidden');
         recal.classList.remove('hidden');
         recal.disabled=false;
-        recal.textContent='Re-calibrate'; recal.className='btn btn-recalibrate';
+        recal.textContent=t('recalibrate'); recal.className='btn btn-recalibrate';
       } else {
-        cal.disabled=false; cal.textContent='Calibrate'; cal.className='btn btn-calibrate';
+        cal.disabled=false; cal.textContent=t('calibrate'); cal.className='btn btn-calibrate';
         cal.classList.remove('hidden'); recal.classList.add('hidden');
       }
     } else {
-      cb.textContent='Connect'; cb.className='btn btn-connect'; cb.disabled=false;
-      cal.disabled=true; cal.textContent='Calibrate'; cal.className='btn btn-calibrate';
+      cb.textContent=t('connect'); cb.className='btn btn-connect'; cb.disabled=false;
+      cal.disabled=true; cal.textContent=t('calibrate'); cal.className='btn btn-calibrate';
       cal.classList.remove('hidden'); recal.classList.add('hidden');
     }
   }
@@ -2602,6 +2954,9 @@ const PianoRoll = (() => {
 //  BOOTSTRAP
 // ═══════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
+  // Init splash screen
+  initSplash();
+
   // Browser check
   if(!('serial' in navigator)) {
     document.getElementById('browser-warning').classList.remove('hidden');
