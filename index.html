@@ -217,6 +217,7 @@
     .header {
       text-align: center;
       margin-bottom: 48px;
+      position: relative;
     }
 
     .header h1 {
@@ -235,6 +236,27 @@
       font-size: 0.8rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
+    }
+
+    /* Back to splash button — top-right of header */
+    #back-to-splash {
+      position: absolute;
+      top: 0;
+      right: 0;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    #back-to-splash:hover {
+      color: var(--text);
+      border-color: var(--accent);
     }
 
     /* Warning */
@@ -1051,6 +1073,7 @@
   <div class="header">
     <h1>Ripple</h1>
     <p id="app-tagline">Music Therapy System</p>
+    <button id="back-to-splash">⚙ Theme &amp; Language</button>
   </div>
 
   <div id="browser-warning" class="warning hidden">
@@ -1222,7 +1245,7 @@ const I18N = {
     browserWarning: '⚠️ Web Serial API not supported. Please use Chrome or Edge.',
     pressThis: 'Press this finger:',
     step: 'Step',
-    splashTheme: 'Choose a Theme',
+    splashBtn: '⚙ Theme & Language',
     splashLang: 'Language / 语言',
     enter: 'Enter →',
     darkThemes: '— Dark —',
@@ -1248,7 +1271,7 @@ const I18N = {
     browserWarning: '⚠️ 浏览器不支持 Web Serial API，请使用 Chrome 或 Edge。',
     pressThis: '请按此手指：',
     step: '步骤',
-    splashTheme: '选择主题',
+    splashBtn: '⚙ 主题与语言',
     splashLang: 'Language / 语言',
     enter: '进入 →',
     darkThemes: '— 深色 —',
@@ -1263,6 +1286,8 @@ function applyLang() {
   // Header
   const appTagline = document.getElementById('app-tagline');
   if(appTagline) appTagline.textContent = t('tagline');
+  const backBtn = document.getElementById('back-to-splash');
+  if(backBtn) backBtn.textContent = t('splashBtn');
   // Buttons
   const map = {
     'connect-btn':    el => { if(el.textContent.trim()==='Connect'||el.textContent.trim()==='连接'||el.textContent.trim()==='Disconnect'||el.textContent.trim()==='断开连接') {} },
@@ -1382,8 +1407,9 @@ function initSplash() {
     currentLang = selectedLang;
     applyTheme(selectedTheme);
     const splash = document.getElementById('splash');
-    splash.classList.add('splash-fade-out');
-    setTimeout(() => { splash.style.display='none'; applyLang(); }, 500);
+    splash.style.transition = 'opacity 0.5s ease';
+    splash.style.opacity = '0';
+    setTimeout(() => { splash.style.display = 'none'; applyLang(); }, 500);
   });
 
   // Init preview theme as midnight
@@ -3018,6 +3044,21 @@ const PianoRoll = (() => {
 document.addEventListener('DOMContentLoaded', () => {
   // Init splash screen
   initSplash();
+
+  // Back to splash button
+  document.getElementById('back-to-splash').addEventListener('click', () => {
+    const splash = document.getElementById('splash');
+    splash.style.display = 'flex';   // make it visible again
+    splash.style.opacity = '0';      // start transparent
+    splash.classList.remove('splash-fade-out');
+    // Fade it in
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        splash.style.transition = 'opacity 0.35s ease';
+        splash.style.opacity = '1';
+      });
+    });
+  });
 
   // Browser check
   if(!('serial' in navigator)) {
