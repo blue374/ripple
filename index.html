@@ -1046,68 +1046,67 @@
       100% { box-shadow: 0 0 0 18px rgba(var(--rc), 0); }
     }
     /* ── SIDE HINTS ── */
-    #side-hints {
-      position: fixed;
-      right: 20px;
+    #side-hints { display: none; } /* replaced by inline button hints */
+
+    .btn-hint-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+    }
+    .btn-hint-bubble {
+      position: absolute;
+      left: calc(100% + 10px);
       top: 50%;
       transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 50;
-      max-width: 180px;
-      pointer-events: none;
-    }
-    .hint-bubble {
       background: linear-gradient(135deg, rgba(255,220,60,0.97), rgba(255,190,20,0.97));
       color: #1a1200;
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.74rem;
-      line-height: 1.4;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,220,60,0.4);
-      position: relative;
-      pointer-events: auto;
+      border-radius: 10px;
+      padding: 7px 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      line-height: 1.35;
+      white-space: nowrap;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      z-index: 60;
+      pointer-events: none;
       animation: hintPop 0.3s cubic-bezier(0.34,1.56,0.64,1);
     }
-    .hint-bubble::before {
+    .btn-hint-bubble::before {
       content: '';
       position: absolute;
-      left: -7px;
+      right: 100%;
       top: 50%;
       transform: translateY(-50%);
       border-width: 6px 8px 6px 0;
       border-style: solid;
       border-color: transparent rgba(255,205,20,0.97) transparent transparent;
     }
-    .hint-bubble .hint-step {
-      font-size: 0.6rem;
-      letter-spacing: 0.1em;
+    .btn-hint-icon {
+      margin-right: 5px;
+    }
+    .btn-highlighted {
+      box-shadow: 0 0 0 3px rgba(255,220,60,0.9), 0 0 18px rgba(255,200,40,0.6) !important;
+      animation: hintPulse 1.2s ease-in-out infinite;
+    }
+    @keyframes hintPulse {
+      0%,100% { box-shadow: 0 0 0 3px rgba(255,220,60,0.9), 0 0 18px rgba(255,200,40,0.5); }
+      50%      { box-shadow: 0 0 0 5px rgba(255,220,60,0.6), 0 0 28px rgba(255,200,40,0.8); }
+    }
+    .tut-diff-header {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      opacity: 0.65;
-      margin-bottom: 3px;
-    }
-    .hint-bubble .hint-icon {
-      font-size: 1.1rem;
-      margin-bottom: 3px;
-      display: block;
-    }
-    @keyframes hintPop {
-      0% { opacity:0; transform: scale(0.85) translateX(10px); }
-      100% { opacity:1; transform: scale(1) translateX(0); }
+      padding: 10px 4px 5px;
+      margin-top: 4px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 6px;
     }
     @media (max-width: 760px) {
-      #side-hints {
-        right: auto;
-        left: 50%;
-        bottom: 20px;
-        top: auto;
-        transform: translateX(-50%);
-        flex-direction: row;
-        max-width: 90vw;
-      }
-      .hint-bubble::before { display: none; }
+      .btn-hint-bubble { left: auto; right: auto; top: calc(100% + 8px); transform: none; white-space: normal; width: 160px; }
+      .btn-hint-bubble::before { right: auto; left: 20px; top: auto; bottom: 100%; transform: none;
+        border-width: 0 6px 8px 6px; border-color: transparent transparent rgba(255,205,20,0.97) transparent; }
     }
   </style>
 </head>
@@ -1150,9 +1149,13 @@
 
   <!-- Controls -->
   <div class="control-bar">
-    <button id="connect-btn" class="btn btn-connect">Connect</button>
-    <button id="calibrate-btn" class="btn btn-calibrate" disabled>Calibrate</button>
-    <button id="recalibrate-btn" class="btn btn-recalibrate hidden">Re-calibrate</button>
+    <div class="btn-hint-wrap" id="connect-hint-wrap">
+      <button id="connect-btn" class="btn btn-connect">Connect</button>
+    </div>
+    <div class="btn-hint-wrap" id="calibrate-hint-wrap">
+      <button id="calibrate-btn" class="btn btn-calibrate" disabled>Calibrate</button>
+      <button id="recalibrate-btn" class="btn btn-recalibrate hidden">Re-calibrate</button>
+    </div>
   </div>
 
   <!-- Tabs -->
@@ -3149,29 +3152,37 @@ const UI = (() => {
   }
 
   function updateHints() {
-    const el = document.getElementById('side-hints');
-    if(!el) return;
-    const hints = [];
+    // Clear all existing hint bubbles and highlights
+    document.querySelectorAll('.btn-hint-bubble').forEach(e=>e.remove());
+    document.querySelectorAll('.btn-highlighted').forEach(e=>e.classList.remove('btn-highlighted'));
+
+    if(App.connected && App.calibrated) return; // no hints needed
+
+    const zh = currentLang === 'zh';
+
     if(!App.connected) {
-      hints.push(`
-        <div class="hint-bubble">
-          <span class="hint-icon">🔌</span>
-          <div class="hint-step">${currentLang==='zh'?'第一步':'Step 1'}</div>
-          ${currentLang==='zh'
-            ? '点击<strong>连接</strong>按钮，连接外骨骼设备'
-            : 'Click <strong>Connect</strong> to link your exoskeleton'}
-        </div>`);
+      // Highlight connect button and show bubble next to it
+      const btn = document.getElementById('connect-btn');
+      const wrap = document.getElementById('connect-hint-wrap');
+      if(btn) btn.classList.add('btn-highlighted');
+      if(wrap) {
+        const bubble = document.createElement('div');
+        bubble.className = 'btn-hint-bubble';
+        bubble.innerHTML = `<span class="btn-hint-icon">🔌</span>${zh ? '点击<strong>连接</strong>外骨骼' : 'Click to connect your exoskeleton'}`;
+        wrap.appendChild(bubble);
+      }
     } else if(!App.calibrated) {
-      hints.push(`
-        <div class="hint-bubble">
-          <span class="hint-icon">✋</span>
-          <div class="hint-step">${currentLang==='zh'?'第二步':'Step 2'}</div>
-          ${currentLang==='zh'
-            ? '放平手掌，点击<strong>校准</strong>按钮'
-            : 'Rest your hand flat, then click <strong>Calibrate</strong>'}
-        </div>`);
+      // Highlight calibrate button and show bubble next to it
+      const btn = document.getElementById('calibrate-btn');
+      const wrap = document.getElementById('calibrate-hint-wrap');
+      if(btn) btn.classList.add('btn-highlighted');
+      if(wrap) {
+        const bubble = document.createElement('div');
+        bubble.className = 'btn-hint-bubble';
+        bubble.innerHTML = `<span class="btn-hint-icon">✋</span>${zh ? '放平手掌，点击<strong>校准</strong>' : 'Rest hand flat, then <strong>Calibrate</strong>'}`;
+        wrap.appendChild(bubble);
+      }
     }
-    el.innerHTML = hints.join('');
   }
 
   function renderConnectBtn() {
@@ -3417,14 +3428,26 @@ const UI = (() => {
 
   function renderTutorialList() {
     const diffKey = { Beginner:'diffBeginner', Easy:'diffEasy', Medium:'diffMedium', Hard:'diffHard' };
-    const list=document.getElementById('tutorial-list');
-    list.innerHTML=Object.entries(TUTORIALS).map(([id,tut])=>`
-      <div class="tutorial-card" data-id="${id}">
-        <div class="tut-name">${tut.name}</div>
-        ${currentLang==='zh' && tut.nameEn ? `<div style="font-size:0.68rem;color:var(--muted);margin-bottom:2px;font-style:italic;">${tut.nameEn}</div>` : ''}
-        <div class="tut-meta difficulty-${tut.difficulty.toLowerCase()}">${t(diffKey[tut.difficulty]||tut.difficulty)} · ${tut.sequence.length} ${t('notes')}</div>
-      </div>
-    `).join('');
+    const diffOrder = { Beginner:0, Easy:1, Medium:2, Hard:3 };
+    const sorted = Object.entries(TUTORIALS).sort((a,b)=>
+      (diffOrder[a[1].difficulty]??9) - (diffOrder[b[1].difficulty]??9)
+    );
+    // Group by difficulty with section headers
+    let lastDiff = null;
+    const list = document.getElementById('tutorial-list');
+    list.innerHTML = sorted.map(([id,tut])=>{
+      let header = '';
+      if(tut.difficulty !== lastDiff) {
+        lastDiff = tut.difficulty;
+        header = `<div class="tut-diff-header difficulty-${tut.difficulty.toLowerCase()}">${t(diffKey[tut.difficulty]||tut.difficulty)}</div>`;
+      }
+      return header + `
+        <div class="tutorial-card" data-id="${id}">
+          <div class="tut-name">${tut.name}</div>
+          ${currentLang==='zh' && tut.nameEn ? `<div style="font-size:0.68rem;color:var(--muted);margin-bottom:2px;font-style:italic;">${tut.nameEn}</div>` : ''}
+          <div class="tut-meta difficulty-${tut.difficulty.toLowerCase()}">${tut.sequence.length} ${t('notes')}</div>
+        </div>`;
+    }).join('');
     list.querySelectorAll('.tutorial-card').forEach(c=>{
       c.addEventListener('click',()=>App.startTutorial(c.dataset.id));
     });
