@@ -1846,16 +1846,21 @@ const TUTORIALS_ZH = {
       {note:'D4',d:1},{note:'C4',d:2},
     ],
   },
+
+  // 茉莉花 — C pentatonic: C D E G A (5 notes, no shift needed)
+  // 好一朵茉莉花: G A G E | D C(hold) | G A G A | A. G G(hold) | E D C(hold)
   molihua: {
     name:'茉莉花', nameEn:'Jasmine Flower', difficulty:'Beginner', bpm:88,
     sequence:[
       {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},
-      {note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:2},
+      {note:'D4',d:1},{note:'C4',d:3},
       {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'A4',d:0.5},
-      {note:'A4',d:0.75},{note:'G4',d:0.25},{note:'G4',d:2},
-      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'A4',d:0.75},{note:'G4',d:0.25},{note:'G4',d:3},
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:3},
     ],
   },
+
+  // 两只老虎 — Frère Jacques melody, C major: C D E F G (5 notes, no shift)
   liangzhi: {
     name:'两只老虎', nameEn:'Two Tigers', difficulty:'Beginner', bpm:112,
     sequence:[
@@ -1863,12 +1868,16 @@ const TUTORIALS_ZH = {
       {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},
       {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
       {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
-      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'C4',d:1},
-      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'C4',d:1},
-      {note:'C4',d:1},{note:'G4',d:1},{note:'C4',d:2},
-      {note:'C4',d:1},{note:'G4',d:1},{note:'C4',d:2},
+      {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'C4',d:1},{note:'G3',d:1},{note:'C4',d:2},
+      {note:'C4',d:1},{note:'G3',d:1},{note:'C4',d:2},
     ],
   },
+
+  // 世上只有妈妈好 — 3/4 waltz, C pentatonic: C D E G A (5 notes, no shift)
+  // 世上只有妈妈好: E G(h.) | G E G A | G(h.) | E G(h.) | G E D C | D(h.) |
+  // 投进妈妈的怀抱: C D E G E D C | E(h.) | G E D E | D(h.) | C(h.)
   mama: {
     name:'世上只有妈妈好', nameEn:'Mother Is the Best', difficulty:'Easy', bpm:96,
     sequence:[
@@ -1877,7 +1886,7 @@ const TUTORIALS_ZH = {
       {note:'G4',d:3},
       {note:'E4',d:1},{note:'G4',d:2},
       {note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
-      {note:'D4',d:1},{note:'C4',d:2},
+      {note:'D4',d:3},
       {note:'C4',d:0.5},{note:'D4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:1},
       {note:'E4',d:3},
       {note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'E4',d:1},
@@ -1885,6 +1894,8 @@ const TUTORIALS_ZH = {
       {note:'C4',d:3},
     ],
   },
+
+  // 生日快乐 — C major: C D E F G A Bb C5 (8 notes, shifts for high notes)
   happy: {
     name:'生日快乐', nameEn:'Happy Birthday', difficulty:'Easy',
     sequence:[
@@ -1898,6 +1909,8 @@ const TUTORIALS_ZH = {
       {note:'F4',d:1},{note:'G4',d:1},{note:'F4',d:2},
     ],
   },
+
+  // 小星星 — Twinkle, C pentatonic with F: C D E F G A (6 notes, shifts for A4)
   twinkle: {
     name:'小星星', nameEn:'Little Star (Twinkle)', difficulty:'Easy',
     sequence:[
@@ -1915,6 +1928,10 @@ const TUTORIALS_ZH = {
       {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
     ],
   },
+
+  // 卖报歌 — Nie Er 1933, C pentatonic: C D E G A (5 notes, no shift)
+  // G G G E G A | G. E G | A A A A A G | A(h) |
+  // E E G E D C | D(h) | C E G A G E | C(h)
   brother: {
     name:'卖报歌', nameEn:"Newsboy's Song", difficulty:'Medium', bpm:120,
     sequence:[
@@ -1928,19 +1945,36 @@ const TUTORIALS_ZH = {
       {note:'C4',d:2},
     ],
   },
+
+  // 友谊地久天长 (Auld Lang Syne) — correct melody, 3/4
+  // Notes: C4 D4 E4 G4 A4 C5 (6 notes, shifts up when C5 appears)
+  // G(pickup) | C. C D C | C E G(h.) | E. E C E | G(h.) |
+  // A. A A G | A C5 C5(h.) | A. E G A | A(h.) |
+  // G. G A G | G E G(h.) | D. D C E | G. E D C |
+  // E. E G A | A G E(h.) | C(h.) |
   jingle: {
     name:'友谊地久天长', nameEn:'Auld Lang Syne', difficulty:'Medium', bpm:84,
     sequence:[
-      {note:'C4',d:1.5},{note:'C4',d:0.5},{note:'G4',d:1},{note:'G4',d:1},
-      {note:'A4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:2},
-      {note:'A4',d:1.5},{note:'A4',d:0.5},{note:'C4',d:1},{note:'D4',d:1},
-      {note:'F4',d:3},
-      {note:'G4',d:1.5},{note:'G4',d:0.5},{note:'F4',d:1},{note:'D4',d:1},
-      {note:'F4',d:1.5},{note:'F4',d:0.5},{note:'D4',d:2},
-      {note:'D4',d:1.5},{note:'D4',d:0.5},{note:'F4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},
+      {note:'C4',d:1.5},{note:'C4',d:0.5},{note:'D4',d:1},{note:'C4',d:1},
+      {note:'C4',d:1},{note:'E4',d:1},{note:'G4',d:3},
+      {note:'E4',d:1.5},{note:'E4',d:0.5},{note:'C4',d:1},{note:'E4',d:1},
+      {note:'G4',d:3},
+      {note:'A4',d:1.5},{note:'A4',d:0.5},{note:'A4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'C5',d:1},{note:'C5',d:3},
+      {note:'A4',d:1.5},{note:'E4',d:0.5},{note:'G4',d:1},{note:'A4',d:1},
       {note:'A4',d:3},
+      {note:'G4',d:1.5},{note:'G4',d:0.5},{note:'A4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:3},
+      {note:'D4',d:1.5},{note:'D4',d:0.5},{note:'C4',d:1},{note:'E4',d:1},
+      {note:'G4',d:1.5},{note:'E4',d:0.5},{note:'D4',d:1},{note:'C4',d:1},
+      {note:'E4',d:1.5},{note:'E4',d:0.5},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:3},
+      {note:'C4',d:3},
     ],
   },
+
+  // 欢乐颂 — Ode to Joy, C major: C D E F G (5 notes, no shift)
   ode: {
     name:'欢乐颂', nameEn:'Ode to Joy', difficulty:'Medium',
     sequence:[
@@ -1954,8 +1988,10 @@ const TUTORIALS_ZH = {
       {note:'D4',d:1.5},{note:'C4',d:0.5},{note:'C4',d:2},
     ],
   },
+
+  // Row Row Row Your Boat — kept in ZH list as a universal favourite
   rowboat: {
-    name:'Row Row Row Your Boat', nameEn:'Row Row Row Your Boat', difficulty:'Medium',
+    name:'划船之歌', nameEn:'Row Your Boat', difficulty:'Medium',
     sequence:[
       {note:'C4',d:1.5},{note:'C4',d:1.5},{note:'C4',d:0.75},{note:'D4',d:0.25},{note:'E4',d:1},
       {note:'E4',d:1.5},{note:'D4',d:0.5},{note:'E4',d:1.5},{note:'G4',d:0.5},{note:'C5',d:3},
@@ -1966,19 +2002,30 @@ const TUTORIALS_ZH = {
       {note:'G4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1.5},{note:'D4',d:0.5},{note:'C4',d:3},
     ],
   },
+
+  // 梁祝主题 — Butterfly Lovers, C pentatonic: C D E G A C5 (6 notes)
+  // Correct opening: G G A | C5 A | G E | D(long) | C(long)
+  // Second phrase: E E G A G | E D E G | A G E D | C(long)
   entertainer: {
     name:'梁祝主题', nameEn:'Butterfly Lovers (Theme)', difficulty:'Hard', bpm:66,
     sequence:[
-      {note:'G4',d:1},{note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:1},{note:'E4',d:1},
-      {note:'D4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:2},
-      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'C5',d:1.5},{note:'A4',d:0.5},
+      {note:'G4',d:1},{note:'E4',d:1},
+      {note:'D4',d:3},
       {note:'C4',d:3},
       {note:'E4',d:1},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'A4',d:1},{note:'G4',d:1},
       {note:'E4',d:0.5},{note:'D4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},
       {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},
       {note:'C4',d:3},
+      {note:'G4',d:1},{note:'G4',d:0.5},{note:'A4',d:0.5},{note:'C5',d:1},{note:'A4',d:1},
+      {note:'G4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:0.5},{note:'E4',d:0.5},
+      {note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:3},
     ],
   },
+
+  // 致爱丽丝 — Für Elise, A minor: A3 B3 C4 D4 Eb4 E4 A4 B4 (8 notes, shifts)
   furelise: {
     name:'致爱丽丝', nameEn:'Für Elise (Theme)', difficulty:'Hard',
     sequence:[
