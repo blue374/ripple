@@ -1045,6 +1045,70 @@
       0% { box-shadow: 0 0 0 0 rgba(var(--rc), 0.4); }
       100% { box-shadow: 0 0 0 18px rgba(var(--rc), 0); }
     }
+    /* ── SIDE HINTS ── */
+    #side-hints {
+      position: fixed;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 50;
+      max-width: 180px;
+      pointer-events: none;
+    }
+    .hint-bubble {
+      background: linear-gradient(135deg, rgba(255,220,60,0.97), rgba(255,190,20,0.97));
+      color: #1a1200;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.74rem;
+      line-height: 1.4;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,220,60,0.4);
+      position: relative;
+      pointer-events: auto;
+      animation: hintPop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .hint-bubble::before {
+      content: '';
+      position: absolute;
+      left: -7px;
+      top: 50%;
+      transform: translateY(-50%);
+      border-width: 6px 8px 6px 0;
+      border-style: solid;
+      border-color: transparent rgba(255,205,20,0.97) transparent transparent;
+    }
+    .hint-bubble .hint-step {
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.65;
+      margin-bottom: 3px;
+    }
+    .hint-bubble .hint-icon {
+      font-size: 1.1rem;
+      margin-bottom: 3px;
+      display: block;
+    }
+    @keyframes hintPop {
+      0% { opacity:0; transform: scale(0.85) translateX(10px); }
+      100% { opacity:1; transform: scale(1) translateX(0); }
+    }
+    @media (max-width: 760px) {
+      #side-hints {
+        right: auto;
+        left: 50%;
+        bottom: 20px;
+        top: auto;
+        transform: translateX(-50%);
+        flex-direction: row;
+        max-width: 90vw;
+      }
+      .hint-bubble::before { display: none; }
+    }
   </style>
 </head>
 <body class="theme-midnight">
@@ -1070,6 +1134,9 @@
   </div>
 </div>
 
+<!-- ── SIDE HINTS ── -->
+<div id="side-hints"></div>
+
 <div class="app">
   <div class="header">
     <h1>Ripple</h1>
@@ -1090,14 +1157,14 @@
 
   <!-- Tabs -->
   <div class="tabs">
-    <button class="tab active" data-tab="play">Play</button>
-    <button class="tab" data-tab="tutorial">Tutorial</button>
+    <button class="tab active" data-tab="tutorial">Tutorial</button>
+    <button class="tab" data-tab="play">Play</button>
     <button class="tab" data-tab="record">Record</button>
     <button class="tab" data-tab="settings">Settings</button>
   </div>
 
   <!-- PLAY TAB -->
-  <div id="tab-play">
+  <div id="tab-play" class="hidden">
     <!-- Presets -->
     <div class="preset-strip" id="preset-strip"></div>
 
@@ -1123,7 +1190,7 @@
   </div>
 
   <!-- TUTORIAL TAB -->
-  <div id="tab-tutorial" class="hidden">
+  <div id="tab-tutorial">
     <div class="panel" id="tut-browser">
       <div class="panel-title" data-i18n="chooseSong">Choose a Song</div>
       <div class="tutorial-list" id="tutorial-list"></div>
@@ -1343,7 +1410,7 @@ function applyLang() {
 
   // Tabs
   document.querySelectorAll('.tab[data-tab]').forEach(tab => {
-    const key = { play:'tabPlay', tutorial:'tabTutorial', record:'tabRecord', settings:'tabSettings' }[tab.dataset.tab];
+    const key = { tutorial:'tabTutorial', play:'tabPlay', record:'tabRecord', settings:'tabSettings' }[tab.dataset.tab];
     if(key) tab.textContent = t(key);
   });
 
@@ -1408,6 +1475,7 @@ function applyLang() {
   if(typeof UI !== 'undefined') {
     UI.renderConnectBtn();
     UI.syncAll();
+    UI.updateHints();
   }
   // Re-render instrument grid with translated labels
   if(typeof renderInstGrid !== 'undefined') renderInstGrid();
@@ -1516,22 +1584,30 @@ function initSplash() {
 // Returns {root, quality} for two-line display
 function formatChord(key) {
   if (!key || key === 'none') return { root: '—', quality: '' };
+  const zh = currentLang === 'zh';
   // Drums
-  const drumNames = { kick:'Kick', snare:'Snare', hihat:'Hi-Hat', tom:'Tom', clap:'Clap', cymbal:'Cymbal' };
-  if (drumNames[key]) return { root: drumNames[key], quality: 'drum' };
+  const drumNames = {
+    kick:  zh ? '底鼓' : 'Kick',
+    snare: zh ? '军鼓' : 'Snare',
+    hihat: zh ? '踩镲' : 'Hi-Hat',
+    tom:   zh ? '通鼓' : 'Tom',
+    clap:  zh ? '拍手' : 'Clap',
+    cymbal:zh ? '铙钹' : 'Cymbal',
+  };
+  if (drumNames[key]) return { root: drumNames[key], quality: zh ? '打击' : 'drum' };
   // Major chord: e.g. C_maj, Bb3_maj
   if (key.includes('_maj')) {
     const root = key.replace('_maj','');
-    return { root, quality: 'major' };
+    return { root, quality: zh ? '大调' : 'major' };
   }
   // Minor chord: ends with 'm' but not 'dim', e.g. Am, Cm
   if (/^[A-G][b#]?m$/.test(key)) {
-    return { root: key.slice(0,-1), quality: 'minor' };
+    return { root: key.slice(0,-1), quality: zh ? '小调' : 'minor' };
   }
   // 7th chord: e.g. G7, Bb7
   if (/^[A-G][b#]?\d?7$/.test(key)) {
     const root = key.replace('7','');
-    return { root, quality: '7th' };
+    return { root, quality: zh ? '七和弦' : '7th' };
   }
   // Plain note (C, D4, Bb3, etc.)
   return { root: key, quality: '' };
@@ -1559,7 +1635,7 @@ const CHORDS = {
   'C#':[277],'D#':[311],'F#':[370],'G#':[415],'A#':[466],
   'Db':[277],'Eb':[311],'Gb':[370],'Ab':[415],'Bb':[466],
   // Oct 5
-  'C5':[523],'D5':[587],'E5':[659],'F5':[698],'G5':[784],'A5':[880],
+  'C5':[523],'D5':[587],'E5':[659],'F5':[698],'G5':[784],'A5':[880],'B5':[988],
   // Major chords
   'C_maj':[262,330,392],'D_maj':[294,370,440],'E_maj':[330,415,494],
   'F_maj':[349,440,523],'G_maj':[392,494,587],'A_maj':[440,554,659],'B_maj':[494,622,740],
@@ -1581,7 +1657,7 @@ const CHORDS = {
 const DRUMS = ['kick','snare','hihat','tom','clap','cymbal'];
 
 const PRESETS = {
-  therapy: { name:'🧘 Therapy', nameZh:'🧘 治疗', instrument:'pad',   mapping:{thumb:'C_maj',index:'F_maj',middle:'G_maj',ring:'Am',pinky:'Em'} },
+  therapy: { name:'🎵 Harp', nameZh:'🎵 竖琴', instrument:'harp', mapping:{thumb:'C_maj',index:'F_maj',middle:'Am',ring:'G_maj',pinky:'Em'} },
   piano:   { name:'🎹 Piano',   nameZh:'🎹 钢琴', instrument:'soft',  mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'} },
   chords:  { name:'🎸 Chords',  nameZh:'🎸 和弦', instrument:'soft',  mapping:{thumb:'C_maj',index:'D_maj',middle:'E_maj',ring:'G_maj',pinky:'A_maj'} },
   drums:   { name:'🥁 Drums',   nameZh:'🥁 打击乐', instrument:'drums', mapping:{thumb:'kick',index:'snare',middle:'hihat',ring:'tom',pinky:'clap'} },
@@ -1921,13 +1997,40 @@ const AudioEngine = (() => {
 
     const nodes = [];
     const gainNode = ctx.createGain();
-    const attackTime = inst==='pad' ? 0.06 : inst==='bell' ? 0.01 : 0.02;
+    const attackTime = inst==='pad' ? 0.06 : inst==='bell' ? 0.01 : inst==='harp' ? 0.008 : 0.02;
     const peakGain = inst==='pad' ? 0.22/Math.max(freqs.length,1) : 0.30/Math.max(freqs.length,1);
     gainNode.gain.setValueAtTime(0, ctx.currentTime);
     gainNode.gain.linearRampToValueAtTime(peakGain, ctx.currentTime + attackTime);
     gainNode.connect(masterGain);
 
-    for(const freq of freqs) {
+    if(inst==='harp') {
+      // Harp: stagger each chord note slightly (arpeggio feel), warm plucked tone
+      // Each note: fast attack, exponential decay ~2s
+      freqs.forEach((freq, noteIdx) => {
+        const delay = noteIdx * 0.055; // 55ms between each string pluck
+        const pluckGain = ctx.createGain();
+        pluckGain.gain.setValueAtTime(0, ctx.currentTime + delay);
+        pluckGain.gain.linearRampToValueAtTime(0.28 / Math.max(freqs.length, 1), ctx.currentTime + delay + 0.008);
+        pluckGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 2.2);
+        pluckGain.connect(masterGain);
+
+        // Fundamental + gentle 2nd harmonic for warmth
+        [1, 2].forEach((h, hi) => {
+          const o = ctx.createOscillator();
+          const hg = ctx.createGain();
+          o.type = 'sine';
+          o.frequency.value = freq * h;
+          hg.gain.value = hi === 0 ? 1.0 : 0.18;
+          o.connect(hg); hg.connect(pluckGain);
+          o.start(ctx.currentTime + delay);
+          // Stop after decay
+          setTimeout(() => { try { o.stop(); } catch(e) {} }, (delay + 2.4) * 1000);
+          nodes.push(o);
+        });
+      });
+      // Override the shared gainNode envelope — harp manages its own per-note gains
+      gainNode.gain.setValueAtTime(1, ctx.currentTime);
+    } else for(const freq of freqs) {
       if(inst==='sine') {
         const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=freq;
         o.connect(gainNode); o.start(); nodes.push(o);
@@ -1940,11 +2043,10 @@ const AudioEngine = (() => {
       } else if(inst==='bell') {
         [1,2.756,5.404].forEach((h,i)=>{
           const o=ctx.createOscillator(); const g=ctx.createGain();
-          o.type = i===0?'sine':'sine';
+          o.type='sine';
           o.frequency.value=freq*h; g.gain.value=[1,0.4,0.15][i];
           o.connect(g); g.connect(gainNode); o.start(); nodes.push(o);
         });
-        // bell decays naturally over 2.5s
         gainNode.gain.cancelScheduledValues(ctx.currentTime);
         gainNode.gain.setValueAtTime(peakGain, ctx.currentTime + attackTime);
         gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5);
@@ -1966,7 +2068,7 @@ const AudioEngine = (() => {
     const { nodes, gainNode, inst } = entry;
     const now = ctx.currentTime;
     // Natural release time varies by instrument
-    const releaseTime = inst==='pad' ? 0.35 : inst==='bell' ? 0.8 : inst==='soft' ? 0.25 : 0.18;
+    const releaseTime = inst==='pad' ? 0.35 : inst==='bell' ? 0.8 : inst==='harp' ? 0.1 : inst==='soft' ? 0.25 : 0.18;
     gainNode.gain.cancelScheduledValues(now);
     gainNode.gain.setValueAtTime(gainNode.gain.value, now);
     gainNode.gain.exponentialRampToValueAtTime(0.001, now + releaseTime);
@@ -2379,7 +2481,6 @@ const App = (() => {
   }
 
   function startTutorial(id) {
-    if(!connected||!calibrated) { alert('Please connect and calibrate first.'); return; }
     tutState={current:id, step:0, completed:false};
     tutReady=new Set(FINGERS);
     mode='tutorial';
@@ -2542,6 +2643,33 @@ const UI = (() => {
     renderHand();
     renderMapping();
     renderRecordingList();
+    updateHints();
+  }
+
+  function updateHints() {
+    const el = document.getElementById('side-hints');
+    if(!el) return;
+    const hints = [];
+    if(!App.connected) {
+      hints.push(`
+        <div class="hint-bubble">
+          <span class="hint-icon">🔌</span>
+          <div class="hint-step">${currentLang==='zh'?'第一步':'Step 1'}</div>
+          ${currentLang==='zh'
+            ? '点击<strong>连接</strong>按钮，连接外骨骼设备'
+            : 'Click <strong>Connect</strong> to link your exoskeleton'}
+        </div>`);
+    } else if(!App.calibrated) {
+      hints.push(`
+        <div class="hint-bubble">
+          <span class="hint-icon">✋</span>
+          <div class="hint-step">${currentLang==='zh'?'第二步':'Step 2'}</div>
+          ${currentLang==='zh'
+            ? '放平手掌，点击<strong>校准</strong>按钮'
+            : 'Rest your hand flat, then click <strong>Calibrate</strong>'}
+        </div>`);
+    }
+    el.innerHTML = hints.join('');
   }
 
   function renderConnectBtn() {
@@ -2900,6 +3028,7 @@ const UI = (() => {
     renderTutorialList, renderTutorialActive, renderTutorialHand,
     renderRecordingList,
     setDemoPlaying,
+    updateHints,
   };
 })();
 
@@ -3217,12 +3346,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Tabs
-  document.querySelectorAll('.tab').forEach(t=>{
-    t.addEventListener('click', ()=>{
+  document.querySelectorAll('.tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
       document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-      t.classList.add('active');
+      tab.classList.add('active');
       ['play','tutorial','record','settings'].forEach(id=>{
-        document.getElementById('tab-'+id).classList.toggle('hidden', id!==t.dataset.tab);
+        document.getElementById('tab-'+id).classList.toggle('hidden', id!==tab.dataset.tab);
       });
     });
   });
