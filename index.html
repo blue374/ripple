@@ -1627,7 +1627,7 @@ const FINGER_CFG = {
 
 const CHORDS = {
   // Single notes oct3
-  'A3':[220],'B3':[247],'Bb3':[233],'C3':[131],'D3':[147],'E3':[165],'Eb3':[156],
+  'A3':[220],'B3':[247],'Bb3':[233],'C3':[131],'D3':[147],'E3':[165],'Eb3':[156],'F3':[175],'G3':[196],'Ab3':[208],
   // Single notes oct4
   'C4':[262],'D4':[294],'E4':[330],'F4':[349],'G4':[392],'A4':[440],'B4':[494],
   'C#4':[277],'D#4':[311],'F#4':[370],'G#4':[415],'A#4':[466],
@@ -1669,173 +1669,170 @@ const PRESETS = {
 const TUTORIALS_EN = {
   scale: {
     name:'Simple Scale', difficulty:'Beginner',
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
     sequence:[
-      {f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},{f:'ring',d:1},
-      {f:'pinky',d:1},{f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},
-      {f:'index',d:1},{f:'thumb',d:2},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'C4',d:2},
     ],
   },
   hotcross: {
     name:'Hot Cross Buns', difficulty:'Beginner',
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
     sequence:[
-      {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:2},
-      {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:2},
-      {f:'thumb',d:0.5},{f:'thumb',d:0.5},{f:'thumb',d:0.5},{f:'thumb',d:0.5},
-      {f:'index',d:0.5},{f:'index',d:0.5},{f:'index',d:0.5},{f:'index',d:0.5},
-      {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:2},
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'C4',d:0.5},{note:'C4',d:0.5},{note:'C4',d:0.5},{note:'C4',d:0.5},
+      {note:'D4',d:0.5},{note:'D4',d:0.5},{note:'D4',d:0.5},{note:'D4',d:0.5},
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
     ],
   },
   rain: {
     name:'Rain Rain Go Away', difficulty:'Beginner',
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
     sequence:[
-      {f:'middle',d:1},{f:'middle',d:1},{f:'ring',d:1},{f:'middle',d:1},
-      {f:'middle',d:1},{f:'middle',d:1},{f:'ring',d:1},{f:'middle',d:1},
-      {f:'middle',d:1},{f:'ring',d:1},{f:'pinky',d:1},{f:'ring',d:1},
-      {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:2},
+      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'G4',d:2},
+      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'G4',d:2},
+      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'D4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:2},
     ],
   },
   mary: {
     name:'Mary Had a Little Lamb', difficulty:'Easy',
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
     sequence:[
-      {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:1},{f:'index',d:1},
-      {f:'middle',d:1},{f:'middle',d:1},{f:'middle',d:2},
-      {f:'index',d:1},{f:'index',d:1},{f:'index',d:2},
-      {f:'middle',d:1},{f:'pinky',d:1},{f:'pinky',d:2},
-      {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:1},{f:'index',d:1},
-      {f:'middle',d:1},{f:'middle',d:1},{f:'middle',d:1},{f:'middle',d:1},
-      {f:'index',d:1},{f:'index',d:1},{f:'middle',d:1},{f:'index',d:1},
-      {f:'thumb',d:2},
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'D4',d:2},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'G4',d:2},
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:2},
     ],
   },
   happy: {
+    // 8 notes → mapping shifts mid-song
     name:'Happy Birthday', difficulty:'Easy',
-    mapping:{thumb:'F4',index:'G4',middle:'A4',ring:'Bb4',pinky:'C5'},
     sequence:[
-      {f:'thumb',d:0.75},{f:'thumb',d:0.25},{f:'index',d:1},
-      {f:'thumb',d:1},{f:'ring',d:1},{f:'middle',d:2},
-      {f:'thumb',d:0.75},{f:'thumb',d:0.25},{f:'index',d:1},
-      {f:'thumb',d:1},{f:'pinky',d:1},{f:'ring',d:2},
-      {f:'thumb',d:0.75},{f:'thumb',d:0.25},{f:'middle',d:1},
-      {f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},
-      {f:'pinky',d:0.75},{f:'pinky',d:0.25},{f:'ring',d:1},
-      {f:'middle',d:1},{f:'index',d:3},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'F4',d:1},{note:'E4',d:2},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'G4',d:1},{note:'F4',d:2},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'C5',d:1},
+      {note:'A4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'Bb4',d:0.75},{note:'Bb4',d:0.25},{note:'A4',d:1},
+      {note:'F4',d:1},{note:'G4',d:1},{note:'F4',d:2},
     ],
   },
   london: {
     name:'London Bridge', difficulty:'Easy',
-    mapping:{thumb:'G4',index:'A4',middle:'B4',ring:'C5',pinky:'D5'},
     sequence:[
-      {f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'ring',d:1},
-      {f:'pinky',d:1.5},{f:'pinky',d:0.5},{f:'pinky',d:1},
-      {f:'ring',d:1},{f:'ring',d:1},{f:'ring',d:1},{f:'pinky',d:1},
-      {f:'ring',d:1.5},{f:'ring',d:0.5},{f:'middle',d:1},
-      {f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'ring',d:1},
-      {f:'pinky',d:1.5},{f:'pinky',d:0.5},{f:'pinky',d:2},
+      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:2},
+      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},{note:'D4',d:1},{note:'G4',d:2},
     ],
   },
   twinkle: {
+    // 6 notes (C D E F G A) → mapping shifts when A4 needed
     name:'Twinkle Twinkle', difficulty:'Easy',
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
     sequence:[
-      {f:'thumb',d:1},{f:'thumb',d:1},{f:'ring',d:1},{f:'ring',d:1},
-      {f:'pinky',d:1},{f:'pinky',d:1},{f:'ring',d:2},
-      {f:'middle',d:1},{f:'middle',d:1},{f:'index',d:1},{f:'index',d:1},
-      {f:'thumb',d:1},{f:'thumb',d:1},{f:'thumb',d:2},
-      {f:'ring',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'middle',d:1},
-      {f:'index',d:1},{f:'index',d:1},{f:'thumb',d:2},
-      {f:'ring',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'middle',d:1},
-      {f:'index',d:1},{f:'index',d:1},{f:'thumb',d:2},
-      {f:'thumb',d:1},{f:'thumb',d:1},{f:'ring',d:1},{f:'ring',d:1},
-      {f:'pinky',d:1},{f:'pinky',d:1},{f:'ring',d:2},
-      {f:'middle',d:1},{f:'middle',d:1},{f:'index',d:1},{f:'index',d:1},
-      {f:'thumb',d:1},{f:'thumb',d:1},{f:'thumb',d:2},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
     ],
   },
   brother: {
+    // 6 notes (C D E F G A) → mapping shifts for A4
     name:'Are You Sleeping', difficulty:'Medium',
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
     sequence:[
-      {f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},{f:'thumb',d:1},
-      {f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},{f:'thumb',d:1},
-      {f:'middle',d:1},{f:'ring',d:1},{f:'ring',d:2},
-      {f:'middle',d:1},{f:'ring',d:1},{f:'ring',d:2},
-      {f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'middle',d:1},{f:'thumb',d:1},
-      {f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'middle',d:1},{f:'thumb',d:1},
-      {f:'thumb',d:1},{f:'ring',d:1},{f:'thumb',d:2},
-      {f:'thumb',d:1},{f:'ring',d:1},{f:'thumb',d:2},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'C4',d:1},{note:'G4',d:1},{note:'C4',d:2},
+      {note:'C4',d:1},{note:'G4',d:1},{note:'C4',d:2},
     ],
   },
   jingle: {
     name:'Jingle Bells (Chorus)', difficulty:'Medium',
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
     sequence:[
-      {f:'middle',d:1},{f:'middle',d:1},{f:'middle',d:2},
-      {f:'middle',d:1},{f:'middle',d:1},{f:'middle',d:2},
-      {f:'middle',d:1},{f:'pinky',d:1},{f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:2},
-      {f:'ring',d:1},{f:'ring',d:1},{f:'ring',d:1},{f:'ring',d:1},
-      {f:'ring',d:1},{f:'middle',d:1},{f:'middle',d:1},{f:'middle',d:1},
-      {f:'middle',d:1},{f:'index',d:1},{f:'index',d:1},{f:'middle',d:1},
-      {f:'index',d:1},{f:'pinky',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:4},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'E4',d:1},{note:'D4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:2},{note:'G4',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:4},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'D4',d:1},{note:'C4',d:4},
     ],
   },
   ode: {
     name:'Ode to Joy', difficulty:'Medium',
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
     sequence:[
-      {f:'middle',d:1},{f:'middle',d:1},{f:'ring',d:1},{f:'pinky',d:1},
-      {f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},
-      {f:'thumb',d:1},{f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},
-      {f:'middle',d:1.5},{f:'index',d:0.5},{f:'index',d:2},
-      {f:'middle',d:1},{f:'middle',d:1},{f:'ring',d:1},{f:'pinky',d:1},
-      {f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},
-      {f:'thumb',d:1},{f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},
-      {f:'index',d:1.5},{f:'thumb',d:0.5},{f:'thumb',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'E4',d:1.5},{note:'D4',d:0.5},{note:'D4',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1.5},{note:'C4',d:0.5},{note:'C4',d:2},
     ],
   },
   rowboat: {
+    // 6 notes (C4 D4 E4 F4 G4 C5) → shifts when C5 needed
     name:'Row Row Row Your Boat', difficulty:'Medium',
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'C5'},
     sequence:[
-      {f:'thumb',d:1.5},{f:'thumb',d:1.5},{f:'thumb',d:0.75},{f:'index',d:0.25},{f:'middle',d:1},
-      {f:'middle',d:1.5},{f:'index',d:0.5},{f:'middle',d:1.5},{f:'ring',d:0.5},{f:'pinky',d:3},
-      {f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'pinky',d:0.5},
-      {f:'ring',d:0.5},{f:'ring',d:0.5},{f:'ring',d:0.5},
-      {f:'middle',d:0.5},{f:'middle',d:0.5},{f:'middle',d:0.5},
-      {f:'thumb',d:0.5},{f:'thumb',d:0.5},{f:'thumb',d:0.5},
-      {f:'ring',d:1.5},{f:'middle',d:0.5},{f:'middle',d:1.5},{f:'index',d:0.5},{f:'thumb',d:3},
+      {note:'C4',d:1.5},{note:'C4',d:1.5},{note:'C4',d:0.75},{note:'D4',d:0.25},{note:'E4',d:1},
+      {note:'E4',d:1.5},{note:'D4',d:0.5},{note:'E4',d:1.5},{note:'G4',d:0.5},{note:'C5',d:3},
+      {note:'C5',d:0.5},{note:'C5',d:0.5},{note:'C5',d:0.5},
+      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:0.5},
+      {note:'E4',d:0.5},{note:'E4',d:0.5},{note:'E4',d:0.5},
+      {note:'C4',d:0.5},{note:'C4',d:0.5},{note:'C4',d:0.5},
+      {note:'G4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1.5},{note:'D4',d:0.5},{note:'C4',d:3},
     ],
   },
   entertainer: {
+    // 6 notes (Bb3 C4 D4 E4 F4 G4) → shifts when G4 needed
     name:'The Entertainer', difficulty:'Hard',
-    mapping:{thumb:'Bb3',index:'D4',middle:'F4',ring:'G4',pinky:'A4'},
     sequence:[
-      {f:'index',d:0.5},{f:'middle',d:0.5},{f:'index',d:0.5},{f:'thumb',d:0.5},
-      {f:'index',d:0.5},{f:'middle',d:0.5},{f:'ring',d:1},{f:'middle',d:0.5},{f:'index',d:0.5},
-      {f:'middle',d:0.5},{f:'index',d:0.5},{f:'thumb',d:0.5},{f:'index',d:0.5},
-      {f:'middle',d:0.5},{f:'pinky',d:1},{f:'thumb',d:0.5},
-      {f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},
-      {f:'middle',d:0.5},{f:'index',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},
-      {f:'pinky',d:1},{f:'thumb',d:0.5},{f:'pinky',d:0.5},
-      {f:'middle',d:0.5},{f:'index',d:0.5},{f:'thumb',d:1},
+      {note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:0.5},{note:'D4',d:1},{note:'F4',d:0.5},{note:'G4',d:0.5},
+      {note:'F4',d:0.5},{note:'E4',d:0.5},{note:'F4',d:0.5},{note:'C4',d:0.5},{note:'F4',d:1},
+      {note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:0.5},{note:'D4',d:1},{note:'G4',d:0.5},{note:'F4',d:0.5},
+      {note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:2},
+      {note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:0.5},{note:'D4',d:1},{note:'F4',d:0.5},{note:'G4',d:0.5},
+      {note:'F4',d:0.5},{note:'E4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:0.5},{note:'F4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:0.5},
+      {note:'D4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:2},
     ],
   },
   furelise: {
+    // 8 notes (A3 B3 C4 D4 Eb4 E4 A4 B4) → mapping shifts for upper notes
     name:'Für Elise (Theme)', difficulty:'Hard',
-    mapping:{thumb:'A3',index:'C4',middle:'E4',ring:'Eb4',pinky:'B3'},
     sequence:[
-      {f:'middle',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},
-      {f:'middle',d:0.5},{f:'pinky',d:0.5},{f:'index',d:0.5},{f:'thumb',d:0.5},
-      {f:'thumb',d:1},
-      {f:'index',d:0.5},{f:'middle',d:0.5},{f:'thumb',d:0.5},{f:'pinky',d:1},
-      {f:'middle',d:0.5},{f:'thumb',d:0.5},{f:'pinky',d:0.5},{f:'index',d:1},
-      {f:'middle',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},
-      {f:'middle',d:0.5},{f:'pinky',d:0.5},{f:'index',d:0.5},{f:'thumb',d:0.5},
-      {f:'thumb',d:1},
-      {f:'middle',d:0.5},{f:'index',d:0.5},{f:'thumb',d:1},{f:'thumb',d:1},
+      {note:'E4',d:0.5},{note:'Eb4',d:0.5},{note:'E4',d:0.5},{note:'Eb4',d:0.5},
+      {note:'E4',d:0.5},{note:'B3',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'A3',d:1},
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'A4',d:0.5},{note:'B4',d:1},
+      {note:'E4',d:0.5},{note:'Eb4',d:0.5},{note:'E4',d:0.5},{note:'Eb4',d:0.5},
+      {note:'E4',d:0.5},{note:'B3',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'A3',d:1},
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'A4',d:0.5},{note:'B4',d:1},
+      {note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:1},
     ],
   },
 };
@@ -1843,178 +1840,200 @@ const TUTORIALS_EN = {
 const TUTORIALS_ZH = {
   scale: {
     name:'音阶练习', nameEn:'Simple Scale', difficulty:'Beginner',
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
     sequence:[
-      {f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},{f:'ring',d:1},
-      {f:'pinky',d:1},{f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},
-      {f:'index',d:1},{f:'thumb',d:2},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'C4',d:2},
     ],
   },
   molihua: {
     name:'茉莉花', nameEn:'Jasmine Flower', difficulty:'Beginner', bpm:88,
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
     sequence:[
-      {f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},
-      {f:'index',d:1},{f:'thumb',d:1},
-      {f:'index',d:2},
-      {f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'pinky',d:0.5},
-      {f:'pinky',d:0.75},{f:'ring',d:0.25},{f:'ring',d:2},
-      {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:2},
+      {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},
+      {note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:2},
+      {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'A4',d:0.5},
+      {note:'A4',d:0.75},{note:'G4',d:0.25},{note:'G4',d:2},
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
     ],
   },
   liangzhi: {
     name:'两只老虎', nameEn:'Two Tigers', difficulty:'Beginner', bpm:112,
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
     sequence:[
-      {f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},{f:'thumb',d:1},
-      {f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},{f:'thumb',d:1},
-      {f:'middle',d:1},{f:'ring',d:1},{f:'pinky',d:2},
-      {f:'middle',d:1},{f:'ring',d:1},{f:'pinky',d:2},
-      {f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'middle',d:1},{f:'thumb',d:1},
-      {f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'middle',d:1},{f:'thumb',d:1},
-      {f:'thumb',d:1},{f:'pinky',d:1},{f:'thumb',d:2},
-      {f:'thumb',d:1},{f:'pinky',d:1},{f:'thumb',d:2},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'C4',d:1},{note:'G4',d:1},{note:'C4',d:2},
+      {note:'C4',d:1},{note:'G4',d:1},{note:'C4',d:2},
     ],
   },
   mama: {
     name:'世上只有妈妈好', nameEn:'Mother Is the Best', difficulty:'Easy', bpm:96,
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
     sequence:[
-      {f:'middle',d:1},{f:'ring',d:2},
-      {f:'ring',d:1},{f:'middle',d:1},{f:'ring',d:0.5},{f:'pinky',d:0.5},
-      {f:'ring',d:3},
-      {f:'middle',d:1},{f:'ring',d:2},
-      {f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},
-      {f:'thumb',d:1},{f:'index',d:2},
-      {f:'thumb',d:0.5},{f:'index',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'index',d:0.5},{f:'thumb',d:1},
-      {f:'middle',d:3},
-      {f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},{f:'middle',d:1},
-      {f:'index',d:3},
-      {f:'thumb',d:3},
+      {note:'E4',d:1},{note:'G4',d:2},
+      {note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:0.5},{note:'A4',d:0.5},
+      {note:'G4',d:3},
+      {note:'E4',d:1},{note:'G4',d:2},
+      {note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
+      {note:'D4',d:1},{note:'C4',d:2},
+      {note:'C4',d:0.5},{note:'D4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:1},
+      {note:'E4',d:3},
+      {note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'D4',d:3},
+      {note:'C4',d:3},
     ],
   },
   happy: {
     name:'生日快乐', nameEn:'Happy Birthday', difficulty:'Easy',
-    mapping:{thumb:'F4',index:'G4',middle:'A4',ring:'Bb4',pinky:'C5'},
     sequence:[
-      {f:'thumb',d:0.75},{f:'thumb',d:0.25},{f:'index',d:1},
-      {f:'thumb',d:1},{f:'ring',d:1},{f:'middle',d:2},
-      {f:'thumb',d:0.75},{f:'thumb',d:0.25},{f:'index',d:1},
-      {f:'thumb',d:1},{f:'pinky',d:1},{f:'ring',d:2},
-      {f:'thumb',d:0.75},{f:'thumb',d:0.25},{f:'middle',d:1},
-      {f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},
-      {f:'pinky',d:0.75},{f:'pinky',d:0.25},{f:'ring',d:1},
-      {f:'middle',d:1},{f:'index',d:3},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'F4',d:1},{note:'E4',d:2},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'G4',d:1},{note:'F4',d:2},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'C5',d:1},
+      {note:'A4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'Bb4',d:0.75},{note:'Bb4',d:0.25},{note:'A4',d:1},
+      {note:'F4',d:1},{note:'G4',d:1},{note:'F4',d:2},
     ],
   },
   twinkle: {
     name:'小星星', nameEn:'Little Star (Twinkle)', difficulty:'Easy',
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
     sequence:[
-      {f:'thumb',d:1},{f:'thumb',d:1},{f:'ring',d:1},{f:'ring',d:1},
-      {f:'pinky',d:1},{f:'pinky',d:1},{f:'ring',d:2},
-      {f:'middle',d:1},{f:'middle',d:1},{f:'index',d:1},{f:'index',d:1},
-      {f:'thumb',d:1},{f:'thumb',d:1},{f:'thumb',d:2},
-      {f:'ring',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'middle',d:1},
-      {f:'index',d:1},{f:'index',d:1},{f:'thumb',d:2},
-      {f:'ring',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'middle',d:1},
-      {f:'index',d:1},{f:'index',d:1},{f:'thumb',d:2},
-      {f:'thumb',d:1},{f:'thumb',d:1},{f:'ring',d:1},{f:'ring',d:1},
-      {f:'pinky',d:1},{f:'pinky',d:1},{f:'ring',d:2},
-      {f:'middle',d:1},{f:'middle',d:1},{f:'index',d:1},{f:'index',d:1},
-      {f:'thumb',d:1},{f:'thumb',d:1},{f:'thumb',d:2},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
     ],
   },
   brother: {
     name:'卖报歌', nameEn:"Newsboy's Song", difficulty:'Medium', bpm:120,
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
     sequence:[
-      {f:'ring',d:0.5},{f:'ring',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},{f:'pinky',d:0.5},
-      {f:'ring',d:1},{f:'middle',d:0.5},{f:'ring',d:0.5},
-      {f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},
-      {f:'pinky',d:2},
-      {f:'middle',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'index',d:0.5},{f:'thumb',d:0.5},
-      {f:'index',d:2},
-      {f:'thumb',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},
-      {f:'thumb',d:2},
+      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'A4',d:0.5},
+      {note:'G4',d:1},{note:'E4',d:0.5},{note:'G4',d:0.5},
+      {note:'A4',d:0.5},{note:'A4',d:0.5},{note:'A4',d:0.5},{note:'A4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},
+      {note:'A4',d:2},
+      {note:'E4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},
+      {note:'D4',d:2},
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},
+      {note:'C4',d:2},
     ],
   },
   jingle: {
     name:'友谊地久天长', nameEn:'Auld Lang Syne', difficulty:'Medium', bpm:84,
-    mapping:{thumb:'C4',index:'D4',middle:'F4',ring:'G4',pinky:'A4'},
     sequence:[
-      {f:'thumb',d:1.5},{f:'thumb',d:0.5},{f:'ring',d:1},{f:'ring',d:1},
-      {f:'pinky',d:1.5},{f:'pinky',d:0.5},{f:'ring',d:2},
-      {f:'pinky',d:1.5},{f:'pinky',d:0.5},{f:'thumb',d:1},{f:'index',d:1},
-      {f:'middle',d:3},
-      {f:'ring',d:1.5},{f:'ring',d:0.5},{f:'middle',d:1},{f:'index',d:1},
-      {f:'middle',d:1.5},{f:'middle',d:0.5},{f:'index',d:2},
-      {f:'index',d:1.5},{f:'index',d:0.5},{f:'middle',d:1},{f:'ring',d:1},
-      {f:'pinky',d:3},
+      {note:'C4',d:1.5},{note:'C4',d:0.5},{note:'G4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:2},
+      {note:'A4',d:1.5},{note:'A4',d:0.5},{note:'C4',d:1},{note:'D4',d:1},
+      {note:'F4',d:3},
+      {note:'G4',d:1.5},{note:'G4',d:0.5},{note:'F4',d:1},{note:'D4',d:1},
+      {note:'F4',d:1.5},{note:'F4',d:0.5},{note:'D4',d:2},
+      {note:'D4',d:1.5},{note:'D4',d:0.5},{note:'F4',d:1},{note:'G4',d:1},
+      {note:'A4',d:3},
     ],
   },
   ode: {
     name:'欢乐颂', nameEn:'Ode to Joy', difficulty:'Medium',
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
     sequence:[
-      {f:'middle',d:1},{f:'middle',d:1},{f:'ring',d:1},{f:'pinky',d:1},
-      {f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},
-      {f:'thumb',d:1},{f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},
-      {f:'middle',d:1.5},{f:'index',d:0.5},{f:'index',d:2},
-      {f:'middle',d:1},{f:'middle',d:1},{f:'ring',d:1},{f:'pinky',d:1},
-      {f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},
-      {f:'thumb',d:1},{f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},
-      {f:'index',d:1.5},{f:'thumb',d:0.5},{f:'thumb',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'E4',d:1.5},{note:'D4',d:0.5},{note:'D4',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1.5},{note:'C4',d:0.5},{note:'C4',d:2},
     ],
   },
   rowboat: {
     name:'Row Row Row Your Boat', nameEn:'Row Row Row Your Boat', difficulty:'Medium',
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'C5'},
     sequence:[
-      {f:'thumb',d:1.5},{f:'thumb',d:1.5},{f:'thumb',d:0.75},{f:'index',d:0.25},{f:'middle',d:1},
-      {f:'middle',d:1.5},{f:'index',d:0.5},{f:'middle',d:1.5},{f:'ring',d:0.5},{f:'pinky',d:3},
-      {f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'pinky',d:0.5},
-      {f:'ring',d:0.5},{f:'ring',d:0.5},{f:'ring',d:0.5},
-      {f:'middle',d:0.5},{f:'middle',d:0.5},{f:'middle',d:0.5},
-      {f:'thumb',d:0.5},{f:'thumb',d:0.5},{f:'thumb',d:0.5},
-      {f:'ring',d:1.5},{f:'middle',d:0.5},{f:'middle',d:1.5},{f:'index',d:0.5},{f:'thumb',d:3},
+      {note:'C4',d:1.5},{note:'C4',d:1.5},{note:'C4',d:0.75},{note:'D4',d:0.25},{note:'E4',d:1},
+      {note:'E4',d:1.5},{note:'D4',d:0.5},{note:'E4',d:1.5},{note:'G4',d:0.5},{note:'C5',d:3},
+      {note:'C5',d:0.5},{note:'C5',d:0.5},{note:'C5',d:0.5},
+      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:0.5},
+      {note:'E4',d:0.5},{note:'E4',d:0.5},{note:'E4',d:0.5},
+      {note:'C4',d:0.5},{note:'C4',d:0.5},{note:'C4',d:0.5},
+      {note:'G4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1.5},{note:'D4',d:0.5},{note:'C4',d:3},
     ],
   },
   entertainer: {
     name:'梁祝主题', nameEn:'Butterfly Lovers (Theme)', difficulty:'Hard', bpm:66,
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
     sequence:[
-      {f:'ring',d:1},{f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:1},{f:'middle',d:1},
-      {f:'index',d:0.5},{f:'middle',d:0.5},{f:'ring',d:2},
-      {f:'ring',d:1},{f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},
-      {f:'thumb',d:3},
-      {f:'middle',d:1},{f:'middle',d:0.5},{f:'ring',d:0.5},{f:'pinky',d:1},{f:'ring',d:1},
-      {f:'middle',d:0.5},{f:'index',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},
-      {f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},
-      {f:'thumb',d:3},
+      {note:'G4',d:1},{note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:1},{note:'E4',d:1},
+      {note:'D4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:2},
+      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:3},
+      {note:'E4',d:1},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'A4',d:1},{note:'G4',d:1},
+      {note:'E4',d:0.5},{note:'D4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},
+      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:3},
     ],
   },
   furelise: {
     name:'致爱丽丝', nameEn:'Für Elise (Theme)', difficulty:'Hard',
-    mapping:{thumb:'A3',index:'C4',middle:'E4',ring:'Eb4',pinky:'B3'},
     sequence:[
-      {f:'middle',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},
-      {f:'middle',d:0.5},{f:'pinky',d:0.5},{f:'index',d:0.5},{f:'thumb',d:0.5},
-      {f:'thumb',d:1},
-      {f:'index',d:0.5},{f:'middle',d:0.5},{f:'thumb',d:0.5},{f:'pinky',d:1},
-      {f:'middle',d:0.5},{f:'thumb',d:0.5},{f:'pinky',d:0.5},{f:'index',d:1},
-      {f:'middle',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},
-      {f:'middle',d:0.5},{f:'pinky',d:0.5},{f:'index',d:0.5},{f:'thumb',d:0.5},
-      {f:'thumb',d:1},
-      {f:'middle',d:0.5},{f:'index',d:0.5},{f:'thumb',d:1},{f:'thumb',d:1},
+      {note:'E4',d:0.5},{note:'Eb4',d:0.5},{note:'E4',d:0.5},{note:'Eb4',d:0.5},
+      {note:'E4',d:0.5},{note:'B3',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'A3',d:1},
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'A4',d:0.5},{note:'B4',d:1},
+      {note:'E4',d:0.5},{note:'Eb4',d:0.5},{note:'E4',d:0.5},{note:'Eb4',d:0.5},
+      {note:'E4',d:0.5},{note:'B3',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'A3',d:1},
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'A4',d:0.5},{note:'B4',d:1},
+      {note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:1},
     ],
   },
 };
 
 // Active tutorial set — switches with language
 function getTutorials() { return currentLang === 'zh' ? TUTORIALS_ZH : TUTORIALS_EN; }
-// Keep TUTORIALS as a proxy so all existing code that references it still works
 let TUTORIALS = getTutorials();
+
+// ─── Dynamic note-window helpers ─────────────────────────────
+const CHROM = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+function noteToMidi(n) {
+  if(!n) return 60;
+  const m = n.match(/^([A-G][b#]?)(\d)$/);
+  if(!m) return 60;
+  const norm = {'C#':'Db','D#':'Eb','F#':'Gb','G#':'Ab','A#':'Bb'}[m[1]] || m[1];
+  const idx = CHROM.indexOf(norm);
+  return (parseInt(m[2]) + 1) * 12 + (idx >= 0 ? idx : 0);
+}
+function noteToFreq(n) {
+  return 440 * Math.pow(2, (noteToMidi(n) - 69) / 12);
+}
+function getFreqs(note) {
+  return CHORDS[note] || [noteToFreq(note)];
+}
+function getSongNotes(seq) {
+  const unique = [...new Set(seq.map(s => s.note).filter(Boolean))];
+  return unique.sort((a,b) => noteToMidi(a) - noteToMidi(b));
+}
+function getWindowStart(note, songNotes, currentStart) {
+  const idx = songNotes.indexOf(note);
+  if(idx < 0) return currentStart;
+  if(idx >= currentStart && idx < currentStart + 5) return currentStart; // already visible
+  if(idx < currentStart) return Math.max(0, idx);                        // shift down
+  return Math.max(0, idx - 4);                                           // shift up
+}
+function buildWindowMapping(songNotes, windowStart) {
+  const mapping = {};
+  FINGERS.forEach((f, i) => { const n = songNotes[windowStart + i]; if(n) mapping[f] = n; });
+  return mapping;
+}
+function fingerForNote(note, songNotes, windowStart) {
+  const idx = songNotes.indexOf(note);
+  if(idx < 0) return FINGERS[0];
+  return FINGERS[Math.max(0, Math.min(4, idx - windowStart))];
+}
 
 // ═══════════════════════════════════════════════════════
 //  AUDIO ENGINE
@@ -2340,7 +2359,7 @@ const App = (() => {
 
   // Tutorial state
   let mode='play'; // 'play' | 'tutorial'
-  let tutState={current:null, step:0, completed:false};
+  let tutState={current:null, step:0, completed:false, windowStart:0, songNotes:[]};
   let tutReady=new Set(FINGERS);
 
   // Recording state
@@ -2432,16 +2451,25 @@ const App = (() => {
     if(!tutState.current || tutState.completed) return;
     const tut = TUTORIALS[tutState.current];
     const item = tut.sequence[tutState.step];
-    const expected = item.f || item; // support both old strings and new {f,d}
-    if(finger===expected && tutReady.has(finger)) {
+    const expectedNote = item.note;
+    // Check if this finger maps to the expected note in the current window
+    const expectedFinger = fingerForNote(expectedNote, tutState.songNotes, tutState.windowStart);
+    if(finger === expectedFinger && tutReady.has(finger)) {
       tutReady.delete(finger);
       tutState.step++;
-      if(tutState.step>=tut.sequence.length) {
-        tutState.completed=true;
-        UI.renderTutorialActive();
+      if(tutState.step >= tut.sequence.length) {
+        tutState.completed = true;
       } else {
-        UI.renderTutorialActive();
+        // Update window for next step
+        const nextNote = tut.sequence[tutState.step].note;
+        const newWS = getWindowStart(nextNote, tutState.songNotes, tutState.windowStart);
+        if(newWS !== tutState.windowStart) {
+          tutState.windowStart = newWS;
+          PRESETS.piano.mapping = buildWindowMapping(tutState.songNotes, newWS);
+          UI.flashMappingChange();
+        }
       }
+      UI.renderTutorialActive();
     }
   }
 
@@ -2542,38 +2570,55 @@ const App = (() => {
     const tut = TUTORIALS[id];
     if(!tut) return;
 
-    // Apply this song's mapping
-    PRESETS.piano.mapping = {...tut.mapping};
-    currentPreset = 'piano';
     AudioEngine.init();
     activeFingers = new Set();
-    UI.syncAll();
+    currentPreset = 'piano';
 
-    const bpm = DEMO_BPM[id] || 120;
+    const bpm = DEMO_BPM[id] || tut.bpm || 120;
     const beatMs = (60 / bpm) * 1000;
+
+    // Build sorted note list for the window system
+    const songNotes = getSongNotes(tut.sequence);
+    let demoWindowStart = 0;
+    if(tut.sequence[0]?.note) {
+      demoWindowStart = getWindowStart(tut.sequence[0].note, songNotes, 0);
+    }
+    PRESETS.piano.mapping = buildWindowMapping(songNotes, demoWindowStart);
+    UI.syncAll();
 
     demoPlaying = true;
     let step = 0;
     const seq = tut.sequence;
-
     UI.setDemoPlaying(true);
 
     function playStep() {
-      if(!demoPlaying || step >= seq.length) {
-        stopDemo();
-        return;
-      }
+      if(!demoPlaying || step >= seq.length) { stopDemo(); return; }
       const item = seq[step];
-      const finger = item.f;
-      const dur = item.d;
-      const freqOverride = item.hz ? item.hz : null;
-      const noteOnMs  = beatMs * dur * 0.92;   // hold 92% of beat — legato feel
-      const noteOffMs = beatMs * dur * 0.08;   // tiny gap before next note
+      const note = item.note;
+      const dur  = item.d;
 
-      manualPress(finger, freqOverride);
+      // Shift window if this note is outside current window
+      const newWS = getWindowStart(note, songNotes, demoWindowStart);
+      if(newWS !== demoWindowStart) {
+        demoWindowStart = newWS;
+        PRESETS.piano.mapping = buildWindowMapping(songNotes, demoWindowStart);
+        if(tutState.current === id) {
+          tutState.windowStart = demoWindowStart;
+        }
+        UI.flashMappingChange();
+        UI.renderTutorialHand();
+      }
+
+      // Find finger for this note and get its frequencies
+      const finger = fingerForNote(note, songNotes, demoWindowStart);
+      const freqs  = getFreqs(note);
+
+      const noteOnMs  = beatMs * dur * 0.92;
+      const noteOffMs = beatMs * dur * 0.08;
+
+      manualPress(finger, freqs);
       step++;
 
-      // Advance tutorial step highlight
       if(tutState.current === id) {
         tutState.step = step;
         if(tutState.step >= seq.length) tutState.completed = true;
@@ -2599,14 +2644,17 @@ const App = (() => {
   }
 
   function startTutorial(id) {
-    tutState={current:id, step:0, completed:false};
-    tutReady=new Set(FINGERS);
-    mode='tutorial';
     const tut = TUTORIALS[id];
-    if(tut.mapping) PRESETS.piano.mapping = {...tut.mapping};
-    currentPreset='piano';
+    const songNotes = getSongNotes(tut.sequence);
+    const firstNote = tut.sequence[0]?.note;
+    const initWS = firstNote ? getWindowStart(firstNote, songNotes, 0) : 0;
+    tutState = {current:id, step:0, completed:false, windowStart:initWS, songNotes};
+    tutReady = new Set(FINGERS);
+    mode = 'tutorial';
+    PRESETS.piano.mapping = buildWindowMapping(songNotes, initWS);
+    currentPreset = 'piano';
     AudioEngine.stopAll();
-    activeFingers=new Set();
+    activeFingers = new Set();
     UI.renderTutorialActive();
     UI.renderTutorialHand();
     document.getElementById('tut-browser').classList.add('hidden');
@@ -2616,17 +2664,23 @@ const App = (() => {
 
   function resetTutorial() {
     if(!tutState.current) return;
-    tutState.step=0; tutState.completed=false;
-    tutReady=new Set(FINGERS);
+    const tut = TUTORIALS[tutState.current];
+    const songNotes = getSongNotes(tut.sequence);
+    const firstNote = tut.sequence[0]?.note;
+    const initWS = firstNote ? getWindowStart(firstNote, songNotes, 0) : 0;
+    tutState.step = 0; tutState.completed = false;
+    tutState.windowStart = initWS; tutState.songNotes = songNotes;
+    tutReady = new Set(FINGERS);
+    PRESETS.piano.mapping = buildWindowMapping(songNotes, initWS);
     AudioEngine.stopAll();
-    activeFingers=new Set();
+    activeFingers = new Set();
     UI.renderTutorialActive();
     UI.renderTutorialHand();
   }
 
   function exitTutorial() {
     stopDemo();
-    mode='play'; tutState={current:null,step:0,completed:false};
+    mode='play'; tutState={current:null,step:0,completed:false,windowStart:0,songNotes:[]};
     PRESETS.piano.mapping={thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'};
     AudioEngine.stopAll(); activeFingers=new Set();
     document.getElementById('tut-browser').classList.remove('hidden');
@@ -2875,16 +2929,17 @@ const UI = (() => {
     const wrap = document.getElementById('tut-hand-wrap');
     if(!wrap) return;
     const preset = PRESETS[App.currentPreset];
+    const ts = App.tutState;
+    const tut = ts.current ? TUTORIALS[ts.current] : null;
+    const nextItem = tut && !ts.completed ? tut.sequence[ts.step] : null;
+    const nextNote = nextItem?.note;
+    const nextF = nextNote ? fingerForNote(nextNote, ts.songNotes, ts.windowStart) : null;
+
     wrap.innerHTML = FINGERS.map(f=>{
-      const cfg=FINGER_CFG[f];
-      const active=App.activeFingers.has(f);
-      const sound=preset?.mapping[f]||'';
-      // Highlight the expected next finger in tutorial
-      const ts=App.tutState;
-      const tut=ts.current?TUTORIALS[ts.current]:null;
-      const nextItem=tut&&!ts.completed?tut.sequence[ts.step]:null;
-      const nextF=nextItem?(nextItem.f||nextItem):null;
-      const isNext=nextF===f;
+      const cfg = FINGER_CFG[f];
+      const active = App.activeFingers.has(f);
+      const sound = preset?.mapping[f] || '';
+      const isNext = nextF === f;
       return `
         <div class="finger-col">
           <div class="finger ${active?'active':''}"
@@ -2924,10 +2979,11 @@ const UI = (() => {
     const wrap = document.getElementById('tut-hand-wrap');
     if(!wrap) return;
     const preset = PRESETS[App.currentPreset];
-    const ts=App.tutState;
-    const tut=ts.current?TUTORIALS[ts.current]:null;
-    const nextItem=tut&&!ts.completed?tut.sequence[ts.step]:null;
-    const nextF=nextItem?(nextItem.f||nextItem):null;
+    const ts = App.tutState;
+    const tut = ts.current ? TUTORIALS[ts.current] : null;
+    const nextItem = tut && !ts.completed ? tut.sequence[ts.step] : null;
+    const nextNote = nextItem?.note;
+    const nextF = nextNote ? fingerForNote(nextNote, ts.songNotes, ts.windowStart) : null;
 
     wrap.querySelectorAll('.finger[data-tut-f]').forEach(el=>{
       const f=el.dataset.tutF; const cfg=FINGER_CFG[f]; const active=activeSet.has(f);
@@ -2937,6 +2993,9 @@ const UI = (() => {
       el.style.borderColor=active?cfg.color+'66':isNext?cfg.color+'99':'var(--border)';
       el.style.boxShadow=active?`0 0 20px ${cfg.color}44`:isNext?`0 0 12px ${cfg.color}55`:'none';
       el.style.outline=isNext&&!active?`2px solid ${cfg.color}66`:'none';
+      // Update note label
+      const noteEl = el.querySelector('.finger-note');
+      if(noteEl) { noteEl.textContent = preset?.mapping[f]||''; }
     });
 
     // update tut status line
@@ -3042,10 +3101,10 @@ const UI = (() => {
   }
 
   function renderTutorialActive() {
-    const ts=App.tutState;
+    const ts = App.tutState;
     if(!ts.current) return;
-    const tut=TUTORIALS[ts.current];
-    const content=document.getElementById('tut-active-content');
+    const tut = TUTORIALS[ts.current];
+    const content = document.getElementById('tut-active-content');
 
     if(ts.completed) {
       content.innerHTML=`
@@ -3056,17 +3115,20 @@ const UI = (() => {
       return;
     }
 
-    const nextItem=tut.sequence[ts.step];
-    const nextF = nextItem.f || nextItem;
-    const cfg=FINGER_CFG[nextF];
-    const pct=Math.round(ts.step/tut.sequence.length*100);
+    const nextItem = tut.sequence[ts.step];
+    const nextNote = nextItem.note;
+    const nextF    = fingerForNote(nextNote, ts.songNotes, ts.windowStart);
+    const cfg = FINGER_CFG[nextF];
+    const pct = Math.round(ts.step / tut.sequence.length * 100);
+    const mapping = PRESETS[App.currentPreset]?.mapping || {};
 
-    const dots=tut.sequence.map((item,i)=>{
-      const f = item.f || item;
+    // Dot row: colour by finger
+    const dots = tut.sequence.map((item, i) => {
+      const f = fingerForNote(item.note, ts.songNotes, ts.windowStart);
       const fCfg = FINGER_CFG[f];
-      let cls='seq-dot';
-      if(i<ts.step) cls+=' done';
-      else if(i===ts.step) cls+=' current';
+      let cls = 'seq-dot';
+      if(i < ts.step) cls += ' done';
+      else if(i === ts.step) cls += ' current';
       return `<div class="${cls}" style="${i===ts.step?`background:${fCfg.color};border-color:${fCfg.color}`:''}"></div>`;
     }).join('');
 
@@ -3075,18 +3137,41 @@ const UI = (() => {
       <div class="tut-progress-bar"><div class="tut-progress-fill" style="width:${pct}%"></div></div>
       <div style="color:var(--muted);font-size:0.75rem;margin-bottom:8px;">${t('pressThis')}</div>
       <div class="tut-next-finger" style="color:${cfg.color}">${tFinger(nextF)}</div>
-      <div style="font-size:0.7rem;color:${cfg.color};opacity:0.8;margin-bottom:12px;">${tut.mapping[nextF]}</div>
+      <div style="font-size:0.85rem;font-weight:600;color:${cfg.color};opacity:0.9;margin-bottom:12px;">${nextNote}</div>
       <div class="tut-sequence">${dots}</div>
-      <div style="display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap;">
+      <div id="tut-mapping-row" style="display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap;">
         ${FINGERS.map(f=>`
           <div style="text-align:center;font-size:0.65rem;">
-            <div style="color:${FINGER_CFG[f].color};font-weight:500;">${tut.mapping[f]}</div>
+            <div style="color:${FINGER_CFG[f].color};font-weight:500;">${mapping[f]||''}</div>
             <div style="color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;">${tFinger(f)}</div>
           </div>
         `).join('')}
       </div>
     `;
     updateTutorialFingers(App.activeFingers);
+  }
+
+  function flashMappingChange() {
+    // Show a brief toast banner when the finger mapping shifts
+    let toast = document.getElementById('mapping-toast');
+    if(!toast) {
+      toast = document.createElement('div');
+      toast.id = 'mapping-toast';
+      toast.style.cssText = `
+        position:fixed;top:70px;left:50%;transform:translateX(-50%);
+        background:linear-gradient(135deg,rgba(255,200,60,0.95),rgba(255,160,20,0.95));
+        color:#222;font-size:0.72rem;font-weight:700;letter-spacing:0.06em;
+        padding:6px 16px;border-radius:20px;z-index:999;
+        box-shadow:0 4px 16px rgba(0,0,0,0.3);pointer-events:none;
+        transition:opacity 0.3s;
+      `;
+      document.body.appendChild(toast);
+    }
+    const msg = currentLang === 'zh' ? '🎹 音符映射已更新' : '🎹 Mapping shifted';
+    toast.textContent = msg;
+    toast.style.opacity = '1';
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => { toast.style.opacity = '0'; }, 1200);
   }
 
   function renderRecordingList() {
@@ -3144,6 +3229,7 @@ const UI = (() => {
     updateFingers, updateStatus, setStatus,
     renderMapping, openChordModal, closeModal,
     renderTutorialList, renderTutorialActive, renderTutorialHand,
+    flashMappingChange,
     renderRecordingList,
     setDemoPlaying,
     updateHints,
