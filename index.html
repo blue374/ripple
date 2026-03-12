@@ -1329,6 +1329,9 @@ function t(key) { return I18N[currentLang][key] || I18N.en[key] || key; }
 function tFinger(f) { return (I18N[currentLang].fingerNames || {})[f] || f; }
 
 function applyLang() {
+  // Update app title (Ripple ↔ 涟音)
+  const h1 = document.querySelector('.header h1');
+  if(h1) h1.textContent = currentLang==='zh' ? '涟音' : 'Ripple';
   const appTagline = document.getElementById('app-tagline');
   if(appTagline) appTagline.textContent = t('tagline');
   const backBtn = document.getElementById('back-to-splash');
@@ -1406,6 +1409,10 @@ function applyLang() {
     UI.renderConnectBtn();
     UI.syncAll();
   }
+  // Re-render instrument grid with translated labels
+  if(typeof renderInstGrid !== 'undefined') renderInstGrid();
+  // Re-render tutorial list so nameEn subtitle appears/disappears
+  if(typeof UI !== 'undefined') UI.renderTutorialList();
 }
 
 
@@ -1466,6 +1473,9 @@ function initSplash() {
   }
 
   function updateSplashText() {
+    // Splash logo changes with language
+    const logo = document.querySelector('.splash-logo');
+    if(logo) logo.textContent = selectedLang==='zh' ? '涟音' : 'Ripple';
     document.getElementById('splash-tagline').textContent = I18N[selectedLang].tagline;
     document.getElementById('splash-theme-label').textContent = I18N[selectedLang].splashTheme;
     document.getElementById('splash-lang-label').textContent = I18N[selectedLang].splashLang;
@@ -1581,9 +1591,10 @@ const PRESETS = {
 const TUTORIALS = {
   // sequence: [{f: finger, d: duration_in_beats}]
   // d=1 quarter, d=0.5 eighth, d=1.5 dotted quarter, d=2 half, d=0.75 dotted eighth
+  // nameEn shown as subtitle in Chinese mode
 
   scale: {
-    name:'Simple Scale', difficulty:'Beginner',
+    name:'音阶练习', nameEn:'Simple Scale', difficulty:'Beginner',
     mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
     sequence:[
       {f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},{f:'ring',d:1},
@@ -1592,33 +1603,41 @@ const TUTORIALS = {
     ],
   },
 
-  hotcross: {
-    name:'Hot Cross Buns', difficulty:'Beginner',
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
-    // E D C (q q h)  E D C (q q h)  C C C C D D D D (8x8th)  E D C (q q h)
+  // 茉莉花 (Mòlì Huā / Jasmine Flower) — beloved Chinese folk song, key of G pentatonic
+  // G A G E | D C D(h) | G A G A | A G G(h) | E D C(h)
+  // mapping: thumb=C4 index=D4 middle=E4 ring=G4 pinky=A4
+  molihua: {
+    name:'茉莉花', nameEn:'Jasmine Flower', difficulty:'Beginner', bpm:88,
+    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
     sequence:[
-      {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:2},
-      {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:2},
-      {f:'thumb',d:0.5},{f:'thumb',d:0.5},{f:'thumb',d:0.5},{f:'thumb',d:0.5},
-      {f:'index',d:0.5},{f:'index',d:0.5},{f:'index',d:0.5},{f:'index',d:0.5},
+      {f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},
+      {f:'index',d:1},{f:'thumb',d:1},
+      {f:'index',d:2},
+      {f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'pinky',d:0.5},
+      {f:'pinky',d:0.75},{f:'ring',d:0.25},{f:'ring',d:2},
       {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:2},
     ],
   },
 
-  rain: {
-    name:'Rain Rain Go Away', difficulty:'Beginner',
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
-    // Rain rain go a-way: E E G E | E E G E | E G A G | E D C
+  // 两只老虎 (Liǎng Zhī Lǎohǔ / Two Tigers) — same melody as Frère Jacques, beloved Chinese children's song
+  // C D E C (×2) | E F G.(h) (×2) | G G G F E C (×2) | C G C.(h) (×2)
+  liangzhi: {
+    name:'两只老虎', nameEn:'Two Tigers', difficulty:'Beginner', bpm:112,
+    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
     sequence:[
-      {f:'middle',d:1},{f:'middle',d:1},{f:'ring',d:1},{f:'middle',d:1},
-      {f:'middle',d:1},{f:'middle',d:1},{f:'ring',d:1},{f:'middle',d:1},
-      {f:'middle',d:1},{f:'ring',d:1},{f:'pinky',d:1},{f:'ring',d:1},
-      {f:'middle',d:1},{f:'index',d:1},{f:'thumb',d:2},
+      {f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},{f:'thumb',d:1},
+      {f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},{f:'thumb',d:1},
+      {f:'middle',d:1},{f:'ring',d:1},{f:'pinky',d:2},
+      {f:'middle',d:1},{f:'ring',d:1},{f:'pinky',d:2},
+      {f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'middle',d:1},{f:'thumb',d:1},
+      {f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'middle',d:1},{f:'thumb',d:1},
+      {f:'thumb',d:1},{f:'pinky',d:1},{f:'thumb',d:2},
+      {f:'thumb',d:1},{f:'pinky',d:1},{f:'thumb',d:2},
     ],
   },
 
   mary: {
-    name:'Mary Had a Little Lamb', difficulty:'Easy',
+    name:'Mary Had a Little Lamb', nameEn:'Mary Had a Little Lamb', difficulty:'Easy',
     mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
     // E D C D E E E (q q q q q q h)  D D D (q q h)  E G G (q q h)
     // E D C D E E E E (q q q q q q q q)  D D E D C (q q q q h)
@@ -1635,7 +1654,7 @@ const TUTORIALS = {
   },
 
   happy: {
-    name:'Happy Birthday', difficulty:'Easy',
+    name:'生日快乐', nameEn:'Happy Birthday', difficulty:'Easy',
     mapping:{thumb:'F4',index:'G4',middle:'A4',ring:'Bb4',pinky:'C5'},
     // Hap-py birth-day to you (3/4): q. 8th q | q. 8th q | q. 8th q q | h.
     sequence:[
@@ -1650,22 +1669,29 @@ const TUTORIALS = {
     ],
   },
 
-  london: {
-    name:'London Bridge', difficulty:'Easy',
-    mapping:{thumb:'G4',index:'A4',middle:'B4',ring:'C5',pinky:'D5'},
-    // Lon-don Bridge is fall-ing down: q q q q | q. 8 q | q q q q | q. 8 q
+  // 世上只有妈妈好 (Shì Shàng Zhǐ Yǒu Māma Hǎo / Mother Is the Best)
+  // Classic Chinese waltz (3/4), key of C, BPM ~96
+  // E G(h) | G E G A | G(h.) | E G(h) | G E D C | D(h.) | C D E G E D C | E(h.) | G E D E | D(h.) | C(h.)
+  mama: {
+    name:'世上只有妈妈好', nameEn:'Mother Is the Best', difficulty:'Easy', bpm:96,
+    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
     sequence:[
-      {f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'ring',d:1},
-      {f:'pinky',d:1.5},{f:'pinky',d:0.5},{f:'pinky',d:1},
-      {f:'ring',d:1},{f:'ring',d:1},{f:'ring',d:1},{f:'pinky',d:1},
-      {f:'ring',d:1.5},{f:'ring',d:0.5},{f:'middle',d:1},
-      {f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'ring',d:1},
-      {f:'pinky',d:1.5},{f:'pinky',d:0.5},{f:'pinky',d:2},
+      {f:'middle',d:1},{f:'ring',d:2},
+      {f:'ring',d:1},{f:'middle',d:1},{f:'ring',d:0.5},{f:'pinky',d:0.5},
+      {f:'ring',d:3},
+      {f:'middle',d:1},{f:'ring',d:2},
+      {f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},
+      {f:'thumb',d:1},{f:'index',d:2},
+      {f:'thumb',d:0.5},{f:'index',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'index',d:0.5},{f:'thumb',d:1},
+      {f:'middle',d:3},
+      {f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},{f:'middle',d:1},
+      {f:'index',d:3},
+      {f:'thumb',d:3},
     ],
   },
 
   twinkle: {
-    name:'Twinkle Twinkle', difficulty:'Easy',
+    name:'小星星', nameEn:'Little Star (Twinkle)', difficulty:'Easy',
     mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
     // C C G G A A G(h)  F F E E D D C(h)  G G F F E E D(h)  G G F F E E D(h)  C C G G A A G(h)  F F E E D D C(h)
     // F→E approximation kept, all quarters except half notes
@@ -1685,40 +1711,46 @@ const TUTORIALS = {
     ],
   },
 
+  // 卖报歌 (Mài Bào Gē / Newsboy's Song) — classic 1933 Chinese song by Nie Er, lively march feel
+  // Key of C, 4/4, BPM ~120
+  // G G G E G A | G(q) E G | A A A A A G | A(h) | E E G E D C | D(h) | C E G A G E | C(h)
   brother: {
-    name:'Are You Sleeping', difficulty:'Medium',
+    name:'卖报歌', nameEn:"Newsboy's Song", difficulty:'Medium', bpm:120,
     mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
-    // C D E C (q q q q) × 2 | E F G. (q q h.) × 2 | G A G F E C (8 8 8 8 q q) × 2 | C G C (q q h) × 2
-    // F→E approximation
     sequence:[
-      {f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},{f:'thumb',d:1},
-      {f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:1},{f:'thumb',d:1},
-      {f:'middle',d:1},{f:'ring',d:1},{f:'ring',d:2},
-      {f:'middle',d:1},{f:'ring',d:1},{f:'ring',d:2},
-      {f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'middle',d:1},{f:'thumb',d:1},
-      {f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'middle',d:1},{f:'thumb',d:1},
-      {f:'thumb',d:1},{f:'ring',d:1},{f:'thumb',d:2},
-      {f:'thumb',d:1},{f:'ring',d:1},{f:'thumb',d:2},
+      {f:'ring',d:0.5},{f:'ring',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},{f:'pinky',d:0.5},
+      {f:'ring',d:1},{f:'middle',d:0.5},{f:'ring',d:0.5},
+      {f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},
+      {f:'pinky',d:2},
+      {f:'middle',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},{f:'index',d:0.5},{f:'thumb',d:0.5},
+      {f:'index',d:2},
+      {f:'thumb',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'middle',d:0.5},
+      {f:'thumb',d:2},
     ],
   },
 
+  // 友谊地久天长 (Yǒuyì Dì Jiǔ Tiān Cháng / Auld Lang Syne) — universally beloved in China, sung at farewells
+  // Key of F (mapped to 5 fingers), 4/4, BPM ~84
+  // C. C G G | A. A G(h) | A. A C D | F(h.) |
+  // G. G F D | F. F D(h) | D. D F G | A(h.)
+  // mapping: thumb=C4 index=D4 middle=F4 ring=G4 pinky=A4
   jingle: {
-    name:'Jingle Bells (Chorus)', difficulty:'Medium',
-    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
-    // Jin-gle bells: E E E(h) | E E E(h) | E G C D E(h) | F F F F(tied) F E E E | E D D E D G(h)
+    name:'友谊地久天长', nameEn:'Auld Lang Syne', difficulty:'Medium', bpm:84,
+    mapping:{thumb:'C4',index:'D4',middle:'F4',ring:'G4',pinky:'A4'},
     sequence:[
-      {f:'middle',d:1},{f:'middle',d:1},{f:'middle',d:2},
-      {f:'middle',d:1},{f:'middle',d:1},{f:'middle',d:2},
-      {f:'middle',d:1},{f:'pinky',d:1},{f:'thumb',d:1},{f:'index',d:1},{f:'middle',d:2},
-      {f:'ring',d:1},{f:'ring',d:1},{f:'ring',d:1},{f:'ring',d:1},
-      {f:'ring',d:1},{f:'middle',d:1},{f:'middle',d:1},{f:'middle',d:1},
-      {f:'middle',d:1},{f:'index',d:1},{f:'index',d:1},{f:'middle',d:1},
-      {f:'index',d:1},{f:'pinky',d:2},
+      {f:'thumb',d:1.5},{f:'thumb',d:0.5},{f:'ring',d:1},{f:'ring',d:1},
+      {f:'pinky',d:1.5},{f:'pinky',d:0.5},{f:'ring',d:2},
+      {f:'pinky',d:1.5},{f:'pinky',d:0.5},{f:'thumb',d:1},{f:'index',d:1},
+      {f:'middle',d:3},
+      {f:'ring',d:1.5},{f:'ring',d:0.5},{f:'middle',d:1},{f:'index',d:1},
+      {f:'middle',d:1.5},{f:'middle',d:0.5},{f:'index',d:2},
+      {f:'index',d:1.5},{f:'index',d:0.5},{f:'middle',d:1},{f:'ring',d:1},
+      {f:'pinky',d:3},
     ],
   },
 
   ode: {
-    name:'Ode to Joy', difficulty:'Medium',
+    name:'欢乐颂', nameEn:'Ode to Joy', difficulty:'Medium',
     mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'},
     // E E F G | G F E D | C C D E | E. D D (repeat)
     sequence:[
@@ -1734,7 +1766,7 @@ const TUTORIALS = {
   },
 
   rowboat: {
-    name:'Row Row Row Your Boat', difficulty:'Medium',
+    name:'Row Row Row Your Boat', nameEn:'Row Row Row Your Boat', difficulty:'Medium',
     mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'C5'},
     // Row row row your boat: C. C. C D E | E. D E. G C5(h.) | 8C5×3 8G4×3 8E4×3 8C4×3 | G. F E. D C(h.)
     // thumb=C4, pinky=C5 — no same-finger octave conflict here
@@ -1749,24 +1781,27 @@ const TUTORIALS = {
     ],
   },
 
+  // 梁祝主题 (Liáng Zhù / Butterfly Lovers Theme) — most iconic Chinese classical melody, pentatonic
+  // Key of C pentatonic (C D E G A), slow and expressive, BPM ~66
+  // G G A G E | D E G(h) | G A G E D | C(h.) |
+  // E E G A G | E D E G | A G E D | C(h.)
   entertainer: {
-    name:'The Entertainer', difficulty:'Hard',
-    mapping:{thumb:'Bb3',index:'D4',middle:'F4',ring:'G4',pinky:'A4'},
-    // Ragtime feel - mostly 8th notes with some quarters
+    name:'梁祝主题', nameEn:'Butterfly Lovers (Theme)', difficulty:'Hard', bpm:66,
+    mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'G4',pinky:'A4'},
     sequence:[
-      {f:'index',d:0.5},{f:'middle',d:0.5},{f:'index',d:0.5},{f:'thumb',d:0.5},
-      {f:'index',d:0.5},{f:'middle',d:0.5},{f:'ring',d:1},{f:'middle',d:0.5},{f:'index',d:0.5},
-      {f:'middle',d:0.5},{f:'index',d:0.5},{f:'thumb',d:0.5},{f:'index',d:0.5},
-      {f:'middle',d:0.5},{f:'pinky',d:1},{f:'thumb',d:0.5},
-      {f:'pinky',d:0.5},{f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:0.5},
+      {f:'ring',d:1},{f:'ring',d:0.5},{f:'pinky',d:0.5},{f:'ring',d:1},{f:'middle',d:1},
+      {f:'index',d:0.5},{f:'middle',d:0.5},{f:'ring',d:2},
+      {f:'ring',d:1},{f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},
+      {f:'thumb',d:3},
+      {f:'middle',d:1},{f:'middle',d:0.5},{f:'ring',d:0.5},{f:'pinky',d:1},{f:'ring',d:1},
       {f:'middle',d:0.5},{f:'index',d:0.5},{f:'middle',d:0.5},{f:'ring',d:0.5},
-      {f:'pinky',d:1},{f:'thumb',d:0.5},{f:'pinky',d:0.5},
-      {f:'middle',d:0.5},{f:'index',d:0.5},{f:'thumb',d:1},
+      {f:'pinky',d:1},{f:'ring',d:1},{f:'middle',d:1},{f:'index',d:1},
+      {f:'thumb',d:3},
     ],
   },
 
   furelise: {
-    name:'Für Elise (Theme)', difficulty:'Hard',
+    name:'致爱丽丝', nameEn:'Für Elise (Theme)', difficulty:'Hard',
     mapping:{thumb:'A3',index:'C4',middle:'E4',ring:'Eb4',pinky:'B3'},
     // E Eb E Eb E B D C A (all 8th notes except last A is quarter)
     // C E A B (8th 8th 8th quarter)
@@ -2271,11 +2306,12 @@ const App = (() => {
   // ── Demo playback ──
   // BPM per song (quarter note = 1 beat, each sequence step = 1 beat unless noted)
   const DEMO_BPM = {
-    scale:120, hotcross:110, rain:110,
-    mary:110, happy:140, london:120,
-    twinkle:110, brother:110, jingle:150,
-    ode:116, rowboat:108, entertainer:168,
-    furelise:100,
+    scale:120,
+    molihua:88, liangzhi:112,
+    mary:110, happy:140, mama:96,
+    twinkle:110, brother:120,
+    jingle:84, ode:116, rowboat:108,
+    entertainer:66, furelise:100,
   };
 
   let demoTimer = null;
@@ -2750,6 +2786,7 @@ const UI = (() => {
     list.innerHTML=Object.entries(TUTORIALS).map(([id,tut])=>`
       <div class="tutorial-card" data-id="${id}">
         <div class="tut-name">${tut.name}</div>
+        ${currentLang==='zh' && tut.nameEn ? `<div style="font-size:0.68rem;color:var(--muted);margin-bottom:2px;font-style:italic;">${tut.nameEn}</div>` : ''}
         <div class="tut-meta difficulty-${tut.difficulty.toLowerCase()}">${t(diffKey[tut.difficulty]||tut.difficulty)} · ${tut.sequence.length} ${t('notes')}</div>
       </div>
     `).join('');
@@ -3235,17 +3272,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Instrument buttons
   const instGrid=document.getElementById('inst-grid');
-  const insts=[['sine','🎵 Sine'],['soft','🎹 Soft'],['bell','🔔 Bell'],['pad','🧘 Pad']];
-  instGrid.innerHTML=insts.map(([k,l])=>`
-    <button class="inst-btn ${App.customInstrument===k?'active':''}" data-i="${k}">${l}</button>
-  `).join('');
-  instGrid.querySelectorAll('.inst-btn').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      instGrid.querySelectorAll('.inst-btn').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
-      App.customInstrument=b.dataset.i;
+  const INST_LABELS = {
+    sine: { en:'🎵 Sine',  zh:'🎵 正弦波' },
+    soft: { en:'🎹 Soft',  zh:'🎹 柔和' },
+    bell: { en:'🔔 Bell',  zh:'🔔 钟声' },
+    pad:  { en:'🧘 Pad',   zh:'🧘 氛围' },
+  };
+  function renderInstGrid() {
+    instGrid.innerHTML=Object.entries(INST_LABELS).map(([k,l])=>`
+      <button class="inst-btn ${App.customInstrument===k?'active':''}" data-i="${k}">${l[currentLang]||l.en}</button>
+    `).join('');
+    instGrid.querySelectorAll('.inst-btn').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        instGrid.querySelectorAll('.inst-btn').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        App.customInstrument=b.dataset.i;
+      });
     });
-  });
+  }
+  renderInstGrid();
 
   // Piano Roll
   document.getElementById('pr-close-btn').addEventListener('click', ()=>PianoRoll.close());
