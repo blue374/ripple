@@ -8,11 +8,11 @@
   <style>
     :root {
       --bg: #0d0d1a;
-      --surface: rgba(255,255,255,0.05);
-      --surface2: rgba(255,255,255,0.07);
-      --border: rgba(255,255,255,0.1);
-      --text: #eeeef5;
-      --muted: rgba(238,238,245,0.45);
+      --surface: rgba(255,255,255,0.06);
+      --surface2: rgba(255,255,255,0.10);
+      --border: rgba(255,255,255,0.18);
+      --text: #ffffff;
+      --muted: #a8a8c8;
       --accent: #9b8cff;
       --accent2: #ff8cc8;
       --green: #4ade80;
@@ -35,16 +35,16 @@
     }
 
     /* ── THEMES ── */
-    body.theme-midnight { --bg:#0d0d1a; --surface:rgba(255,255,255,0.05); --surface2:rgba(255,255,255,0.07); --border:rgba(255,255,255,0.1); --text:#eeeef5; --muted:rgba(238,238,245,0.45); --accent:#9b8cff; --accent2:#ff8cc8; --orb1:155,140,255; --orb2:255,140,200; --grad1:#0d0d1a; --grad2:#131326; }
-    body.theme-ocean    { --bg:#071a2e; --surface:rgba(255,255,255,0.06); --surface2:rgba(255,255,255,0.09); --border:rgba(255,255,255,0.1); --text:#e8f4ff; --muted:rgba(200,230,255,0.5); --accent:#38bdf8; --accent2:#67e8f9; --orb1:56,189,248; --orb2:103,232,249; --grad1:#071a2e; --grad2:#0d2640; }
-    body.theme-forest   { --bg:#071a0f; --surface:rgba(255,255,255,0.05); --surface2:rgba(255,255,255,0.08); --border:rgba(255,255,255,0.09); --text:#e8f5ec; --muted:rgba(200,240,210,0.5); --accent:#4ade80; --accent2:#86efac; --orb1:74,222,128; --orb2:134,239,172; --grad1:#071a0f; --grad2:#0d2618; }
-    body.theme-rose     { --bg:#1a0a12; --surface:rgba(255,255,255,0.05); --surface2:rgba(255,255,255,0.08); --border:rgba(255,255,255,0.1); --text:#fff0f5; --muted:rgba(255,210,225,0.5); --accent:#fb7185; --accent2:#fda4af; --orb1:251,113,133; --orb2:253,164,175; --grad1:#1a0a12; --grad2:#27101c; }
-    body.theme-dusk     { --bg:#1a1206; --surface:rgba(255,255,255,0.05); --surface2:rgba(255,255,255,0.08); --border:rgba(255,255,255,0.1); --text:#fff8ee; --muted:rgba(255,230,180,0.5); --accent:#fb923c; --accent2:#fbbf24; --orb1:251,146,60; --orb2:251,191,36; --grad1:#1a1206; --grad2:#271c0d; }
+    body.theme-midnight { --bg:#0d0d1a; --surface:rgba(255,255,255,0.06); --surface2:rgba(255,255,255,0.10); --border:rgba(255,255,255,0.22); --text:#ffffff; --muted:#a8a8c8; --accent:#9b8cff; --accent2:#ff8cc8; --orb1:155,140,255; --orb2:255,140,200; --grad1:#0d0d1a; --grad2:#131326; }
+    body.theme-ocean    { --bg:#071a2e; --surface:rgba(255,255,255,0.07); --surface2:rgba(255,255,255,0.11); --border:rgba(255,255,255,0.22); --text:#ffffff; --muted:#7bbedd; --accent:#38bdf8; --accent2:#67e8f9; --orb1:56,189,248; --orb2:103,232,249; --grad1:#071a2e; --grad2:#0d2640; }
+    body.theme-forest   { --bg:#071a0f; --surface:rgba(255,255,255,0.07); --surface2:rgba(255,255,255,0.10); --border:rgba(255,255,255,0.22); --text:#ffffff; --muted:#7dbd90; --accent:#4ade80; --accent2:#86efac; --orb1:74,222,128; --orb2:134,239,172; --grad1:#071a0f; --grad2:#0d2618; }
+    body.theme-rose     { --bg:#1a0a12; --surface:rgba(255,255,255,0.07); --surface2:rgba(255,255,255,0.10); --border:rgba(255,255,255,0.22); --text:#ffffff; --muted:#cc8898; --accent:#fb7185; --accent2:#fda4af; --orb1:251,113,133; --orb2:253,164,175; --grad1:#1a0a12; --grad2:#27101c; }
+    body.theme-dusk     { --bg:#1a1206; --surface:rgba(255,255,255,0.07); --surface2:rgba(255,255,255,0.10); --border:rgba(255,255,255,0.22); --text:#ffffff; --muted:#c8a87a; --accent:#fb923c; --accent2:#fbbf24; --orb1:251,146,60; --orb2:251,191,36; --grad1:#1a1206; --grad2:#271c0d; }
     /* Light themes */
-    body.theme-cloud    { --bg:#f0f4ff; --surface:rgba(255,255,255,0.7); --surface2:rgba(255,255,255,0.85); --border:rgba(100,100,180,0.12); --text:#1a1a3a; --muted:rgba(30,30,80,0.45); --accent:#6366f1; --accent2:#a78bfa; --orb1:99,102,241; --orb2:167,139,250; --grad1:#f0f4ff; --grad2:#e8eeff; }
-    body.theme-blossom  { --bg:#fff0f5; --surface:rgba(255,255,255,0.7); --surface2:rgba(255,255,255,0.85); --border:rgba(200,80,120,0.12); --text:#2d0a18; --muted:rgba(100,20,50,0.45); --accent:#e11d73; --accent2:#f472b6; --orb1:225,29,115; --orb2:244,114,182; --grad1:#fff0f5; --grad2:#ffe4ef; }
-    body.theme-mint     { --bg:#f0fff8; --surface:rgba(255,255,255,0.7); --surface2:rgba(255,255,255,0.85); --border:rgba(20,160,100,0.12); --text:#052e1c; --muted:rgba(10,80,50,0.45); --accent:#059669; --accent2:#34d399; --orb1:5,150,105; --orb2:52,211,153; --grad1:#f0fff8; --grad2:#e0faf0; }
-    body.theme-sand     { --bg:#fdf8f0; --surface:rgba(255,255,255,0.65); --surface2:rgba(255,255,255,0.8); --border:rgba(160,120,60,0.12); --text:#2c1a08; --muted:rgba(80,50,10,0.45); --accent:#b45309; --accent2:#f59e0b; --orb1:180,83,9; --orb2:245,158,11; --grad1:#fdf8f0; --grad2:#f8f0e0; }
+    body.theme-cloud    { --bg:#c2ccee; --surface:rgba(255,255,255,0.42); --surface2:rgba(255,255,255,0.58); --border:rgba(60,60,160,0.28); --text:#0a0a28; --muted:#4a4a7a; --accent:#5254d4; --accent2:#8b6ef0; --orb1:82,84,212; --orb2:139,110,240; --grad1:#c2ccee; --grad2:#b8c3e8; }
+    body.theme-blossom  { --bg:#d9a8be; --surface:rgba(255,255,255,0.38); --surface2:rgba(255,255,255,0.54); --border:rgba(140,20,70,0.30); --text:#180008; --muted:#7a2040; --accent:#c4005e; --accent2:#e85fa0; --orb1:196,0,94; --orb2:232,95,160; --grad1:#d9a8be; --grad2:#d0a0b6; }
+    body.theme-mint     { --bg:#a8d8c0; --surface:rgba(255,255,255,0.36); --surface2:rgba(255,255,255,0.52); --border:rgba(5,100,60,0.30); --text:#011208; --muted:#1a6040; --accent:#027a52; --accent2:#20b880; --orb1:2,122,82; --orb2:32,184,128; --grad1:#a8d8c0; --grad2:#9ed0b8; }
+    body.theme-sand     { --bg:#cebb96; --surface:rgba(255,255,255,0.34); --surface2:rgba(255,255,255,0.50); --border:rgba(100,60,10,0.32); --text:#120800; --muted:#6b4010; --accent:#924200; --accent2:#d4820a; --orb1:146,66,0; --orb2:212,130,10; --grad1:#cebb96; --grad2:#c6b28c; }
 
     /* Dynamic background using theme vars */
     body::before {
@@ -374,7 +374,8 @@
       border-radius: 7px;
       border: none;
       background: transparent;
-      color: var(--muted);
+      color: var(--text);
+      opacity: 0.55;
       cursor: pointer;
       transition: all 0.15s;
       text-align: center;
@@ -383,9 +384,11 @@
     .tab.active {
       background: var(--surface2);
       color: var(--text);
+      opacity: 1;
       border: 1px solid var(--border);
       box-shadow: inset 0 0 0 1px rgba(var(--orb1),0.15);
     }
+    .tab:not(.active):hover { opacity: 0.85; }
 
     /* Preset strip */
     .preset-strip {
@@ -403,7 +406,8 @@
       border-radius: 20px;
       border: 1px solid var(--border);
       background: var(--surface);
-      color: var(--muted);
+      color: var(--text);
+      opacity: 0.65;
       cursor: pointer;
       transition: all 0.15s;
     }
@@ -414,6 +418,7 @@
       background: rgba(var(--orb1),0.14);
       border-color: rgba(var(--orb1),0.5);
       color: var(--accent);
+      opacity: 1;
     }
 
     /* Panel */
@@ -429,9 +434,10 @@
 
     .panel-title {
       font-size: 0.82rem;
+      font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--muted);
+      color: var(--text);
       margin-bottom: 20px;
     }
 
@@ -493,7 +499,8 @@
 
     .finger-label {
       font-size: 0.86rem;
-      color: var(--muted);
+      font-weight: 600;
+      color: var(--text);
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
@@ -501,7 +508,7 @@
     .status-line {
       text-align: center;
       font-size: 0.9rem;
-      color: var(--muted);
+      color: var(--text);
       margin-top: 16px;
       min-height: 1.2em;
       transition: all 0.2s;
@@ -548,7 +555,7 @@
       line-height: 1;
       min-height: 0.8em;
     }
-    .mapping-cell .fname { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+    .mapping-cell .fname { font-size: 0.7rem; color: var(--text); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
 
     /* Settings */
     .settings-grid {
@@ -597,7 +604,7 @@
       background: rgba(249,115,22,0.08);
     }
 
-    .inst-btn:hover:not(.active) { color: var(--text); border-color: rgba(255,255,255,0.15); }
+    .inst-btn:hover:not(.active) { color: var(--text); border-color: var(--border); }
 
     /* Tutorial */
     .tutorial-list {
@@ -620,12 +627,12 @@
     .tutorial-card.active-tut { border-color: rgba(var(--orb1),0.5); background: rgba(var(--orb1),0.08); }
 
     .tut-name { font-size: 0.95rem; margin-bottom: 4px; }
-    .tut-meta { font-size: 0.74rem; color: var(--muted); }
+    .tut-meta { font-size: 0.74rem; color: var(--text); opacity: 0.7; font-weight: 500; }
 
-    .difficulty-beginner { color: var(--green); }
-    .difficulty-easy { color: #60a5fa; }
-    .difficulty-medium { color: #f97316; }
-    .difficulty-hard { color: #ef4444; }
+    .difficulty-beginner { color: #6ab187; }
+    .difficulty-easy     { color: #5b9bd5; }
+    .difficulty-medium   { color: #c97c3a; }
+    .difficulty-hard     { color: #c05555; }
 
     /* Tutorial active view */
     .tutorial-active {
@@ -752,7 +759,7 @@
     }
     .pianoroll-modal {
       background: rgba(20,20,35,0.97);
-      border: 1px solid rgba(255,255,255,0.12);
+      border: 1px solid var(--border);
       border-radius: 20px;
       width: 100%;
       max-width: 860px;
@@ -767,7 +774,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 18px 24px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid var(--border);
       flex-shrink: 0;
     }
     .pianoroll-header h3 {
@@ -780,7 +787,7 @@
       gap: 8px;
       align-items: center;
       padding: 12px 24px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(var(--orb1),0.12);
       flex-wrap: wrap;
       flex-shrink: 0;
     }
@@ -795,7 +802,7 @@
       cursor: pointer;
       transition: all 0.12s;
     }
-    .pr-tool-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .pr-tool-btn:hover { color: var(--text); border-color: var(--border); }
     .pr-tool-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(155,140,255,0.12); }
     .pr-tool-btn.play { border-color: rgba(74,222,128,0.4); color: var(--green); }
     .pr-tool-btn.stop { border-color: rgba(239,68,68,0.4); color: #ef4444; }
@@ -830,14 +837,14 @@
     .pr-lane {
       flex: 1;
       height: 36px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.05);
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 6px;
       position: relative;
       overflow: hidden;
       cursor: crosshair;
     }
-    .pr-lane:hover { background: rgba(255,255,255,0.04); }
+    .pr-lane:hover { background: var(--surface2); }
     .pr-note-block {
       position: absolute;
       top: 4px;
@@ -889,7 +896,7 @@
     .pr-note-popup {
       position: fixed;
       background: rgba(20,20,35,0.98);
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 1px solid var(--border);
       border-radius: 10px;
       padding: 10px;
       z-index: 300;
@@ -914,12 +921,12 @@
       font-size: 0.86rem;
       padding: 3px 7px;
       border-radius: 4px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      background: var(--surface);
       color: var(--muted);
       cursor: pointer;
     }
-    .pr-chord-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.25); }
+    .pr-chord-btn:hover { color: var(--text); border-color: var(--border); }
     .pr-chord-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(155,140,255,0.15); }
 
     .btn-sm {
@@ -1102,6 +1109,7 @@
       margin-top: 4px;
       border-bottom: 1px solid var(--border);
       margin-bottom: 6px;
+      /* color comes from .difficulty-* class */
     }
     @media (max-width: 760px) {
       .btn-hint-bubble { left: auto; right: auto; top: calc(100% + 8px); transform: none; white-space: normal; width: 160px; }
@@ -1345,7 +1353,7 @@ const I18N = {
     fingerNames: { thumb: 'thumb', index: 'index', middle: 'middle', ring: 'ring', pinky: 'pinky' },
   },
   zh: {
-    tagline: '音乐治疗系统',
+    tagline: '指尖律动，音乐康复',
     connect: '连接', disconnect: '断开连接',
     calibrate: '校准', recalibrate: '重新校准',
     connecting: '连接中…', calibrating: '校准中…',
@@ -1399,9 +1407,9 @@ function t(key) { return I18N[currentLang][key] || I18N.en[key] || key; }
 function tFinger(f) { return (I18N[currentLang].fingerNames || {})[f] || f; }
 
 function applyLang() {
-  // Update app title (Ripple ↔ 涟音)
+  // Update app title (Ripple ↔ 音动指尖)
   const h1 = document.querySelector('.header h1');
-  if(h1) h1.textContent = currentLang==='zh' ? '涟音' : 'Ripple';
+  if(h1) h1.textContent = currentLang==='zh' ? '音动指尖' : 'Ripple';
   const appTagline = document.getElementById('app-tagline');
   if(appTagline) appTagline.textContent = t('tagline');
   const backBtn = document.getElementById('back-to-splash');
@@ -1548,7 +1556,7 @@ function initSplash() {
   function updateSplashText() {
     // Splash logo changes with language
     const logo = document.querySelector('.splash-logo');
-    if(logo) logo.textContent = selectedLang==='zh' ? '涟音' : 'Ripple';
+    if(logo) logo.textContent = selectedLang==='zh' ? '音动指尖' : 'Ripple';
     document.getElementById('splash-tagline').textContent = I18N[selectedLang].tagline;
     document.getElementById('splash-theme-label').textContent = I18N[selectedLang].splashTheme;
     document.getElementById('splash-lang-label').textContent = I18N[selectedLang].splashLang;
