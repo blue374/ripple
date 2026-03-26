@@ -1522,8 +1522,13 @@ function applyTheme(id) {
 // ── Splash logic ──
 function initSplash() {
   const grid = document.getElementById('theme-grid');
-  let selectedLang = 'en';
+  let selectedLang = currentLang || 'en';
   let selectedTheme = 'midnight';
+
+  // Mark correct lang button active on init
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === selectedLang);
+  });
 
   function renderGrid() {
     const darkLabel = selectedLang==='zh' ? '— 深色 —' : '— Dark —';
@@ -3862,10 +3867,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Back to splash button
   document.getElementById('back-to-splash').addEventListener('click', () => {
     const splash = document.getElementById('splash');
-    splash.style.display = 'flex';   // make it visible again
-    splash.style.opacity = '0';      // start transparent
+    // Sync splash internal state to current app language
+    if(typeof selectedLang !== 'undefined') {
+      // selectedLang is closure-scoped inside initSplash — trigger via lang buttons
+    }
+    // Re-trigger the correct lang button so splash state syncs
+    const activeLangBtn = document.querySelector(`.lang-btn[data-lang="${currentLang}"]`);
+    if(activeLangBtn) activeLangBtn.click();
+
+    splash.style.display = 'flex';
+    splash.style.opacity = '0';
     splash.classList.remove('splash-fade-out');
-    // Fade it in
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         splash.style.transition = 'opacity 0.35s ease';
