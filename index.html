@@ -1243,12 +1243,12 @@
       <div class="panel-title" data-i18n="configuration">Configuration</div>
       <div class="settings-grid">
         <div class="setting-group">
-          <label for="thresh-on">Sensitivity ON threshold: <span id="thresh-on-val">25</span>%</label>
-          <input type="range" id="thresh-on" min="5" max="60" value="25">
+          <label for="thresh-on">Sensitivity ON threshold: <span id="thresh-on-val">55</span>%</label>
+          <input type="range" id="thresh-on" min="5" max="60" value="55">
         </div>
         <div class="setting-group">
-          <label for="thresh-off">Release threshold: <span id="thresh-off-val">8</span>%</label>
-          <input type="range" id="thresh-off" min="2" max="40" value="8">
+          <label for="thresh-off">Release threshold: <span id="thresh-off-val">12</span>%</label>
+          <input type="range" id="thresh-off" min="2" max="40" value="12">
         </div>
         <div class="setting-group">
           <label for="filter-size">Smoothing (filter frames): <span id="filter-val">5</span></label>
@@ -2699,7 +2699,7 @@ const App = (() => {
   let calibSamples={};
 
   // Hysteresis thresholds (match server.py defaults)
-  let threshOn=0.25, threshOff=0.08;
+  let threshOn=0.55, threshOff=0.12;
   let filterSize=5;
   const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
 
