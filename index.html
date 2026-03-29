@@ -8,9 +8,9 @@
   <style>
     :root {
       --bg: #0d0d1a;
-      --surface: rgba(255,255,255,0.06);
-      --surface2: rgba(255,255,255,0.10);
-      --border: rgba(255,255,255,0.18);
+      --surface: rgba(255,255,255,0.13);
+      --surface2: rgba(255,255,255,0.20);
+      --border: rgba(255,255,255,0.28);
       --text: #ffffff;
       --muted: #a8a8c8;
       --accent: #9b8cff;
@@ -35,16 +35,16 @@
     }
 
     /* ── THEMES ── */
-    body.theme-midnight { --bg:#0d0d1a; --surface:rgba(255,255,255,0.06); --surface2:rgba(255,255,255,0.10); --border:rgba(255,255,255,0.22); --text:#ffffff; --muted:#a8a8c8; --accent:#9b8cff; --accent2:#ff8cc8; --orb1:155,140,255; --orb2:255,140,200; --grad1:#0d0d1a; --grad2:#131326; }
-    body.theme-ocean    { --bg:#071a2e; --surface:rgba(255,255,255,0.07); --surface2:rgba(255,255,255,0.11); --border:rgba(255,255,255,0.22); --text:#ffffff; --muted:#7bbedd; --accent:#38bdf8; --accent2:#67e8f9; --orb1:56,189,248; --orb2:103,232,249; --grad1:#071a2e; --grad2:#0d2640; }
-    body.theme-forest   { --bg:#071a0f; --surface:rgba(255,255,255,0.07); --surface2:rgba(255,255,255,0.10); --border:rgba(255,255,255,0.22); --text:#ffffff; --muted:#7dbd90; --accent:#4ade80; --accent2:#86efac; --orb1:74,222,128; --orb2:134,239,172; --grad1:#071a0f; --grad2:#0d2618; }
-    body.theme-rose     { --bg:#1a0a12; --surface:rgba(255,255,255,0.07); --surface2:rgba(255,255,255,0.10); --border:rgba(255,255,255,0.22); --text:#ffffff; --muted:#cc8898; --accent:#fb7185; --accent2:#fda4af; --orb1:251,113,133; --orb2:253,164,175; --grad1:#1a0a12; --grad2:#27101c; }
-    body.theme-dusk     { --bg:#1a1206; --surface:rgba(255,255,255,0.07); --surface2:rgba(255,255,255,0.10); --border:rgba(255,255,255,0.22); --text:#ffffff; --muted:#c8a87a; --accent:#fb923c; --accent2:#fbbf24; --orb1:251,146,60; --orb2:251,191,36; --grad1:#1a1206; --grad2:#271c0d; }
+    body.theme-midnight { --bg:#0d0d1a; --surface:rgba(255,255,255,0.13); --surface2:rgba(255,255,255,0.20); --border:rgba(255,255,255,0.28); --text:#ffffff; --muted:#a8a8c8; --accent:#9b8cff; --accent2:#ff8cc8; --orb1:155,140,255; --orb2:255,140,200; --grad1:#0d0d1a; --grad2:#131326; }
+    body.theme-ocean    { --bg:#071a2e; --surface:rgba(255,255,255,0.13); --surface2:rgba(255,255,255,0.20); --border:rgba(255,255,255,0.28); --text:#ffffff; --muted:#7bbedd; --accent:#38bdf8; --accent2:#67e8f9; --orb1:56,189,248; --orb2:103,232,249; --grad1:#071a2e; --grad2:#0d2640; }
+    body.theme-forest   { --bg:#071a0f; --surface:rgba(255,255,255,0.13); --surface2:rgba(255,255,255,0.20); --border:rgba(255,255,255,0.28); --text:#ffffff; --muted:#7dbd90; --accent:#4ade80; --accent2:#86efac; --orb1:74,222,128; --orb2:134,239,172; --grad1:#071a0f; --grad2:#0d2618; }
+    body.theme-rose     { --bg:#1a0a12; --surface:rgba(255,255,255,0.13); --surface2:rgba(255,255,255,0.20); --border:rgba(255,255,255,0.28); --text:#ffffff; --muted:#cc8898; --accent:#fb7185; --accent2:#fda4af; --orb1:251,113,133; --orb2:253,164,175; --grad1:#1a0a12; --grad2:#27101c; }
+    body.theme-dusk     { --bg:#1a1206; --surface:rgba(255,255,255,0.13); --surface2:rgba(255,255,255,0.20); --border:rgba(255,255,255,0.28); --text:#ffffff; --muted:#c8a87a; --accent:#fb923c; --accent2:#fbbf24; --orb1:251,146,60; --orb2:251,191,36; --grad1:#1a1206; --grad2:#271c0d; }
     /* Light themes */
-    body.theme-cloud    { --bg:#c2ccee; --surface:rgba(255,255,255,0.42); --surface2:rgba(255,255,255,0.58); --border:rgba(60,60,160,0.28); --text:#0a0a28; --muted:#4a4a7a; --accent:#5254d4; --accent2:#8b6ef0; --orb1:82,84,212; --orb2:139,110,240; --grad1:#c2ccee; --grad2:#b8c3e8; }
-    body.theme-blossom  { --bg:#d9a8be; --surface:rgba(255,255,255,0.38); --surface2:rgba(255,255,255,0.54); --border:rgba(140,20,70,0.30); --text:#180008; --muted:#7a2040; --accent:#c4005e; --accent2:#e85fa0; --orb1:196,0,94; --orb2:232,95,160; --grad1:#d9a8be; --grad2:#d0a0b6; }
-    body.theme-mint     { --bg:#a8d8c0; --surface:rgba(255,255,255,0.36); --surface2:rgba(255,255,255,0.52); --border:rgba(5,100,60,0.30); --text:#011208; --muted:#1a6040; --accent:#027a52; --accent2:#20b880; --orb1:2,122,82; --orb2:32,184,128; --grad1:#a8d8c0; --grad2:#9ed0b8; }
-    body.theme-sand     { --bg:#cebb96; --surface:rgba(255,255,255,0.34); --surface2:rgba(255,255,255,0.50); --border:rgba(100,60,10,0.32); --text:#120800; --muted:#6b4010; --accent:#924200; --accent2:#d4820a; --orb1:146,66,0; --orb2:212,130,10; --grad1:#cebb96; --grad2:#c6b28c; }
+    body.theme-cloud    { --bg:#a8b4d8; --surface:rgba(255,255,255,0.82); --surface2:rgba(255,255,255,0.92); --border:rgba(60,60,160,0.20); --text:#0a0a28; --muted:#4a4a7a; --accent:#5254d4; --accent2:#8b6ef0; --orb1:82,84,212; --orb2:139,110,240; --grad1:#a8b4d8; --grad2:#9faece; }
+    body.theme-blossom  { --bg:#b88098; --surface:rgba(255,255,255,0.82); --surface2:rgba(255,255,255,0.92); --border:rgba(140,20,70,0.18); --text:#180008; --muted:#7a2040; --accent:#c4005e; --accent2:#e85fa0; --orb1:196,0,94; --orb2:232,95,160; --grad1:#b88098; --grad2:#ae7890; }
+    body.theme-mint     { --bg:#80b89a; --surface:rgba(255,255,255,0.82); --surface2:rgba(255,255,255,0.92); --border:rgba(5,100,60,0.18); --text:#011208; --muted:#1a6040; --accent:#027a52; --accent2:#20b880; --orb1:2,122,82; --orb2:32,184,128; --grad1:#80b89a; --grad2:#78ae92; }
+    body.theme-sand     { --bg:#b09870; --surface:rgba(255,255,255,0.82); --surface2:rgba(255,255,255,0.92); --border:rgba(100,60,10,0.18); --text:#120800; --muted:#6b4010; --accent:#924200; --accent2:#d4820a; --orb1:146,66,0; --orb2:212,130,10; --grad1:#b09870; --grad2:#a89068; }
 
     /* Dynamic background using theme vars */
     body::before {
@@ -353,6 +353,20 @@
       background: linear-gradient(135deg, rgba(180,140,20,0.36), rgba(180,140,20,0.16));
       opacity: 1;
     }
+    .btn-stop-sound {
+      border-color: rgba(120,120,120,0.5);
+      color: var(--text);
+      background: linear-gradient(135deg, rgba(120,120,120,0.18), rgba(120,120,120,0.06));
+      box-shadow: 0 0 14px rgba(120,120,120,0.1);
+      font-size: 0.8rem;
+      padding: 8px 16px;
+    }
+    .btn-stop-sound:hover:not(:disabled) {
+      background: linear-gradient(135deg, rgba(200,60,60,0.28), rgba(200,60,60,0.12));
+      border-color: rgba(200,60,60,0.5);
+      opacity: 1;
+    }
+    .btn-stop-sound:disabled { opacity: 0.25; cursor: default; }
 
     /* Tabs */
     .tabs {
@@ -427,18 +441,18 @@
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px;
+      border-radius: 18px;
+      padding: 32px;
       margin-bottom: 20px;
     }
 
     .panel-title {
-      font-size: 0.82rem;
+      font-size: 0.92rem;
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--text);
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
 
     /* Hand visualization */
@@ -608,17 +622,37 @@
 
     /* Tutorial */
     .tutorial-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
       margin-bottom: 20px;
+    }
+    .tut-group {
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 20px 14px;
+      background: rgba(var(--orb1),0.05);
+    }
+    .tut-group-header {
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tut-group-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
     }
 
     .tutorial-card {
       background: var(--surface2);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px;
+      border-radius: 14px;
+      padding: 18px 16px;
       cursor: pointer;
       transition: all 0.15s;
     }
@@ -626,8 +660,8 @@
     .tutorial-card:hover { border-color: var(--accent); background: rgba(var(--orb1),0.06); }
     .tutorial-card.active-tut { border-color: rgba(var(--orb1),0.5); background: rgba(var(--orb1),0.08); }
 
-    .tut-name { font-size: 0.95rem; margin-bottom: 4px; }
-    .tut-meta { font-size: 0.74rem; color: var(--text); opacity: 0.7; font-weight: 500; }
+    .tut-name { font-size: 1.05rem; font-weight: 600; margin-bottom: 6px; }
+    .tut-meta { font-size: 0.78rem; color: var(--text); opacity: 0.7; font-weight: 500; }
 
     .difficulty-beginner { color: #6ab187; }
     .difficulty-easy     { color: #5b9bd5; }
@@ -1100,17 +1134,7 @@
       0%,100% { box-shadow: 0 0 0 3px rgba(255,220,60,0.9), 0 0 18px rgba(255,200,40,0.5); }
       50%      { box-shadow: 0 0 0 5px rgba(255,220,60,0.6), 0 0 28px rgba(255,200,40,0.8); }
     }
-    .tut-diff-header {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 10px 4px 5px;
-      margin-top: 4px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 6px;
-      /* color comes from .difficulty-* class */
-    }
+    /* tut-diff-header replaced by tut-group */
     @media (max-width: 760px) {
       .btn-hint-bubble { left: auto; right: auto; top: calc(100% + 8px); transform: none; white-space: normal; width: 160px; }
       .btn-hint-bubble::before { right: auto; left: 20px; top: auto; bottom: 100%; transform: none;
@@ -1157,6 +1181,7 @@
 
   <!-- Controls -->
   <div class="control-bar">
+    <button id="stop-sound-btn" class="btn btn-stop-sound" disabled>⏹ Stop Sound</button>
     <div class="btn-hint-wrap" id="connect-hint-wrap">
       <button id="connect-btn" class="btn btn-connect">Connect</button>
     </div>
@@ -1306,7 +1331,7 @@
 const I18N = {
   en: {
     tagline: 'Music Therapy System',
-    connect: 'Connect', disconnect: 'Disconnect',
+    connect: 'Connect', disconnect: 'Disconnect', stopSound: '⏹ Stop Sound',
     calibrate: 'Calibrate', recalibrate: 'Re-calibrate',
     connecting: 'Connecting…', calibrating: 'Calibrating…',
     tabPlay: 'Play', tabTutorial: 'Tutorial', tabRecord: 'Record', tabSettings: 'Settings',
@@ -1354,7 +1379,7 @@ const I18N = {
   },
   zh: {
     tagline: '指尖律动，音乐康复',
-    connect: '连接', disconnect: '断开连接',
+    connect: '连接', disconnect: '断开连接', stopSound: '⏹ 停止声音',
     calibrate: '校准', recalibrate: '重新校准',
     connecting: '连接中…', calibrating: '校准中…',
     tabPlay: '演奏', tabTutorial: '教程', tabRecord: '录音', tabSettings: '设置',
@@ -1414,6 +1439,8 @@ function applyLang() {
   if(appTagline) appTagline.textContent = t('tagline');
   const backBtn = document.getElementById('back-to-splash');
   if(backBtn) backBtn.textContent = t('splashBtn');
+  const stopSoundBtn = document.getElementById('stop-sound-btn');
+  if(stopSoundBtn) stopSoundBtn.textContent = t('stopSound');
 
   // Browser warning
   const bw = document.getElementById('browser-warning');
@@ -3237,6 +3264,8 @@ const UI = (() => {
       cal.disabled=true; cal.textContent=t('calibrate'); cal.className='btn btn-calibrate';
       cal.classList.remove('hidden'); recal.classList.add('hidden');
     }
+    const ssb = document.getElementById('stop-sound-btn');
+    if(ssb) { ssb.disabled = !App.connected; ssb.textContent = t('stopSound'); }
   }
 
   function renderPresets() {
@@ -3463,20 +3492,26 @@ const UI = (() => {
     const sorted = Object.entries(TUTORIALS).sort((a,b)=>
       (diffOrder[a[1].difficulty]??9) - (diffOrder[b[1].difficulty]??9)
     );
-    // Group by difficulty with section headers
-    let lastDiff = null;
+    // Group into difficulty buckets
+    const groups = {};
+    const groupOrder = [];
+    for(const [id, tut] of sorted) {
+      if(!groups[tut.difficulty]) { groups[tut.difficulty]=[]; groupOrder.push(tut.difficulty); }
+      groups[tut.difficulty].push([id, tut]);
+    }
     const list = document.getElementById('tutorial-list');
-    list.innerHTML = sorted.map(([id,tut])=>{
-      let header = '';
-      if(tut.difficulty !== lastDiff) {
-        lastDiff = tut.difficulty;
-        header = `<div class="tut-diff-header difficulty-${tut.difficulty.toLowerCase()}">${t(diffKey[tut.difficulty]||tut.difficulty)}</div>`;
-      }
-      return header + `
+    list.innerHTML = groupOrder.map(diff => {
+      const songs = groups[diff];
+      const cards = songs.map(([id, tut]) => `
         <div class="tutorial-card" data-id="${id}">
           <div class="tut-name">${tut.name}</div>
-          ${currentLang==='zh' && tut.nameEn ? `<div style="font-size:0.68rem;color:var(--muted);margin-bottom:2px;font-style:italic;">${tut.nameEn}</div>` : ''}
-          <div class="tut-meta difficulty-${tut.difficulty.toLowerCase()}">${tut.sequence.length} ${t('notes')}</div>
+          ${currentLang==='zh' && tut.nameEn ? `<div style="font-size:0.68rem;color:var(--muted);margin-bottom:3px;font-style:italic;">${tut.nameEn}</div>` : ''}
+          <div class="tut-meta difficulty-${diff.toLowerCase()}">${tut.sequence.length} ${t('notes')}</div>
+        </div>`).join('');
+      return `
+        <div class="tut-group">
+          <div class="tut-group-header difficulty-${diff.toLowerCase()}">${t(diffKey[diff]||diff)}</div>
+          <div class="tut-group-cards">${cards}</div>
         </div>`;
     }).join('');
     list.querySelectorAll('.tutorial-card').forEach(c=>{
@@ -3883,6 +3918,12 @@ document.addEventListener('DOMContentLoaded', () => {
   initSplash();
 
   // Back to splash button
+  document.getElementById('stop-sound-btn').addEventListener('click', () => {
+    AudioEngine.stopAll();
+    UI.updateFingers(new Set(), App.currentPreset);
+    UI.updateStatus(new Set(), App.currentPreset);
+  });
+
   document.getElementById('back-to-splash').addEventListener('click', () => {
     const splash = document.getElementById('splash');
     // Sync splash internal state to current app language
