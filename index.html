@@ -2738,6 +2738,7 @@ const App = (() => {
   }
 
   // Called by Serial on each 10-value packet
+  let _dbgLog = 0;
   function onPacket(vals) {
     if(!connected) return;
 
@@ -2755,6 +2756,11 @@ const App = (() => {
       const raw = vals[cfg.idx];
       const filtered = filterValue(f, raw);
       const drop = (baseline[f]-filtered)/cfg.range;
+
+      // Debug: log drop values every 30 packets
+      if(++_dbgLog % 30 === 0) {
+        console.log(`[${f}] raw=${raw} baseline=${baseline[f]} drop=${drop.toFixed(4)} threshOn=${threshOn} threshOff=${threshOff}`);
+      }
 
       // Hysteresis
       if(activeFingers.has(f)) {
