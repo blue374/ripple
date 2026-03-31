@@ -36,16 +36,39 @@
     }
 
     /* ── THEMES ── */
-    body.theme-midnight { --bg:#0d0d1a; --surface:rgba(255,255,255,0.13); --surface2:rgba(255,255,255,0.20); --surface3:rgba(255,255,255,0.72); --border:rgba(255,255,255,0.30); --text:#ffffff; --muted:#a8a8c8; --accent:#9b8cff; --accent2:#ff8cc8; --orb1:155,140,255; --orb2:255,140,200; --grad1:#0d0d1a; --grad2:#131326; }
-    body.theme-ocean    { --bg:#071a2e; --surface:rgba(255,255,255,0.13); --surface2:rgba(255,255,255,0.20); --surface3:rgba(255,255,255,0.72); --border:rgba(255,255,255,0.30); --text:#ffffff; --muted:#7bbedd; --accent:#38bdf8; --accent2:#67e8f9; --orb1:56,189,248; --orb2:103,232,249; --grad1:#071a2e; --grad2:#0d2640; }
-    body.theme-forest   { --bg:#071a0f; --surface:rgba(255,255,255,0.13); --surface2:rgba(255,255,255,0.20); --surface3:rgba(255,255,255,0.72); --border:rgba(255,255,255,0.30); --text:#ffffff; --muted:#7dbd90; --accent:#4ade80; --accent2:#86efac; --orb1:74,222,128; --orb2:134,239,172; --grad1:#071a0f; --grad2:#0d2618; }
-    body.theme-rose     { --bg:#1a0a12; --surface:rgba(255,255,255,0.13); --surface2:rgba(255,255,255,0.20); --surface3:rgba(255,255,255,0.72); --border:rgba(255,255,255,0.30); --text:#ffffff; --muted:#cc8898; --accent:#fb7185; --accent2:#fda4af; --orb1:251,113,133; --orb2:253,164,175; --grad1:#1a0a12; --grad2:#27101c; }
-    body.theme-dusk     { --bg:#1a1206; --surface:rgba(255,255,255,0.13); --surface2:rgba(255,255,255,0.20); --surface3:rgba(255,255,255,0.72); --border:rgba(255,255,255,0.30); --text:#ffffff; --muted:#c8a87a; --accent:#fb923c; --accent2:#fbbf24; --orb1:251,146,60; --orb2:251,191,36; --grad1:#1a1206; --grad2:#271c0d; }
-    /* Light themes */
-    body.theme-cloud    { --bg:#a8b4d8; --surface:rgba(255,255,255,0.82); --surface2:rgba(255,255,255,0.92); --surface3:rgba(255,255,255,0.98); --border:rgba(60,60,160,0.20); --text:#0a0a28; --muted:#4a4a7a; --accent:#5254d4; --accent2:#8b6ef0; --orb1:82,84,212; --orb2:139,110,240; --grad1:#a8b4d8; --grad2:#9faece; }
-    body.theme-blossom  { --bg:#b88098; --surface:rgba(255,255,255,0.82); --surface2:rgba(255,255,255,0.92); --surface3:rgba(255,255,255,0.98); --border:rgba(140,20,70,0.18); --text:#180008; --muted:#7a2040; --accent:#c4005e; --accent2:#e85fa0; --orb1:196,0,94; --orb2:232,95,160; --grad1:#b88098; --grad2:#ae7890; }
-    body.theme-mint     { --bg:#80b89a; --surface:rgba(255,255,255,0.82); --surface2:rgba(255,255,255,0.92); --surface3:rgba(255,255,255,0.98); --border:rgba(5,100,60,0.18); --text:#011208; --muted:#1a6040; --accent:#027a52; --accent2:#20b880; --orb1:2,122,82; --orb2:32,184,128; --grad1:#80b89a; --grad2:#78ae92; }
-    body.theme-sand     { --bg:#b09870; --surface:rgba(255,255,255,0.82); --surface2:rgba(255,255,255,0.92); --surface3:rgba(255,255,255,0.98); --border:rgba(100,60,10,0.18); --text:#120800; --muted:#6b4010; --accent:#924200; --accent2:#d4820a; --orb1:146,66,0; --orb2:212,130,10; --grad1:#b09870; --grad2:#a89068; }
+    /* ── DARK THEME: deep navy with vivid purple/pink/teal accents ── */
+    body.theme-dark {
+      --bg: #0e0e1c;
+      --surface: rgba(255,255,255,0.10);
+      --surface2: rgba(255,255,255,0.16);
+      --surface3: rgba(255,255,255,0.72);
+      --border: rgba(255,255,255,0.22);
+      --text: #ffffff;
+      --muted: #b0aed0;
+      --accent: #a78bfa;
+      --accent2: #34d399;
+      --orb1: 167,139,250;
+      --orb2: 52,211,153;
+      --grad1: #0e0e1c;
+      --grad2: #151528;
+    }
+
+    /* ── LIGHT THEME: warm cream with vivid coral/indigo/amber accents ── */
+    body.theme-light {
+      --bg: #f0ede8;
+      --surface: rgba(255,255,255,0.70);
+      --surface2: rgba(255,255,255,0.85);
+      --surface3: rgba(255,255,255,0.98);
+      --border: rgba(80,60,40,0.18);
+      --text: #1a1208;
+      --muted: #6b5840;
+      --accent: #e84855;
+      --accent2: #6366f1;
+      --orb1: 232,72,85;
+      --orb2: 99,102,241;
+      --grad1: #f0ede8;
+      --grad2: #e8e2da;
+    }
 
     /* Dynamic background using theme vars */
     body::before {
@@ -150,13 +173,15 @@
     .lang-btn.active { border-color: rgba(155,140,255,0.7); color: #fff; background: rgba(155,140,255,0.18); box-shadow: 0 0 16px rgba(155,140,255,0.2); }
     /* Theme grid */
     .theme-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
       margin-bottom: 36px;
+      flex-wrap: wrap;
     }
-    @media(max-width:420px){ .theme-grid { grid-template-columns: repeat(2,1fr); } }
     .theme-card {
+      width: 180px;
+      flex-shrink: 0;
       border-radius: 12px;
       padding: 14px 10px 10px;
       border: 2px solid transparent;
@@ -1143,7 +1168,7 @@
     }
   </style>
 </head>
-<body class="theme-midnight">
+<body class="theme-dark">
 
 <!-- ── SPLASH SCREEN ── -->
 <div id="splash">
@@ -1372,8 +1397,7 @@ const I18N = {
     splashTheme: 'Choose a Theme',
     splashLang: 'Language / 语言',
     enter: 'Enter →',
-    darkThemes: '— Dark —',
-    lightThemes: '— Light —',
+
     diffBeginner: 'Beginner', diffEasy: 'Easy', diffMedium: 'Medium', diffHard: 'Hard',
     notes: 'notes',
     fingerNames: { thumb: 'thumb', index: 'index', middle: 'middle', ring: 'ring', pinky: 'pinky' },
@@ -1420,8 +1444,7 @@ const I18N = {
     splashTheme: '选择主题',
     splashLang: 'Language / 语言',
     enter: '进入 →',
-    darkThemes: '— 深色 —',
-    lightThemes: '— 浅色 —',
+
     diffBeginner: '初级', diffEasy: '简单', diffMedium: '中级', diffHard: '高级',
     notes: '个音符',
     fingerNames: { thumb: '拇指', index: '食指', middle: '中指', ring: '无名指', pinky: '小指' },
@@ -1529,18 +1552,11 @@ function applyLang() {
 //  THEMES
 // ═══════════════════════════════════════════════════════
 const THEMES = [
-  { id:'midnight', nameEn:'Midnight',  nameZh:'午夜',   dark:true,  colors:['#0d0d1a','#9b8cff','#ff8cc8'] },
-  { id:'ocean',    nameEn:'Ocean',     nameZh:'海洋',   dark:true,  colors:['#071a2e','#38bdf8','#67e8f9'] },
-  { id:'forest',   nameEn:'Forest',    nameZh:'森林',   dark:true,  colors:['#071a0f','#4ade80','#86efac'] },
-  { id:'rose',     nameEn:'Rose',      nameZh:'玫瑰',   dark:true,  colors:['#1a0a12','#fb7185','#fda4af'] },
-  { id:'dusk',     nameEn:'Dusk',      nameZh:'黄昏',   dark:true,  colors:['#1a1206','#fb923c','#fbbf24'] },
-  { id:'cloud',    nameEn:'Cloud',     nameZh:'云朵',   dark:false, colors:['#f0f4ff','#6366f1','#a78bfa'] },
-  { id:'blossom',  nameEn:'Blossom',   nameZh:'樱花',   dark:false, colors:['#fff0f5','#e11d73','#f472b6'] },
-  { id:'mint',     nameEn:'Mint',      nameZh:'薄荷',   dark:false, colors:['#f0fff8','#059669','#34d399'] },
-  { id:'sand',     nameEn:'Sand',      nameZh:'沙漠',   dark:false, colors:['#fdf8f0','#b45309','#f59e0b'] },
+  { id:'dark',  nameEn:'Dark',  nameZh:'深色', dark:true,  colors:['#0e0e1c','#a78bfa','#34d399'] },
+  { id:'light', nameEn:'Light', nameZh:'浅色', dark:false, colors:['#f0ede8','#e84855','#6366f1'] },
 ];
 
-let currentTheme = 'midnight';
+let currentTheme = 'dark';
 
 function applyTheme(id) {
   currentTheme = id;
@@ -1551,7 +1567,7 @@ function applyTheme(id) {
 function initSplash() {
   const grid = document.getElementById('theme-grid');
   let selectedLang = currentLang || 'en';
-  let selectedTheme = 'midnight';
+  let selectedTheme = 'dark';
 
   // Mark correct lang button active on init
   document.querySelectorAll('.lang-btn').forEach(b => {
@@ -1559,14 +1575,7 @@ function initSplash() {
   });
 
   function renderGrid() {
-    const darkLabel = selectedLang==='zh' ? '— 深色 —' : '— Dark —';
-    const lightLabel = selectedLang==='zh' ? '— 浅色 —' : '— Light —';
-    grid.innerHTML = `
-      <div style="grid-column:1/-1;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);text-align:left;padding-left:2px;margin-bottom:-4px;">${darkLabel}</div>
-      ${THEMES.filter(t=>t.dark).map(th => themeCard(th, selectedTheme, selectedLang)).join('')}
-      <div style="grid-column:1/-1;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);text-align:left;padding-left:2px;margin-top:4px;margin-bottom:-4px;">${lightLabel}</div>
-      ${THEMES.filter(t=>!t.dark).map(th => themeCard(th, selectedTheme, selectedLang)).join('')}
-    `;
+    grid.innerHTML = THEMES.map(th => themeCard(th, selectedTheme, selectedLang)).join('');
     grid.querySelectorAll('.theme-card').forEach(card => {
       card.addEventListener('click', () => {
         selectedTheme = card.dataset.theme;
@@ -1619,7 +1628,7 @@ function initSplash() {
   });
 
   // Init preview theme as midnight
-  applyTheme('midnight');
+  applyTheme('dark');
   updateSplashText();
 }
 
