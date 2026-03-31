@@ -1942,13 +1942,24 @@ const TUTORIALS_EN = {
     // 6 notes (Bb3 C4 D4 E4 F4 G4) → shifts when G4 needed
     name:'The Entertainer', difficulty:'Hard',
     sequence:[
-      {note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:0.5},{note:'D4',d:1},{note:'F4',d:0.5},{note:'G4',d:0.5},
-      {note:'F4',d:0.5},{note:'E4',d:0.5},{note:'F4',d:0.5},{note:'C4',d:0.5},{note:'F4',d:2},
-      {note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:0.5},{note:'D4',d:1},{note:'G4',d:0.5},{note:'F4',d:0.5},
-      {note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:2},
-      {note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:0.5},{note:'D4',d:1},{note:'F4',d:0.5},{note:'G4',d:0.5},
-      {note:'F4',d:0.5},{note:'E4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:0.5},{note:'F4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:0.5},
-      {note:'D4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:2},
+      // Phrase A1: D C D Bb | D. F G | Eb D C D | Bb(long)
+      {note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:0.5},
+      {note:'D4',d:1},{note:'F4',d:0.5},{note:'G4',d:0.5},
+      {note:'Eb4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},
+      {note:'Bb3',d:2},
+      // Phrase A2: D C D Bb | D. G F | Eb D C | Bb(long)
+      {note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:0.5},
+      {note:'D4',d:1},{note:'G4',d:0.5},{note:'F4',d:0.5},
+      {note:'Eb4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},
+      {note:'Bb3',d:2},
+      // Phrase B: D C D Bb | D. F G | F E F | E F G | F E D E D C | D(long)
+      {note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:0.5},
+      {note:'D4',d:1},{note:'F4',d:0.5},{note:'G4',d:0.5},
+      {note:'F4',d:0.5},{note:'E4',d:0.5},{note:'F4',d:0.5},
+      {note:'E4',d:0.5},{note:'F4',d:0.5},{note:'G4',d:0.5},
+      {note:'F4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:0.5},
+      {note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},
+      {note:'D4',d:2},
     ],
   },
   furelise: {
@@ -2068,25 +2079,26 @@ const TUTORIALS_EN = {
   amazinggrace: {
     name:'Amazing Grace', difficulty:'Medium', bpm:76,
     sequence:[
-      // "Amazing grace how sweet the sound"
+      // Phrase 1: Amazing grace, how sweet the sound
       {note:'D4',d:1},
       {note:'G4',d:1.5},{note:'B4',d:0.5},{note:'G4',d:1},
-      {note:'B4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},{note:'E4',d:3},
-      // "that saved a wretch like me"
-      {note:'E4',d:1.5},{note:'G4',d:0.5},{note:'E4',d:1},
-      {note:'D4',d:1.5},{note:'B3',d:0.5},{note:'D4',d:1},{note:'G4',d:3},
-      // "I once was lost but now am found"
+      {note:'B4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},
+      {note:'G4',d:3},
+      // Phrase 2: That saved a wretch like me
+      {note:'D4',d:1},
       {note:'G4',d:1.5},{note:'B4',d:0.5},{note:'G4',d:1},
-      {note:'B4',d:1.5},{note:'D5',d:0.5},{note:'B4',d:1},{note:'G4',d:3},
-      // "was blind but now I see"
+      {note:'D4',d:1.5},{note:'B3',d:0.5},{note:'D4',d:1},
+      {note:'G4',d:3},
+      // Phrase 3: I once was lost but now am found
+      {note:'D4',d:1},
+      {note:'G4',d:1.5},{note:'B4',d:0.5},{note:'G4',d:1},
+      {note:'B4',d:1.5},{note:'D5',d:0.5},{note:'B4',d:1},
+      {note:'G4',d:3},
+      // Phrase 4: Was blind but now I see
+      {note:'G4',d:1},
       {note:'G4',d:1.5},{note:'B4',d:0.5},{note:'D5',d:1},
-      {note:'B4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},{note:'E4',d:3},
-      // Verse 2: "Twas grace that taught my heart to fear"
-      {note:'D4',d:1},
-      {note:'G4',d:1.5},{note:'B4',d:0.5},{note:'G4',d:1},
-      {note:'B4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},{note:'E4',d:3},
-      {note:'E4',d:1.5},{note:'G4',d:0.5},{note:'E4',d:1},
-      {note:'D4',d:1.5},{note:'B3',d:0.5},{note:'D4',d:1},{note:'G4',d:3},
+      {note:'B4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},
+      {note:'G4',d:3},
     ],
   },
 
@@ -2098,7 +2110,7 @@ const TUTORIALS_EN = {
       {note:'A3',d:1},
       {note:'C4',d:2},{note:'D4',d:1},{note:'E4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1},
       {note:'D4',d:2},{note:'B3',d:1},{note:'C4',d:2},{note:'A3',d:1},
-      {note:'A3',d:1.5},{note:'Ab3',d:0.5},{note:'A3',d:1},{note:'B3',d:2},{note:'G4',d:1},
+      {note:'A3',d:3},{note:'B3',d:2},{note:'G4',d:1},
       {note:'G4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'D4',d:2},{note:'A3',d:1},
       {note:'C4',d:2},{note:'D4',d:1},{note:'E4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1},
       {note:'D4',d:2},{note:'B3',d:1},{note:'C4',d:2},{note:'A3',d:1},
@@ -2152,8 +2164,8 @@ const TUTORIALS_ZH = {
       {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
       {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'C4',d:1},
       {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'C4',d:1},
-      {note:'C4',d:1},{note:'G3',d:1},{note:'C4',d:2},
-      {note:'C4',d:1},{note:'G3',d:1},{note:'C4',d:2},
+      {note:'C4',d:1},{note:'G4',d:1},{note:'C4',d:2},
+      {note:'C4',d:1},{note:'G4',d:1},{note:'C4',d:2},
     ],
   },
 
@@ -2693,7 +2705,7 @@ const AudioEngine = (() => {
   let activeNodes = {}; // finger -> {osc nodes or buffer source}
   let drumBuffers = {};
   let volume = 0.3;
-  let instrument = 'pad';
+  let instrument = 'harp';
 
   function init() {
     if (ctx) return;
@@ -3098,6 +3110,7 @@ const App = (() => {
   function checkTutorialProgress(finger) {
     if(!tutState.current || tutState.completed) return;
     const tut = TUTORIALS[tutState.current];
+    if(!tut) return;
     const item = tut.sequence[tutState.step];
     const expectedNote = item.note;
     // Check if this finger maps to the expected note in the current window
@@ -3163,6 +3176,8 @@ const App = (() => {
     currentPreset=p;
     AudioEngine.stopAll();
     activeFingers=new Set();
+    const preset = PRESETS[p];
+    if(preset?.instrument) AudioEngine.setInstrument(preset.instrument);
     UI.syncAll();
   }
 
@@ -3293,6 +3308,7 @@ const App = (() => {
 
   function startTutorial(id) {
     const tut = TUTORIALS[id];
+    if(!tut) { console.error('Tutorial not found:', id, 'Available:', Object.keys(TUTORIALS)); return; }
     const songNotes = getSongNotes(tut.sequence);
     const firstNote = tut.sequence[0]?.note;
     const initWS = firstNote ? getWindowStart(firstNote, songNotes, 0) : 0;
@@ -3313,6 +3329,7 @@ const App = (() => {
   function resetTutorial() {
     if(!tutState.current) return;
     const tut = TUTORIALS[tutState.current];
+    if(!tut) return;
     const songNotes = getSongNotes(tut.sequence);
     const firstNote = tut.sequence[0]?.note;
     const initWS = firstNote ? getWindowStart(firstNote, songNotes, 0) : 0;
@@ -3779,7 +3796,8 @@ const UI = (() => {
   function renderTutorialActive() {
     const ts = App.tutState;
     if(!ts.current) return;
-    const tut = TUTORIALS[ts.current];
+    const tut = ts.current ? TUTORIALS[ts.current] : null;
+    if(!tut) return;
     const content = document.getElementById('tut-active-content');
 
     if(ts.completed) {
