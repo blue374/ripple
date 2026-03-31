@@ -10,11 +10,11 @@
       --bg: #0d0d1a;
       --surface: rgba(255,255,255,0.13);
       --surface2: rgba(255,255,255,0.20);
-      --surface3: rgba(255,255,255,0.72);
+      --surface3: rgba(255,255,255,0.88);
       --border: rgba(255,255,255,0.30);
       --text: #ffffff;
       --muted: #a8a8c8;
-      --accent: #9b8cff;
+      --accent: #8b5cf6;
       --accent2: #ff8cc8;
       --green: #4ade80;
       --thumb: #c0392b;
@@ -41,13 +41,13 @@
       --bg: #0e0e1c;
       --surface: rgba(255,255,255,0.10);
       --surface2: rgba(255,255,255,0.16);
-      --surface3: rgba(255,255,255,0.72);
+      --surface3: rgba(255,255,255,0.88);
       --border: rgba(255,255,255,0.22);
       --text: #ffffff;
       --muted: #b0aed0;
-      --accent: #a78bfa;
+      --accent: #8b5cf6;
       --accent2: #34d399;
-      --orb1: 167,139,250;
+      --orb1: 139,92,246;
       --orb2: 52,211,153;
       --grad1: #0e0e1c;
       --grad2: #151528;
@@ -160,17 +160,19 @@
     }
     .lang-btn {
       font-family: 'DM Mono', monospace;
-      padding: 10px 28px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.15);
-      background: rgba(255,255,255,0.05);
-      color: rgba(255,255,255,0.6);
+      padding: 12px 0;
+      width: 160px;
+      border-radius: 12px;
+      border: 2px solid rgba(139,92,246,0.5);
+      background: rgba(139,92,246,0.18);
+      color: rgba(255,255,255,0.7);
       cursor: pointer;
       font-size: 1rem;
       transition: all 0.18s;
+      text-align: center;
     }
-    .lang-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
-    .lang-btn.active { border-color: rgba(155,140,255,0.7); color: #fff; background: rgba(155,140,255,0.18); box-shadow: 0 0 16px rgba(155,140,255,0.2); }
+    .lang-btn:hover { background: rgba(139,92,246,0.38); color: #fff; border-color: rgba(139,92,246,0.8); }
+    .lang-btn.active { border-color: rgba(139,92,246,1); color: #fff; background: rgba(139,92,246,0.88); box-shadow: 0 0 20px rgba(139,92,246,0.45); }
     /* Theme grid */
     .theme-grid {
       display: flex;
@@ -209,20 +211,20 @@
     /* Enter button */
     .splash-enter-btn {
       font-family: 'DM Mono', monospace;
-      padding: 14px 48px;
+      padding: 16px 64px;
       border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(155,140,255,0.2);
+      border: 2px solid rgba(139,92,246,0.9);
+      background: rgba(139,92,246,0.88);
       color: #fff;
       font-size: 1rem;
       letter-spacing: 0.1em;
       cursor: pointer;
       transition: all 0.2s;
-      box-shadow: 0 0 30px rgba(155,140,255,0.2);
+      box-shadow: 0 0 30px rgba(139,92,246,0.35);
     }
     .splash-enter-btn:hover {
-      background: rgba(155,140,255,0.35);
-      box-shadow: 0 0 40px rgba(155,140,255,0.35);
+      background: rgba(139,92,246,1);
+      box-shadow: 0 0 44px rgba(139,92,246,0.6);
       transform: translateY(-1px);
     }
     .splash-fade-out {
@@ -333,14 +335,14 @@
 
     /* All colored buttons use var(--text) so they're readable on every theme */
     .btn-connect { 
-      border-color: rgba(var(--orb1),0.55); 
-      color: var(--text);
-      background: linear-gradient(135deg, rgba(var(--orb1),0.22), rgba(var(--orb1),0.08));
-      box-shadow: 0 0 16px rgba(var(--orb1),0.15);
+      border-color: rgba(var(--orb1),0.8); 
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(var(--orb1),0.85), rgba(var(--orb1),0.65));
+      box-shadow: 0 0 20px rgba(var(--orb1),0.4);
     }
     .btn-connect:hover:not(:disabled) { 
-      background: linear-gradient(135deg, rgba(var(--orb1),0.38), rgba(var(--orb1),0.18));
-      box-shadow: 0 0 24px rgba(var(--orb1),0.3);
+      background: linear-gradient(135deg, rgba(var(--orb1),1), rgba(var(--orb1),0.8));
+      box-shadow: 0 0 28px rgba(var(--orb1),0.6);
       opacity: 1;
     }
     .btn-disconnect { 
@@ -354,13 +356,14 @@
       opacity: 1;
     }
     .btn-calibrate { 
-      border-color: rgba(var(--orb2),0.5); 
-      color: var(--text);
-      background: linear-gradient(135deg, rgba(var(--orb2),0.2), rgba(var(--orb2),0.07));
-      box-shadow: 0 0 16px rgba(var(--orb2),0.12);
+      border-color: rgba(var(--orb2),0.8); 
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(var(--orb2),0.75), rgba(var(--orb2),0.55));
+      box-shadow: 0 0 20px rgba(var(--orb2),0.35);
     }
     .btn-calibrate:hover:not(:disabled) { 
-      background: linear-gradient(135deg, rgba(var(--orb2),0.35), rgba(var(--orb2),0.16));
+      background: linear-gradient(135deg, rgba(var(--orb2),0.95), rgba(var(--orb2),0.75));
+      box-shadow: 0 0 28px rgba(var(--orb2),0.5);
       opacity: 1;
     }
     .btn-calibrated { 
@@ -370,13 +373,13 @@
       box-shadow: 0 0 16px rgba(60,180,100,0.12);
     }
     .btn-recalibrate { 
-      border-color: rgba(180,140,20,0.5); 
-      color: var(--text);
-      background: linear-gradient(135deg, rgba(180,140,20,0.22), rgba(180,140,20,0.08));
-      box-shadow: 0 0 14px rgba(180,140,20,0.1);
+      border-color: rgba(180,140,20,0.8); 
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(180,140,20,0.80), rgba(180,140,20,0.60));
+      box-shadow: 0 0 14px rgba(180,140,20,0.3);
     }
     .btn-recalibrate:hover:not(:disabled) { 
-      background: linear-gradient(135deg, rgba(180,140,20,0.36), rgba(180,140,20,0.16));
+      background: linear-gradient(135deg, rgba(180,140,20,0.95), rgba(180,140,20,0.75));
       opacity: 1;
     }
     .btn-stop-sound {
@@ -408,27 +411,28 @@
     .tab {
       flex: 1;
       font-family: 'DM Mono', monospace;
-      font-size: 0.86rem;
+      font-size: 1rem;
+      font-weight: 700;
       letter-spacing: 0.06em;
-      padding: 9px;
+      padding: 10px;
       border-radius: 7px;
       border: none;
-      background: transparent;
-      color: var(--text);
-      opacity: 0.55;
+      background: rgba(139,92,246,0.12);
+      color: rgba(255,255,255,0.88);
       cursor: pointer;
       transition: all 0.15s;
       text-align: center;
     }
 
     .tab.active {
-      background: var(--surface2);
-      color: var(--text);
+      background: rgba(139,92,246,0.92);
+      color: #ffffff;
+      font-weight: 800;
       opacity: 1;
-      border: 1px solid var(--border);
-      box-shadow: inset 0 0 0 1px rgba(var(--orb1),0.15);
+      border: 2px solid rgba(139,92,246,1);
+      box-shadow: 0 0 18px rgba(139,92,246,0.5);
     }
-    .tab:not(.active):hover { opacity: 0.85; }
+    .tab:not(.active):hover { background: rgba(139,92,246,0.25); color: #fff; }
 
     /* Preset strip */
     .preset-strip {
@@ -442,23 +446,26 @@
     .preset-btn {
       font-family: 'DM Mono', monospace;
       font-size: 0.9rem;
+      font-weight: 700;
       padding: 9px 18px;
       border-radius: 20px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      opacity: 0.65;
+      border: 1px solid rgba(139,92,246,0.45);
+      background: rgba(139,92,246,0.18);
+      color: #ffffff;
+      opacity: 0.72;
       cursor: pointer;
       transition: all 0.15s;
     }
 
-    .preset-btn:hover { color: var(--text); border-color: var(--accent); }
+    .preset-btn:hover { opacity: 1; border-color: rgba(139,92,246,0.7); background: rgba(139,92,246,0.30); }
 
     .preset-btn.active {
-      background: rgba(var(--orb1),0.14);
-      border-color: rgba(var(--orb1),0.5);
-      color: var(--accent);
+      background: rgba(139,92,246,0.90);
+      border-color: rgba(139,92,246,1);
+      color: #ffffff;
+      font-weight: 800;
       opacity: 1;
+      box-shadow: 0 0 18px rgba(139,92,246,0.45);
     }
 
     /* Panel */
@@ -486,8 +493,8 @@
       display: flex;
       justify-content: center;
       align-items: flex-end;
-      gap: 10px;
-      padding: 20px 0 10px;
+      gap: 14px;
+      padding: 28px 0 14px;
     }
 
     .finger-col {
@@ -504,6 +511,9 @@
       transition: all 0.08s ease;
       position: relative;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .finger::after {
@@ -524,17 +534,20 @@
     .finger.clickable:hover { border-color: var(--accent); }
 
     .finger-note {
-      font-size: 0.76rem;
-      font-weight: 600;
+      font-size: clamp(0.9rem, 3.5vw, 1.6rem);
+      font-weight: 900;
       text-align: center;
-      padding: 4px 2px 5px;
-      letter-spacing: 0.03em;
-      line-height: 1.3;
+      padding: 6px 4px 4px;
+      letter-spacing: -0.01em;
+      line-height: 1.15;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       width: 100%;
+      overflow: hidden;
+      word-break: break-word;
+      hyphens: auto;
     }
 
     .finger-label {
@@ -583,15 +596,16 @@
 
     /* Two-line chord display */
     .mapping-cell .note-root {
-      font-size: 1rem;
-      font-weight: 600;
+      font-size: 1.8rem;
+      font-weight: 900;
       line-height: 1;
     }
     .mapping-cell .note-quality {
-      font-size: 0.7rem;
+      font-size: 0.78rem;
+      font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      opacity: 0.75;
+      opacity: 0.85;
       line-height: 1;
       min-height: 0.8em;
     }
@@ -660,13 +674,14 @@
       background: rgba(var(--orb1),0.05);
     }
     .tut-group-header {
-      font-size: 0.78rem;
-      font-weight: 800;
-      letter-spacing: 0.14em;
+      font-size: 1.0rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
       margin-bottom: 14px;
       padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 2px solid currentColor;
+      filter: brightness(1.4);
     }
     .tut-group-cards {
       display: grid;
@@ -675,24 +690,24 @@
     }
 
     .tutorial-card {
-      background: var(--surface3);
-      border: 1px solid var(--border);
+      background: rgba(139,92,246,0.32);
+      border: 1px solid rgba(139,92,246,0.55);
       border-radius: 14px;
       padding: 18px 16px;
       cursor: pointer;
       transition: all 0.15s;
     }
 
-    .tutorial-card:hover { border-color: var(--accent); background: rgba(var(--orb1),0.06); }
+    .tutorial-card:hover { border-color: rgba(139,92,246,0.8); background: rgba(139,92,246,0.30); }
     .tutorial-card.active-tut { border-color: rgba(var(--orb1),0.5); background: rgba(var(--orb1),0.08); }
 
-    .tut-name { font-size: 1.05rem; font-weight: 400; margin-bottom: 6px; color: #111111; }
-    .tut-meta { font-size: 0.78rem; opacity: 0.9; font-weight: 600; }
+    .tut-name { font-size: 1.05rem; font-weight: 600; margin-bottom: 6px; color: #ffffff; }
+    .tut-meta { font-size: 0.78rem; opacity: 0.85; font-weight: 700; color: #ffffff; }
 
-    .difficulty-beginner { color: #2e7d52; }
-    .difficulty-easy     { color: #1a5fa8; }
-    .difficulty-medium   { color: #a05a10; }
-    .difficulty-hard     { color: #952020; }
+    .difficulty-beginner { color: #22c55e; }
+    .difficulty-easy     { color: #38bdf8; }
+    .difficulty-medium   { color: #fb923c; }
+    .difficulty-hard     { color: #f87171; }
 
     /* Tutorial active view */
     .tutorial-active {
@@ -718,7 +733,7 @@
       font-size: 0.82rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--muted);
+      color: #ffffff;
       margin-bottom: 8px;
     }
 
@@ -1003,10 +1018,26 @@
     }
 
     .btn-sm:hover { color: var(--text); border-color: var(--accent); }
-    .btn-sm.play { border-color: rgba(60,180,100,0.4); color: #3db870; }
+    .btn-sm.play {
+      border-color: rgba(34,197,94,0.9);
+      color: #ffffff;
+      background: rgba(34,197,94,0.82);
+      font-weight: 700;
+      box-shadow: 0 0 16px rgba(34,197,94,0.4);
+    }
+    .btn-sm.play:hover {
+      background: rgba(34,197,94,1);
+      box-shadow: 0 0 24px rgba(34,197,94,0.6);
+      color: #ffffff;
+    }
     .btn-sm.stop { border-color: rgba(200,60,60,0.4); color: #c84040; }
-    .btn-sm.danger { border-color: rgba(200,60,60,0.25); color: rgba(200,60,60,0.7); }
-    .btn-sm.danger:hover { color: #c84040; border-color: rgba(200,60,60,0.5); }
+    .btn-sm.danger {
+      border-color: rgba(200,60,60,0.8);
+      color: #ffffff;
+      background: rgba(200,60,60,0.75);
+      font-weight: 700;
+    }
+    .btn-sm.danger:hover { background: rgba(220,50,50,1); border-color: rgba(220,50,50,1); color: #ffffff; box-shadow: 0 0 14px rgba(200,60,60,0.5); }
 
     /* Modal */
     .modal-overlay {
@@ -1713,11 +1744,11 @@ function formatChord(key) {
 const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 
 const FINGER_CFG = {
-  thumb:  { idx: 1, range: 139000, w: 54, h: 72,  mt: 55, color: '#c0392b', rc: '192,57,43' },
-  index:  { idx: 3, range: 140000, w: 44, h: 112, mt: 8,  color: '#c85a0a', rc: '200,90,10' },
-  middle: { idx: 4, range: 139000, w: 44, h: 128, mt: 0,  color: '#a07c00', rc: '160,124,0' },
-  ring:   { idx: 5, range: 184000, w: 44, h: 112, mt: 8,  color: '#15803d', rc: '21,128,61' },
-  pinky:  { idx: 6, range: 168000, w: 44, h: 96,  mt: 25, color: '#4f46e5', rc: '79,70,229' },
+  thumb:  { idx: 1, range: 139000, w: 80, h: 108, mt: 80, color: '#ff4d4d', rc: '255,77,77' },
+  index:  { idx: 3, range: 140000, w: 68, h: 168, mt: 12, color: '#ff8c2a', rc: '255,140,42' },
+  middle: { idx: 4, range: 139000, w: 68, h: 192, mt: 0,  color: '#e6b800', rc: '230,184,0' },
+  ring:   { idx: 5, range: 184000, w: 68, h: 168, mt: 12, color: '#22c55e', rc: '34,197,94' },
+  pinky:  { idx: 6, range: 168000, w: 68, h: 144, mt: 38, color: '#818cf8', rc: '129,140,248' },
 };
 
 const CHORDS = {
@@ -3523,7 +3554,7 @@ const UI = (() => {
                  border-color:${active?cfg.color+'66':'var(--border)'};
                  box-shadow:${active?`0 0 20px ${cfg.color}44`:'none'};
                ">
-            <span class="finger-note" style="color:${active?'#fff':cfg.color}">${ch.root}${ch.quality?`<br><span style="font-size:0.48rem;opacity:0.8;letter-spacing:0.04em">${ch.quality}</span>`:''}</span>
+            <span class="finger-note" style="color:${active?'#fff':cfg.color};font-size:${Math.min(cfg.w*0.38,38)}px">${ch.root}${ch.quality?`<br><span style="font-size:${Math.min(cfg.w*0.22,18)}px;opacity:0.88;font-weight:700;letter-spacing:0.04em">${ch.quality}</span>`:''}</span>
           </div>
           <span class="finger-label">${tFinger(f)}</span>
         </div>
@@ -3578,7 +3609,7 @@ const UI = (() => {
                  box-shadow:${active?`0 0 20px ${cfg.color}44`:isNext?`0 0 12px ${cfg.color}55`:'none'};
                  outline:${isNext&&!active?`2px solid ${cfg.color}66`:'none'};
                ">
-            <span class="finger-note" style="color:${active?'#fff':cfg.color}">${sound}</span>
+            <span class="finger-note" style="color:${active?'#fff':cfg.color};font-size:${Math.min(cfg.w*0.38,38)}px">${sound}</span>
           </div>
           <span class="finger-label">${tFinger(f)}</span>
         </div>
@@ -3780,15 +3811,15 @@ const UI = (() => {
     content.innerHTML=`
       <div class="tut-next-label">${tut.name} · ${t('step')} ${ts.step+1} / ${tut.sequence.length}</div>
       <div class="tut-progress-bar"><div class="tut-progress-fill" style="width:${pct}%"></div></div>
-      <div style="color:var(--muted);font-size:0.75rem;margin-bottom:8px;">${t('pressThis')}</div>
+      <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:8px;">${t('pressThis')}</div>
       <div class="tut-next-finger" style="color:${cfg.color}">${tFinger(nextF)}</div>
       <div style="font-size:0.85rem;font-weight:600;color:${cfg.color};opacity:0.9;margin-bottom:12px;">${nextNote}</div>
       <div class="tut-sequence">${dots}</div>
-      <div id="tut-mapping-row" style="display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap;">
+      <div id="tut-mapping-row" style="display:flex;justify-content:center;gap:14px;margin-top:14px;flex-wrap:wrap;">
         ${FINGERS.map(f=>`
-          <div style="text-align:center;font-size:0.65rem;">
-            <div style="color:${FINGER_CFG[f].color};font-weight:500;">${mapping[f]||''}</div>
-            <div style="color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;">${tFinger(f)}</div>
+          <div style="text-align:center;">
+            <div style="color:${FINGER_CFG[f].color};font-weight:800;font-size:1rem;">${mapping[f]||''}</div>
+            <div style="color:#ffffff;font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.07em;margin-top:2px;">${tFinger(f)}</div>
           </div>
         `).join('')}
       </div>
@@ -3836,7 +3867,7 @@ const UI = (() => {
             ? `<button class="btn-sm stop" data-stop="1">${t('recStop')}</button>`
             : `<button class="btn-sm play" data-id="${r.id}">▶ ${t('tabPlay')}</button>`
           }
-          <button class="btn-sm" data-edit="${r.id}" style="border-color:rgba(155,140,255,0.4);color:var(--accent);">✏️ Edit</button>
+          <button class="btn-sm" data-edit="${r.id}" style="border-color:rgba(139,92,246,0.9);color:#ffffff;background:rgba(139,92,246,0.85);font-weight:700;box-shadow:0 0 12px rgba(139,92,246,0.35);">✏️ Edit</button>
           <button class="btn-sm danger" data-del="${r.id}">✕</button>
         </div>
       </div>
