@@ -49,6 +49,8 @@
       --accent2: #34d399;
       --orb1: 139,92,246;
       --orb2: 52,211,153;
+      --btn1: 139,92,246;
+      --diff-b: #4ade80; --diff-e: #22d3ee; --diff-m: #f97316; --diff-h: #ef4444;
       --grad1: #0e0e1c;
       --grad2: #151528;
     }
@@ -59,14 +61,15 @@
       --surface: rgba(255,255,255,0.70);
       --surface2: rgba(255,255,255,0.85);
       --surface3: rgba(255,255,255,0.98);
-      --border: rgba(80,60,40,0.18);
+      --border: rgba(80,60,40,0.35);
       --text: #1a1208;
       --muted: #6b5840;
       --accent: #e84855;
       --accent2: #6366f1;
       --orb1: 232,72,85;
       --orb2: 99,102,241;
-      --grad1: #f0ede8;
+      --btn1: 232,72,85;
+      --diff-b: #15803d; --diff-e: #0369a1; --diff-m: #c2410c; --diff-h: #9f1239;
       --grad2: #e8e2da;
     }
 
@@ -163,16 +166,16 @@
       padding: 12px 0;
       width: 160px;
       border-radius: 12px;
-      border: 2px solid rgba(139,92,246,0.5);
-      background: rgba(139,92,246,0.18);
+      border: 2px solid rgba(var(--btn1),0.5);
+      background: rgba(var(--btn1),0.18);
       color: rgba(255,255,255,0.7);
       cursor: pointer;
       font-size: 1rem;
       transition: all 0.18s;
       text-align: center;
     }
-    .lang-btn:hover { background: rgba(139,92,246,0.38); color: #fff; border-color: rgba(139,92,246,0.8); }
-    .lang-btn.active { border-color: rgba(139,92,246,1); color: #fff; background: rgba(139,92,246,0.88); box-shadow: 0 0 20px rgba(139,92,246,0.45); }
+    .lang-btn:hover { background: rgba(var(--btn1),0.38); color: #fff; border-color: rgba(var(--btn1),0.8); }
+    .lang-btn.active { border-color: rgba(var(--btn1),1); color: #fff; background: rgba(var(--btn1),0.88); box-shadow: 0 0 20px rgba(var(--btn1),0.45); }
     /* Theme grid */
     .theme-grid {
       display: flex;
@@ -213,18 +216,18 @@
       font-family: 'DM Mono', monospace;
       padding: 16px 64px;
       border-radius: 14px;
-      border: 2px solid rgba(139,92,246,0.9);
-      background: rgba(139,92,246,0.88);
+      border: 2px solid rgba(var(--btn1),0.9);
+      background: rgba(var(--btn1),0.88);
       color: #fff;
       font-size: 1rem;
       letter-spacing: 0.1em;
       cursor: pointer;
       transition: all 0.2s;
-      box-shadow: 0 0 30px rgba(139,92,246,0.35);
+      box-shadow: 0 0 30px rgba(var(--btn1),0.35);
     }
     .splash-enter-btn:hover {
-      background: rgba(139,92,246,1);
-      box-shadow: 0 0 44px rgba(139,92,246,0.6);
+      background: rgba(var(--btn1),1);
+      box-shadow: 0 0 44px rgba(var(--btn1),0.6);
       transform: translateY(-1px);
     }
     .splash-fade-out {
@@ -417,22 +420,22 @@
       padding: 10px;
       border-radius: 7px;
       border: none;
-      background: rgba(139,92,246,0.12);
-      color: rgba(255,255,255,0.88);
+      background: rgba(var(--btn1),0.30);
+      color: rgba(var(--btn1),1);
       cursor: pointer;
       transition: all 0.15s;
       text-align: center;
     }
 
     .tab.active {
-      background: rgba(139,92,246,0.92);
+      background: rgba(var(--btn1),0.92);
       color: #ffffff;
       font-weight: 800;
       opacity: 1;
-      border: 2px solid rgba(139,92,246,1);
-      box-shadow: 0 0 18px rgba(139,92,246,0.5);
+      border: 2px solid rgba(var(--btn1),1);
+      box-shadow: 0 0 18px rgba(var(--btn1),0.5);
     }
-    .tab:not(.active):hover { background: rgba(139,92,246,0.25); color: #fff; }
+    .tab:not(.active):hover { background: rgba(var(--btn1),0.30); color: rgba(var(--btn1),1); }
 
     /* Preset strip */
     .preset-strip {
@@ -449,23 +452,23 @@
       font-weight: 700;
       padding: 9px 18px;
       border-radius: 20px;
-      border: 1px solid rgba(139,92,246,0.45);
-      background: rgba(139,92,246,0.18);
-      color: #ffffff;
-      opacity: 0.72;
+      border: 2px solid rgba(var(--btn1),0.55);
+      background: rgba(var(--btn1),0.12);
+      color: rgba(var(--btn1),1);
+      opacity: 0.85;
       cursor: pointer;
       transition: all 0.15s;
     }
 
-    .preset-btn:hover { opacity: 1; border-color: rgba(139,92,246,0.7); background: rgba(139,92,246,0.30); }
+    .preset-btn:hover { opacity: 1; border-color: rgba(var(--btn1),0.8); background: rgba(var(--btn1),0.25); }
 
     .preset-btn.active {
-      background: rgba(139,92,246,0.90);
-      border-color: rgba(139,92,246,1);
+      background: rgba(var(--btn1),0.90);
+      border-color: rgba(var(--btn1),1);
       color: #ffffff;
       font-weight: 800;
       opacity: 1;
-      box-shadow: 0 0 18px rgba(139,92,246,0.45);
+      box-shadow: 0 0 18px rgba(var(--btn1),0.45);
     }
 
     /* Panel */
@@ -507,7 +510,7 @@
     .finger {
       border-radius: 16px 16px 8px 8px;
       background: var(--surface3);
-      border: 1px solid var(--border);
+      border: 2px solid var(--border);
       transition: all 0.08s ease;
       position: relative;
       overflow: hidden;
@@ -681,7 +684,6 @@
       margin-bottom: 14px;
       padding-bottom: 10px;
       border-bottom: 2px solid currentColor;
-      filter: brightness(1.4);
     }
     .tut-group-cards {
       display: grid;
@@ -690,24 +692,24 @@
     }
 
     .tutorial-card {
-      background: rgba(139,92,246,0.32);
-      border: 1px solid rgba(139,92,246,0.55);
+      background: rgba(var(--btn1),0.32);
+      border: 1px solid rgba(var(--btn1),0.55);
       border-radius: 14px;
       padding: 18px 16px;
       cursor: pointer;
       transition: all 0.15s;
     }
 
-    .tutorial-card:hover { border-color: rgba(139,92,246,0.8); background: rgba(139,92,246,0.30); }
+    .tutorial-card:hover { border-color: rgba(var(--btn1),0.8); background: rgba(var(--btn1),0.30); }
     .tutorial-card.active-tut { border-color: rgba(var(--orb1),0.5); background: rgba(var(--orb1),0.08); }
 
-    .tut-name { font-size: 1.05rem; font-weight: 600; margin-bottom: 6px; color: #ffffff; }
-    .tut-meta { font-size: 0.78rem; opacity: 0.85; font-weight: 700; color: #ffffff; }
+    .tut-name { font-size: 1.05rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+    .tut-meta { font-size: 0.78rem; opacity: 0.85; font-weight: 700; color: var(--text); }
 
-    .difficulty-beginner { color: #22c55e; }
-    .difficulty-easy     { color: #38bdf8; }
-    .difficulty-medium   { color: #fb923c; }
-    .difficulty-hard     { color: #f87171; }
+    .difficulty-beginner { color: var(--diff-b); }
+    .difficulty-easy     { color: var(--diff-e); }
+    .difficulty-medium   { color: var(--diff-m); }
+    .difficulty-hard     { color: var(--diff-h); }
 
     /* Tutorial active view */
     .tutorial-active {
@@ -3885,7 +3887,7 @@ const UI = (() => {
             ? `<button class="btn-sm stop" data-stop="1">${t('recStop')}</button>`
             : `<button class="btn-sm play" data-id="${r.id}">▶ ${t('tabPlay')}</button>`
           }
-          <button class="btn-sm" data-edit="${r.id}" style="border-color:rgba(139,92,246,0.9);color:#ffffff;background:rgba(139,92,246,0.85);font-weight:700;box-shadow:0 0 12px rgba(139,92,246,0.35);">✏️ Edit</button>
+          <button class="btn-sm" data-edit="${r.id}" style="border-color:rgba(var(--btn1),0.9);color:#ffffff;background:rgba(var(--btn1),0.85);font-weight:700;box-shadow:0 0 12px rgba(var(--btn1),0.35);">✏️ Edit</button>
           <button class="btn-sm danger" data-del="${r.id}">✕</button>
         </div>
       </div>
