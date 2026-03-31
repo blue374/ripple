@@ -3094,7 +3094,10 @@ const App = (() => {
 
     // Collect calibration samples
     if(!calibrated && calibSamples && Object.keys(calibSamples).length>0) {
-      FINGERS.forEach(f=>{ calibSamples[f].push(vals[FINGER_CFG[f].idx]); });
+      FINGERS.forEach(f=>{
+        const raw = f==='thumb' ? vals[0] + vals[1] : vals[FINGER_CFG[f].idx];
+        calibSamples[f].push(raw);
+      });
     }
 
     if(!calibrated) return;
@@ -3103,7 +3106,7 @@ const App = (() => {
 
     for(const f of FINGERS) {
       const cfg = FINGER_CFG[f];
-      const raw = vals[cfg.idx];
+      const raw = f==='thumb' ? vals[0] + vals[1] : vals[cfg.idx];
       const filtered = filterValue(f, raw);
       const rawDrop = baseline[f] - filtered;
       const drop = Math.abs(rawDrop);
