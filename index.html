@@ -1328,16 +1328,27 @@
       <div class="panel-title" data-i18n="configuration">Configuration</div>
       <div class="settings-grid">
         <div class="setting-group">
-          <label for="thresh-on">Bend threshold (trigger): <span id="thresh-on-val">700,000</span></label>
-          <input type="range" id="thresh-on" min="10000" max="3000000" step="10000" value="700000">
+          <label for="thresh-on">Bend threshold (trigger): <span id="thresh-on-val">550,000</span></label>
+          <input type="range" id="thresh-on" min="10000" max="3000000" step="10000" value="550000">
         </div>
         <div class="setting-group">
-          <label for="thresh-off">Straighten threshold (release): <span id="thresh-off-val">200,000</span></label>
-          <input type="range" id="thresh-off" min="10000" max="1500000" step="10000" value="200000">
+          <label for="thresh-off">Straighten threshold (release): <span id="thresh-off-val">410,000</span></label>
+          <input type="range" id="thresh-off" min="10000" max="1500000" step="10000" value="410000">
         </div>
         <div class="setting-group">
           <label for="filter-size">Smoothing (filter frames): <span id="filter-val">5</span></label>
           <input type="range" id="filter-size" min="1" max="15" value="5">
+        </div>
+        <div class="setting-group" style="grid-column:1/-1;border-top:1px solid var(--border);padding-top:14px;margin-top:4px;">
+          <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">👍 Thumb (separate encoder range)</div>
+        </div>
+        <div class="setting-group">
+          <label for="thumb-thresh-on">Thumb bend trigger: <span id="thumb-thresh-on-val">3,700,000</span></label>
+          <input type="range" id="thumb-thresh-on" min="100000" max="8000000" step="100000" value="3700000">
+        </div>
+        <div class="setting-group">
+          <label for="thumb-thresh-off">Thumb release: <span id="thumb-thresh-off-val">4,100,000</span></label>
+          <input type="range" id="thumb-thresh-off" min="100000" max="8000000" step="100000" value="4100000">
         </div>
         <div class="setting-group">
           <label for="volume-range">Volume: <span id="volume-val">30</span>%</label>
@@ -3032,7 +3043,8 @@ const App = (() => {
   let calibSamples={};
 
   // Hysteresis thresholds (match server.py defaults)
-  let threshOn=700000, threshOff=200000;
+  let threshOn=550000, threshOff=410000;
+  let thumbThreshOn=3700000, thumbThreshOff=4100000;
   let filterSize=5;
   const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
 
@@ -3099,11 +3111,13 @@ const App = (() => {
       _debugBase[f] = Math.round(baseline[f] || 0);
       if(drop > (_debugMaxDrop[f]||0)) _debugMaxDrop[f] = Math.round(drop);
 
-      // Hysteresis
+      // Hysteresis (thumb uses its own thresholds)
+      const tOn  = f==="thumb" ? thumbThreshOn  : threshOn;
+      const tOff = f==="thumb" ? thumbThreshOff : threshOff;
       if(activeFingers.has(f)) {
-        if(drop > threshOff) newActive.add(f);
+        if(drop > tOff) newActive.add(f);
       } else {
-        if(drop > threshOn) newActive.add(f);
+        if(drop > tOn) newActive.add(f);
       }
 
       // Tutorial release tracking
@@ -3497,6 +3511,10 @@ const App = (() => {
     set customInstrument(v){ customInstrument=v; AudioEngine.setInstrument(v); },
     setThreshOn(v){threshOn=v},
     setThreshOff(v){threshOff=v},
+    get thumbThreshOn(){return thumbThreshOn},
+    get thumbThreshOff(){return thumbThreshOff},
+    setThumbThreshOn(v){thumbThreshOn=v},
+    setThumbThreshOff(v){thumbThreshOff=v},
     setFilterSize(v){filterSize=v},
     manualPress, manualRelease,
     startDemo, stopDemo,
