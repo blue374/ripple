@@ -1343,12 +1343,12 @@
           <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">👍 Thumb (separate encoder range)</div>
         </div>
         <div class="setting-group">
-          <label for="thumb-thresh-on">Thumb bend trigger: <span id="thumb-thresh-on-val">3,700,000</span></label>
-          <input type="range" id="thumb-thresh-on" min="100000" max="8000000" step="100000" value="3700000">
+          <label for="thumb-thresh-on">Thumb bend trigger: <span id="thumb-thresh-on-val">400,000</span></label>
+          <input type="range" id="thumb-thresh-on" min="10000" max="3000000" step="10000" value="400000">
         </div>
         <div class="setting-group">
-          <label for="thumb-thresh-off">Thumb release: <span id="thumb-thresh-off-val">4,100,000</span></label>
-          <input type="range" id="thumb-thresh-off" min="100000" max="8000000" step="100000" value="4100000">
+          <label for="thumb-thresh-off">Thumb release: <span id="thumb-thresh-off-val">300,000</span></label>
+          <input type="range" id="thumb-thresh-off" min="10000" max="2000000" step="10000" value="300000">
         </div>
         <div class="setting-group">
           <label for="volume-range">Volume: <span id="volume-val">30</span>%</label>
@@ -3045,7 +3045,7 @@ const App = (() => {
 
   // Hysteresis thresholds (match server.py defaults)
   let threshOn=400000, threshOff=200000;
-  let thumbThreshOn=3700000, thumbThreshOff=4100000;
+  let thumbThreshOn=400000, thumbThreshOff=300000;
   let filterSize=5;
   const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
 
