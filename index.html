@@ -1345,6 +1345,23 @@
         </div>
       </div>
     </div>
+    <div class="panel">
+      <div class="panel-title">🔧 Debug Mode</div>
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.88rem;color:var(--text);">
+        <input type="checkbox" id="debug-toggle" style="accent-color:var(--accent);width:18px;height:18px;">
+        Show live encoder values (connect &amp; calibrate first)
+      </label>
+    </div>
+    <div class="panel" id="debug-panel" style="display:none;">
+      <div class="panel-title">📊 Encoder Debug</div>
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:12px;">Bend each finger fully to record max drop values. Green = currently active.</div>
+      <div id="debug-table" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;text-align:center;"></div>
+      <div style="margin-top:16px;padding:12px;background:var(--surface2);border-radius:10px;">
+        <div style="font-size:0.72rem;color:var(--muted);margin-bottom:6px;">💡 Suggested thresholds (bend all fingers fully first):</div>
+        <div id="debug-suggest" style="font-size:0.82rem;font-family:'DM Mono',monospace;color:var(--text);line-height:1.8;"></div>
+      </div>
+      <button id="debug-reset-btn" class="btn" style="margin-top:12px;font-size:0.78rem;padding:6px 16px;">↺ Reset Max Values</button>
+    </div>
   </div>
 </div>
 
@@ -4385,6 +4402,53 @@ document.addEventListener('DOMContentLoaded', () => {
     AudioEngine.setVolume(parseInt(e.target.value)/100);
     document.getElementById('volume-val').textContent=e.target.value;
   });
+
+  // ── Debug panel ──────────────────────────────────────────────────────────
+  const debugToggle = document.getElementById('debug-toggle');
+  const debugPanel  = document.getElementById('debug-panel');
+  const debugTable  = document.getElementById('debug-table');
+  const debugSuggest= document.getElementById('debug-suggest');
+  const debugReset  = document.getElementById('debug-reset-btn');
+
+  debugToggle.addEventListener('change', () => {
+    debugPanel.style.display = debugToggle.checked ? 'block' : 'none';
+  });
+  debugReset.addEventListener('click', () => {
+    FINGERS.forEach(f => { App._debugMaxDrop[f] = 0; });
+  });
+  setInterval(() => {
+    if (!debugToggle.checked) return;
+    const rd = App._debugRaw  || {};
+    const dr = App._debugDrop || {};
+    const md = App._debugMaxDrop || {};
+    debugTable.innerHTML = FINGERS.map(f => {
+      const drop = dr[f] ?? 0;
+      const maxD = md[f] ?? 0;
+      const thOff = App.threshOff;
+      const isActive = drop > thOff;
+      const col = isActive ? '#22c55e' : FINGER_CFG[f].color;
+      return `<div style="background:var(--surface2);border-radius:10px;padding:10px 4px;">
+        <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;color:${FINGER_CFG[f].color};margin-bottom:4px;">${f}</div>
+        <div style="font-size:0.6rem;color:var(--muted);">raw</div>
+        <div style="font-size:0.72rem;font-family:'DM Mono',monospace;color:var(--text);">${(rd[f]??0).toLocaleString()}</div>
+        <div style="font-size:0.6rem;color:var(--muted);margin-top:3px;">drop</div>
+        <div style="font-size:0.95rem;font-weight:800;font-family:'DM Mono',monospace;color:${col};">${drop.toLocaleString()}</div>
+        <div style="font-size:0.6rem;color:var(--muted);margin-top:3px;">peak</div>
+        <div style="font-size:0.72rem;font-family:'DM Mono',monospace;color:#a78bfa;">${maxD.toLocaleString()}</div>
+      </div>`;
+    }).join('');
+    const peaks = FINGERS.map(f => md[f] || 0).filter(v => v > 0);
+    if (peaks.length === 5) {
+      const minPeak = Math.min(...peaks);
+      const sugOn  = Math.round(minPeak * 0.6 / 500) * 500;
+      const sugOff = Math.round(minPeak * 0.2 / 100) * 100;
+      debugSuggest.innerHTML =
+        `Trigger (ON): <strong>${sugOn.toLocaleString()}</strong> &nbsp;·&nbsp; Release (OFF): <strong>${sugOff.toLocaleString()}</strong><br>` +
+        `<span style="font-size:0.65rem;color:var(--muted);">Based on weakest finger peak: ${minPeak.toLocaleString()}</span>`;
+    } else {
+      debugSuggest.textContent = 'Bend all 5 fingers fully after calibrating to generate suggestions.';
+    }
+  }, 100);
 
   // Piano Roll
   document.getElementById('pr-close-btn').addEventListener('click', ()=>PianoRoll.close());
