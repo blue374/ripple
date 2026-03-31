@@ -1772,6 +1772,7 @@ function formatChord(key) {
 }
 
 const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
+const TUT_FINGERS = ['index', 'middle', 'ring', 'pinky']; // thumb disabled
 
 const FINGER_CFG = {
   thumb:  { idx: 1, range: 139000, w: 80, h: 108, mt: 80, color: '#ff4d4d', rc: '255,77,77' },
@@ -2710,19 +2711,19 @@ function getSongNotes(seq) {
 function getWindowStart(note, songNotes, currentStart) {
   const idx = songNotes.indexOf(note);
   if(idx < 0) return currentStart;
-  if(idx >= currentStart && idx < currentStart + 5) return currentStart; // already visible
+  if(idx >= currentStart && idx < currentStart + TUT_FINGERS.length) return currentStart; // already visible
   if(idx < currentStart) return Math.max(0, idx);                        // shift down
   return Math.max(0, idx - 4);                                           // shift up
 }
 function buildWindowMapping(songNotes, windowStart) {
   const mapping = {};
-  FINGERS.forEach((f, i) => { const n = songNotes[windowStart + i]; if(n) mapping[f] = n; });
+  TUT_FINGERS.forEach((f, i) => { const n = songNotes[windowStart + i]; if(n) mapping[f] = n; });
   return mapping;
 }
 function fingerForNote(note, songNotes, windowStart) {
   const idx = songNotes.indexOf(note);
-  if(idx < 0) return FINGERS[0];
-  return FINGERS[Math.max(0, Math.min(4, idx - windowStart))];
+  if(idx < 0) return TUT_FINGERS[0];
+  return TUT_FINGERS[Math.max(0, Math.min(TUT_FINGERS.length - 1, idx - windowStart))];
 }
 
 // ═══════════════════════════════════════════════════════
@@ -3051,7 +3052,7 @@ const App = (() => {
   // Tutorial state
   let mode='play'; // 'play' | 'tutorial'
   let tutState={current:null, step:0, completed:false, windowStart:0, songNotes:[]};
-  let tutReady=new Set(FINGERS);
+  let tutReady = new Set(TUT_FINGERS);
 
   // Recording state
   let recording=false, playingBack=false;
@@ -3317,7 +3318,7 @@ const App = (() => {
       }
 
       // Find finger for this note and get its frequencies
-      const finger = fingerForNote(note, songNotes, demoWindowStart);
+      const finger = fingerForNote(note, songNotes, demoWindowStart); // uses TUT_FINGERS
       const freqs  = getFreqs(note);
 
       const noteOnMs  = beatMs * dur * 0.92;
@@ -3357,7 +3358,7 @@ const App = (() => {
     const firstNote = tut.sequence[0]?.note;
     const initWS = firstNote ? getWindowStart(firstNote, songNotes, 0) : 0;
     tutState = {current:id, step:0, completed:false, windowStart:initWS, songNotes};
-    tutReady = new Set(FINGERS);
+    tutReady = new Set(TUT_FINGERS);
     mode = 'tutorial';
     PRESETS.piano.mapping = buildWindowMapping(songNotes, initWS);
     currentPreset = 'piano';
@@ -3379,7 +3380,7 @@ const App = (() => {
     const initWS = firstNote ? getWindowStart(firstNote, songNotes, 0) : 0;
     tutState.step = 0; tutState.completed = false;
     tutState.windowStart = initWS; tutState.songNotes = songNotes;
-    tutReady = new Set(FINGERS);
+    tutReady = new Set(TUT_FINGERS);
     PRESETS.piano.mapping = buildWindowMapping(songNotes, initWS);
     AudioEngine.stopAll();
     activeFingers = new Set();
