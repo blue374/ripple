@@ -1328,8 +1328,8 @@
       <div class="panel-title" data-i18n="configuration">Configuration</div>
       <div class="settings-grid">
         <div class="setting-group">
-          <label for="thresh-on">Bend threshold (trigger): <span id="thresh-on-val">5,000</span></label>
-          <input type="range" id="thresh-on" min="500" max="50000" step="500" value="5000">
+          <label for="thresh-on">Bend threshold (trigger): <span id="thresh-on-val">8,000</span></label>
+          <input type="range" id="thresh-on" min="500" max="50000" step="500" value="8000">
         </div>
         <div class="setting-group">
           <label for="thresh-off">Straighten threshold (release): <span id="thresh-off-val">800</span></label>
@@ -3015,7 +3015,7 @@ const App = (() => {
   let calibSamples={};
 
   // Hysteresis thresholds (match server.py defaults)
-  let threshOn=5000, threshOff=800;
+  let threshOn=8000, threshOff=800;
   let filterSize=5;
   const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
 
@@ -3054,6 +3054,11 @@ const App = (() => {
   }
 
   // Called by Serial on each 10-value packet
+  let _debugRaw = {};
+  let _debugDrop = {};
+  let _debugMaxDrop = {thumb:0,index:0,middle:0,ring:0,pinky:0};
+  let _debugBase = {};
+
   function onPacket(vals) {
     if(!connected) return;
 
@@ -3071,6 +3076,10 @@ const App = (() => {
       const raw = vals[cfg.idx];
       const filtered = filterValue(f, raw);
       const drop = baseline[f] - filtered;
+      _debugRaw[f] = raw;
+      _debugDrop[f] = Math.round(drop);
+      _debugBase[f] = Math.round(baseline[f] || 0);
+      if(drop > (_debugMaxDrop[f]||0)) _debugMaxDrop[f] = Math.round(drop);
 
       // Hysteresis
       if(activeFingers.has(f)) {
@@ -3446,6 +3455,12 @@ const App = (() => {
 
   return {
     onPacket,
+    get _debugRaw(){return _debugRaw},
+    get _debugDrop(){return _debugDrop},
+    get _debugMaxDrop(){return _debugMaxDrop},
+    get _debugBase(){return _debugBase},
+    get threshOn(){return threshOn},
+    get threshOff(){return threshOff},
     doConnect, doDisconnect, doCalibrate,
     setPreset, setMapping,
     startTutorial, resetTutorial, exitTutorial,
