@@ -1328,12 +1328,12 @@
       <div class="panel-title" data-i18n="configuration">Configuration</div>
       <div class="settings-grid">
         <div class="setting-group">
-          <label for="thresh-on">Bend threshold (trigger): <span id="thresh-on-val">550,000</span></label>
-          <input type="range" id="thresh-on" min="10000" max="3000000" step="10000" value="550000">
+          <label for="thresh-on">Bend threshold (trigger): <span id="thresh-on-val">400,000</span></label>
+          <input type="range" id="thresh-on" min="10000" max="3000000" step="10000" value="400000">
         </div>
         <div class="setting-group">
-          <label for="thresh-off">Straighten threshold (release): <span id="thresh-off-val">410,000</span></label>
-          <input type="range" id="thresh-off" min="10000" max="1500000" step="10000" value="410000">
+          <label for="thresh-off">Straighten threshold (release): <span id="thresh-off-val">200,000</span></label>
+          <input type="range" id="thresh-off" min="10000" max="1500000" step="10000" value="200000">
         </div>
         <div class="setting-group">
           <label for="filter-size">Smoothing (filter frames): <span id="filter-val">5</span></label>
@@ -1772,10 +1772,10 @@ function formatChord(key) {
 }
 
 const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
-const TUT_FINGERS = ['index', 'middle', 'ring', 'pinky']; // thumb disabled
+const TUT_FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 
 const FINGER_CFG = {
-  thumb:  { idx: 1, range: 139000, w: 80, h: 108, mt: 80, color: '#ff4d4d', rc: '255,77,77' },
+  thumb:  { idx: 0, range: 139000, w: 80, h: 108, mt: 80, color: '#ff4d4d', rc: '255,77,77' },
   index:  { idx: 3, range: 140000, w: 68, h: 168, mt: 12, color: '#ff8c2a', rc: '255,140,42' },
   middle: { idx: 4, range: 139000, w: 68, h: 192, mt: 0,  color: '#e6b800', rc: '230,184,0' },
   ring:   { idx: 5, range: 184000, w: 68, h: 168, mt: 12, color: '#22c55e', rc: '34,197,94' },
@@ -3044,7 +3044,7 @@ const App = (() => {
   let calibSamples={};
 
   // Hysteresis thresholds (match server.py defaults)
-  let threshOn=550000, threshOff=410000;
+  let threshOn=400000, threshOff=200000;
   let thumbThreshOn=3700000, thumbThreshOff=4100000;
   let filterSize=5;
   const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
@@ -3102,7 +3102,6 @@ const App = (() => {
     const newActive = new Set();
 
     for(const f of FINGERS) {
-      if(f === "thumb") continue; // thumb disabled
       const cfg = FINGER_CFG[f];
       const raw = vals[cfg.idx];
       const filtered = filterValue(f, raw);
@@ -3123,7 +3122,8 @@ const App = (() => {
       }
 
       // Tutorial release tracking — re-arms when finger returns close to baseline
-      if(mode==='tutorial' && drop < 50000) tutReady.add(f);
+      const reArmThresh = f==='thumb' ? 500000 : 50000;
+      if(mode==='tutorial' && drop < reArmThresh) tutReady.add(f);
     }
 
     const changed = newActive.size!==activeFingers.size || [...newActive].some(f=>!activeFingers.has(f));
