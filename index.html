@@ -735,7 +735,7 @@
       font-size: 0.82rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #ffffff;
+      color: var(--text);
       margin-bottom: 8px;
     }
 
@@ -757,8 +757,8 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
+      background: rgba(var(--orb1),0.25);
+      border: 1px solid rgba(var(--orb1),0.45);
       transition: all 0.15s;
     }
 
@@ -3831,7 +3831,7 @@ const UI = (() => {
     content.innerHTML=`
       <div class="tut-next-label">${tut.name} · ${t('step')} ${ts.step+1} / ${tut.sequence.length}</div>
       <div class="tut-progress-bar"><div class="tut-progress-fill" style="width:${pct}%"></div></div>
-      <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:8px;">${t('pressThis')}</div>
+      <div style="color:var(--text);font-size:0.82rem;font-weight:600;margin-bottom:8px;">${t('pressThis')}</div>
       <div class="tut-next-finger" style="color:${cfg.color}">${tFinger(nextF)}</div>
       <div style="font-size:0.85rem;font-weight:600;color:${cfg.color};opacity:0.9;margin-bottom:12px;">${nextNote}</div>
       <div class="tut-sequence">${dots}</div>
@@ -3839,7 +3839,7 @@ const UI = (() => {
         ${FINGERS.map(f=>`
           <div style="text-align:center;">
             <div style="color:${FINGER_CFG[f].color};font-weight:800;font-size:1rem;">${mapping[f]||''}</div>
-            <div style="color:#ffffff;font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.07em;margin-top:2px;">${tFinger(f)}</div>
+            <div style="color:var(--text);font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.07em;margin-top:2px;">${tFinger(f)}</div>
           </div>
         `).join('')}
       </div>
