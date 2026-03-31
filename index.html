@@ -3101,6 +3101,7 @@ const App = (() => {
     const newActive = new Set();
 
     for(const f of FINGERS) {
+      if(f === "thumb") continue; // thumb disabled
       const cfg = FINGER_CFG[f];
       const raw = vals[cfg.idx];
       const filtered = filterValue(f, raw);
@@ -3120,8 +3121,8 @@ const App = (() => {
         if(drop > tOn) newActive.add(f);
       }
 
-      // Tutorial release tracking
-      if(mode==='tutorial' && drop < 200) tutReady.add(f);
+      // Tutorial release tracking — re-arms when finger returns close to baseline
+      if(mode==='tutorial' && drop < 50000) tutReady.add(f);
     }
 
     const changed = newActive.size!==activeFingers.size || [...newActive].some(f=>!activeFingers.has(f));
