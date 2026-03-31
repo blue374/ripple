@@ -1328,12 +1328,12 @@
       <div class="panel-title" data-i18n="configuration">Configuration</div>
       <div class="settings-grid">
         <div class="setting-group">
-          <label for="thresh-on">Bend threshold (trigger): <span id="thresh-on-val">8,000</span></label>
-          <input type="range" id="thresh-on" min="500" max="50000" step="500" value="8000">
+          <label for="thresh-on">Bend threshold (trigger): <span id="thresh-on-val">700,000</span></label>
+          <input type="range" id="thresh-on" min="10000" max="3000000" step="10000" value="700000">
         </div>
         <div class="setting-group">
-          <label for="thresh-off">Straighten threshold (release): <span id="thresh-off-val">800</span></label>
-          <input type="range" id="thresh-off" min="100" max="20000" step="100" value="800">
+          <label for="thresh-off">Straighten threshold (release): <span id="thresh-off-val">200,000</span></label>
+          <input type="range" id="thresh-off" min="10000" max="1500000" step="10000" value="200000">
         </div>
         <div class="setting-group">
           <label for="filter-size">Smoothing (filter frames): <span id="filter-val">5</span></label>
@@ -3032,7 +3032,7 @@ const App = (() => {
   let calibSamples={};
 
   // Hysteresis thresholds (match server.py defaults)
-  let threshOn=8000, threshOff=800;
+  let threshOn=700000, threshOff=200000;
   let filterSize=5;
   const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
 
@@ -3092,7 +3092,8 @@ const App = (() => {
       const cfg = FINGER_CFG[f];
       const raw = vals[cfg.idx];
       const filtered = filterValue(f, raw);
-      const drop = baseline[f] - filtered;
+      const rawDrop = baseline[f] - filtered;
+      const drop = Math.abs(rawDrop);
       _debugRaw[f] = raw;
       _debugDrop[f] = Math.round(drop);
       _debugBase[f] = Math.round(baseline[f] || 0);
