@@ -595,7 +595,7 @@
       line-height: 1;
       min-height: 0.8em;
     }
-    .mapping-cell .fname { font-size: 0.7rem; color: var(--text); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+    .mapping-cell .fname { font-size: 0.7rem; color: #111111; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
 
     /* Settings */
     .settings-grid {
@@ -1177,10 +1177,11 @@
     <div class="splash-tagline" id="splash-tagline">Music Therapy System</div>
 
     <!-- Language -->
-    <div class="splash-section-title" id="splash-lang-label">Language / 语言</div>
+    <div class="splash-section-title" id="splash-lang-label">Language · 语言 · Idioma</div>
     <div class="lang-picker">
       <button class="lang-btn active" data-lang="en">English</button>
       <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="es">Español</button>
     </div>
 
     <!-- Theme -->
@@ -1197,7 +1198,7 @@
 <div class="app">
   <div class="header">
     <h1>Ripple</h1>
-    <p id="app-tagline">Music Therapy System</p>
+    <p id="app-tagline">Finger Rehabilitation Through Music</p>
     <button id="back-to-splash">⚙ Theme &amp; Language</button>
   </div>
 
@@ -1311,10 +1312,6 @@
         </div>
       </div>
     </div>
-    <div class="panel">
-      <div class="panel-title" id="custom-inst-title">Custom Instrument <span style="opacity:0.6;font-size:0.85em">(for Custom preset)</span></div>
-      <div class="instrument-grid" id="inst-grid"></div>
-    </div>
   </div>
 </div>
 
@@ -1356,7 +1353,7 @@
 // ═══════════════════════════════════════════════════════
 const I18N = {
   en: {
-    tagline: 'Music Therapy System',
+    tagline: 'Finger Rehabilitation Through Music',
     connect: 'Connect', disconnect: 'Disconnect', stopSound: '⏹ Stop Sound', resumeSound: '▶ Resume Sound',
     calibrate: 'Calibrate', recalibrate: 'Re-calibrate',
     connecting: 'Connecting…', calibrating: 'Calibrating…',
@@ -1387,7 +1384,7 @@ const I18N = {
     editTitle: 'Edit ·',
     editRecording: 'Edit Recording',
     save: '💾 Save', close: '✕ Close',
-    pianoRollHint: 'Click lane to add · Click note to change pitch · Hover → ✕ delete',
+    pianoRollHint: 'Drag notes to move · Click note to change pitch · Click lane to add · Hover → ✕ delete',
     zoomLabel: 'px/s',
     singleNotes: 'Single Notes', majorChords: 'Major Chords', minorChords: 'Minor Chords',
     seventhChords: '7th Chords', drums: 'Drums', none: 'None',
@@ -1395,7 +1392,7 @@ const I18N = {
     currentLabel: 'Current: ',
     splashBtn: '⚙ Theme & Language',
     splashTheme: 'Choose a Theme',
-    splashLang: 'Language / 语言',
+    splashLang: 'Language · 语言 · Idioma',
     enter: 'Enter →',
 
     diffBeginner: 'Beginner', diffEasy: 'Easy', diffMedium: 'Medium', diffHard: 'Hard',
@@ -1403,7 +1400,7 @@ const I18N = {
     fingerNames: { thumb: 'thumb', index: 'index', middle: 'middle', ring: 'ring', pinky: 'pinky' },
   },
   zh: {
-    tagline: '指尖律动，音乐康复',
+    tagline: '音乐手指康复系统',
     connect: '连接', disconnect: '断开连接', stopSound: '⏹ 停止声音', resumeSound: '▶ 继续播放',
     calibrate: '校准', recalibrate: '重新校准',
     connecting: '连接中…', calibrating: '校准中…',
@@ -1434,7 +1431,7 @@ const I18N = {
     editTitle: '编辑 ·',
     editRecording: '编辑录音',
     save: '💾 保存', close: '✕ 关闭',
-    pianoRollHint: '点击轨道添加音符 · 点击音符更改音高 · 悬停 → ✕ 删除',
+    pianoRollHint: '拖动音符移动 · 点击音符更改音高 · 点击轨道添加 · 悬停 → ✕ 删除',
     zoomLabel: '像素/秒',
     singleNotes: '单音', majorChords: '大调和弦', minorChords: '小调和弦',
     seventhChords: '七和弦', drums: '打击乐', none: '无',
@@ -1442,12 +1439,58 @@ const I18N = {
     currentLabel: '当前：',
     splashBtn: '⚙ 主题与语言',
     splashTheme: '选择主题',
-    splashLang: 'Language / 语言',
+    splashLang: 'Language · 语言 · Idioma',
     enter: '进入 →',
 
     diffBeginner: '初级', diffEasy: '简单', diffMedium: '中级', diffHard: '高级',
     notes: '个音符',
     fingerNames: { thumb: '拇指', index: '食指', middle: '中指', ring: '无名指', pinky: '小指' },
+  },
+  es: {
+    tagline: 'Rehabilitación Dactilar con Música',
+    connect: 'Conectar', disconnect: 'Desconectar', stopSound: '⏹ Detener Sonido', resumeSound: '▶ Reanudar Sonido',
+    calibrate: 'Calibrar', recalibrate: 'Recalibrar',
+    connecting: 'Conectando…', calibrating: 'Calibrando…',
+    tabPlay: 'Tocar', tabTutorial: 'Tutorial', tabRecord: 'Grabar', tabSettings: 'Ajustes',
+    handViz: 'Visualización de Mano', currentMapping: 'Mapeo Actual',
+    chooseSong: 'Elige una Canción',
+    startRecording: '⏺ Iniciar Grabación', stopRecording: '⏹ Detener Grabación',
+    recStop: '⏹ Detener',
+    recording: 'Grabando',
+    demo: '▶ Demo', stopDemo: '⏹ Detener Demo', restart: '↺ Reiniciar', exitTutorial: 'Salir del Tutorial',
+    connectToStart: 'Conecta el exoesqueleto para empezar',
+    keepStill: 'Mantén la mano quieta…',
+    clickCalibrate: 'Haz clic en Calibrar y mantén la mano quieta',
+    bendToPlay: 'Dobla los dedos para tocar',
+    playing: 'Tocando: ',
+    configuration: 'Configuración',
+    sensOn: 'Umbral de activación', sensOff: 'Umbral de liberación',
+    smoothing: 'Suavizado (fotogramas)', volume: 'Volumen',
+    customInstrument: 'Instrumento personalizado',
+    customInstrumentSub: 'para el preset personalizado',
+    browserWarning: '⚠️ Web Serial API no es compatible. Usa Chrome o Edge.',
+    pressThis: 'Presiona este dedo:',
+    step: 'Paso',
+    complete: '🎉 ¡Completado!',
+    youPlayed: 'Tocaste',
+    noRecordings: 'Sin grabaciones aún.',
+    events: 'notas',
+    editTitle: 'Editar ·',
+    editRecording: 'Editar Grabación',
+    save: '💾 Guardar', close: '✕ Cerrar',
+    pianoRollHint: 'Arrastrar notas para mover · Clic en nota para cambiar tono · Clic en carril para añadir · Hover → ✕ borrar',
+    zoomLabel: 'px/s',
+    singleNotes: 'Notas Simples', majorChords: 'Acordes Mayores', minorChords: 'Acordes Menores',
+    seventhChords: 'Acordes de 7ª', drums: 'Percusión', none: 'Ninguno',
+    changeNote: 'Cambiar nota para',
+    currentLabel: 'Actual: ',
+    splashBtn: '⚙ Tema e Idioma',
+    splashTheme: 'Elige un Tema',
+    splashLang: 'Language · 语言 · Idioma',
+    enter: 'Entrar →',
+    diffBeginner: 'Principiante', diffEasy: 'Fácil', diffMedium: 'Medio', diffHard: 'Difícil',
+    notes: 'notas',
+    fingerNames: { thumb: 'pulgar', index: 'índice', middle: 'medio', ring: 'anular', pinky: 'meñique' },
   }
 };
 
@@ -1458,7 +1501,7 @@ function tFinger(f) { return (I18N[currentLang].fingerNames || {})[f] || f; }
 function applyLang() {
   // Update app title (Ripple ↔ 音动指尖)
   const h1 = document.querySelector('.header h1');
-  if(h1) h1.textContent = currentLang==='zh' ? '音动指尖' : 'Ripple';
+  if(h1) h1.textContent = currentLang==='zh' ? '音动指尖' : currentLang==='es' ? 'La Onda' : 'Ripple';
   const appTagline = document.getElementById('app-tagline');
   if(appTagline) appTagline.textContent = t('tagline');
   const backBtn = document.getElementById('back-to-splash');
@@ -1542,7 +1585,6 @@ function applyLang() {
     UI.updateHints();
   }
   // Re-render instrument grid with translated labels
-  if(typeof renderInstGrid !== 'undefined') renderInstGrid();
   // Re-render tutorial list so nameEn subtitle appears/disappears
   if(typeof UI !== 'undefined') UI.renderTutorialList();
 }
@@ -1552,8 +1594,8 @@ function applyLang() {
 //  THEMES
 // ═══════════════════════════════════════════════════════
 const THEMES = [
-  { id:'dark',  nameEn:'Dark',  nameZh:'深色', dark:true,  colors:['#0e0e1c','#a78bfa','#34d399'] },
-  { id:'light', nameEn:'Light', nameZh:'浅色', dark:false, colors:['#f0ede8','#e84855','#6366f1'] },
+  { id:'dark',  nameEn:'Dark',  nameZh:'深色', nameEs:'Oscuro', dark:true,  colors:['#0e0e1c','#a78bfa','#34d399'] },
+  { id:'light', nameEn:'Light', nameZh:'浅色', nameEs:'Claro',  dark:false, colors:['#f0ede8','#e84855','#6366f1'] },
 ];
 
 let currentTheme = 'dark';
@@ -1586,7 +1628,7 @@ function initSplash() {
   }
 
   function themeCard(th, sel, lang) {
-    const name = lang==='zh' ? th.nameZh : th.nameEn;
+    const name = lang==='zh' ? th.nameZh : lang==='es' ? (th.nameEs||th.nameEn) : th.nameEn;
     const [bg, c1, c2] = th.colors;
     return `
       <div class="theme-card ${sel===th.id?'selected':''}" data-theme="${th.id}">
@@ -1598,7 +1640,7 @@ function initSplash() {
   function updateSplashText() {
     // Splash logo changes with language
     const logo = document.querySelector('.splash-logo');
-    if(logo) logo.textContent = selectedLang==='zh' ? '音动指尖' : 'Ripple';
+    if(logo) logo.textContent = selectedLang==='zh' ? '音动指尖' : selectedLang==='es' ? 'La Onda' : 'Ripple';
     document.getElementById('splash-tagline').textContent = I18N[selectedLang].tagline;
     document.getElementById('splash-theme-label').textContent = I18N[selectedLang].splashTheme;
     document.getElementById('splash-lang-label').textContent = I18N[selectedLang].splashLang;
@@ -1639,30 +1681,30 @@ function initSplash() {
 // Returns {root, quality} for two-line display
 function formatChord(key) {
   if (!key || key === 'none') return { root: '—', quality: '' };
-  const zh = currentLang === 'zh';
+  const zh = currentLang === 'zh'; const es = currentLang === 'es';
   // Drums
   const drumNames = {
-    kick:  zh ? '底鼓' : 'Kick',
-    snare: zh ? '军鼓' : 'Snare',
-    hihat: zh ? '踩镲' : 'Hi-Hat',
-    tom:   zh ? '通鼓' : 'Tom',
-    clap:  zh ? '拍手' : 'Clap',
-    cymbal:zh ? '铙钹' : 'Cymbal',
+    kick:  zh ? '底鼓' : es ? 'Bombo' : 'Kick',
+    snare: zh ? '军鼓' : es ? 'Caja' : 'Snare',
+    hihat: zh ? '踩镲' : es ? 'Platillo' : 'Hi-Hat',
+    tom:   zh ? '通鼓' : es ? 'Tom' : 'Tom',
+    clap:  zh ? '拍手' : es ? 'Palmada' : 'Clap',
+    cymbal:zh ? '铙钹' : es ? 'Címbalo' : 'Cymbal',
   };
   if (drumNames[key]) return { root: drumNames[key], quality: zh ? '打击' : 'drum' };
   // Major chord: e.g. C_maj, Bb3_maj
   if (key.includes('_maj')) {
     const root = key.replace('_maj','');
-    return { root, quality: zh ? '大调' : 'major' };
+    return { root, quality: zh ? '大调' : es ? 'mayor' : 'major' };
   }
   // Minor chord: ends with 'm' but not 'dim', e.g. Am, Cm
   if (/^[A-G][b#]?m$/.test(key)) {
-    return { root: key.slice(0,-1), quality: zh ? '小调' : 'minor' };
+    return { root: key.slice(0,-1), quality: zh ? '小调' : es ? 'menor' : 'minor' };
   }
   // 7th chord: e.g. G7, Bb7
   if (/^[A-G][b#]?\d?7$/.test(key)) {
     const root = key.replace('7','');
-    return { root, quality: zh ? '七和弦' : '7th' };
+    return { root, quality: zh ? '七和弦' : es ? '7ª' : '7th' };
   }
   // Plain note (C, D4, Bb3, etc.)
   return { root: key, quality: '' };
@@ -1712,11 +1754,11 @@ const CHORDS = {
 const DRUMS = ['kick','snare','hihat','tom','clap','cymbal'];
 
 const PRESETS = {
-  therapy: { name:'🎵 Harp', nameZh:'🎵 竖琴', instrument:'harp', mapping:{thumb:'C_maj',index:'F_maj',middle:'Am',ring:'G_maj',pinky:'Em'} },
-  piano:   { name:'🎹 Piano',   nameZh:'🎹 钢琴', instrument:'soft',  mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'} },
-  chords:  { name:'🎸 Chords',  nameZh:'🎸 和弦', instrument:'soft',  mapping:{thumb:'C_maj',index:'D_maj',middle:'E_maj',ring:'G_maj',pinky:'A_maj'} },
-  drums:   { name:'🥁 Drums',   nameZh:'🥁 打击乐', instrument:'drums', mapping:{thumb:'kick',index:'snare',middle:'hihat',ring:'tom',pinky:'clap'} },
-  custom:  { name:'✏️ Custom',  nameZh:'✏️ 自定义', instrument:'sine',  mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'} },
+  therapy: { name:'🎵 Harp', nameZh:'🎵 竖琴', nameEs:'🎵 Arpa', instrument:'harp', mapping:{thumb:'C_maj',index:'F_maj',middle:'Am',ring:'G_maj',pinky:'Em'} },
+  piano:   { name:'🎹 Piano',   nameZh:'🎹 钢琴', nameEs:'🎹 Piano', instrument:'soft',  mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'} },
+  chords:  { name:'🎸 Chords',  nameZh:'🎸 和弦', nameEs:'🎸 Acordes', instrument:'soft',  mapping:{thumb:'C_maj',index:'D_maj',middle:'E_maj',ring:'G_maj',pinky:'A_maj'} },
+  drums:   { name:'🥁 Drums',   nameZh:'🥁 打击乐', nameEs:'🥁 Batería', instrument:'drums', mapping:{thumb:'kick',index:'snare',middle:'hihat',ring:'tom',pinky:'clap'} },
+  custom:  { name:'✏️ Custom',  nameZh:'✏️ 自定义', nameEs:'✏️ Personalizado', instrument:'sine',  mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'} },
 };
 
 const TUTORIALS_EN = {
@@ -2395,7 +2437,181 @@ const TUTORIALS_ZH = {
 };
 
 // Active tutorial set — switches with language
-function getTutorials() { return currentLang === 'zh' ? TUTORIALS_ZH : TUTORIALS_EN; }
+const TUTORIALS_ES = {
+  escala: {
+    name:'Escala Simple', difficulty:'Beginner',
+    sequence:[
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'C4',d:2},
+    ],
+  },
+  // Cumpleaños Feliz
+  cumple: {
+    name:'Cumpleaños Feliz', difficulty:'Easy',
+    sequence:[
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'F4',d:1},{note:'E4',d:2},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'G4',d:1},{note:'F4',d:2},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'C5',d:1},
+      {note:'A4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'Bb4',d:0.75},{note:'Bb4',d:0.25},{note:'A4',d:1},
+      {note:'F4',d:1},{note:'G4',d:1},{note:'F4',d:2},
+    ],
+  },
+  // Estrellita (Twinkle Twinkle)
+  estrellita: {
+    name:'Estrellita ¿Dónde Estás?', difficulty:'Easy',
+    sequence:[
+      {note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+    ],
+  },
+  // Los Pollitos
+  pollitos: {
+    name:'Los Pollitos', difficulty:'Easy', bpm:108,
+    sequence:[
+      // Los po-lli-tos di-cen pío pío pío
+      {note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      // cuando tienen hambre cuando tienen frío
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'D4',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'D4',d:2},
+      // La mamá les busca el maíz y el trigo
+      {note:'G4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'G4',d:1},{note:'E4',d:2},
+      // les da su comida y les presta abrigo
+      {note:'G4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'G4',d:1},{note:'E4',d:2},
+      // Bajo sus dos alas acurrucaditos
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'E4',d:2},
+      // duermen los pollitos hasta el otro día
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'C4',d:2},
+    ],
+  },
+  // Cumbia del Abecedario (simplified)
+  abecedario: {
+    name:'El Abecedario', difficulty:'Easy', bpm:112,
+    sequence:[
+      {note:'C4',d:1},{note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:2},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+    ],
+  },
+  // La Bamba
+  bamba: {
+    name:'La Bamba', difficulty:'Medium', bpm:120,
+    sequence:[
+      // Pa-ra bai-lar la bam-ba
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      // se nece-si-ta una po-ca de gra-cia
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      // una po-ca de gra-cia y o-tra co-si-ta
+      {note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
+      {note:'D4',d:1},{note:'E4',d:1},{note:'G4',d:2},
+      // Bam-ba bam-ba
+      {note:'C4',d:1},{note:'E4',d:1},{note:'G4',d:2},
+      {note:'C4',d:1},{note:'E4',d:1},{note:'G4',d:2},
+    ],
+  },
+  // Cielito Lindo
+  cielito: {
+    name:'Cielito Lindo', difficulty:'Medium', bpm:84,
+    sequence:[
+      // De la Sie-rra Mo-re-na
+      {note:'E4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:2},
+      // Cie-li-to lin-do
+      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},{note:'E4',d:1},{note:'C4',d:2},
+      // vie-nen ba-jan-do
+      {note:'E4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:2},
+      // un par de o-ji-tos ne-gros
+      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},{note:'E4',d:1},{note:'C4',d:3},
+      // Ay ay ay ay
+      {note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
+      // can-ta y no llo-res
+      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},{note:'E4',d:1},{note:'C4',d:2},
+      // por-que can-tan-do se a-le-gran
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      // Cie-li-to lin-do los co-ra-zo-nes
+      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:3},
+    ],
+  },
+  // Ode to Joy — Himno a la Alegría
+  himno: {
+    name:'Himno a la Alegría', difficulty:'Medium',
+    sequence:[
+      {note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'E4',d:1.5},{note:'D4',d:0.5},{note:'D4',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1.5},{note:'C4',d:0.5},{note:'C4',d:2},
+    ],
+  },
+  // Cuando los Santos Marchan
+  santos: {
+    name:'Cuando los Santos Marchan', difficulty:'Medium', bpm:112,
+    sequence:[
+      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:2},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'E4',d:2},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'C4',d:3},
+      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:2},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'E4',d:2},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'C4',d:3},
+    ],
+  },
+  // Fur Elise
+  furelise: {
+    name:'Para Elisa', difficulty:'Hard',
+    sequence:[
+      {note:'E4',d:0.5},{note:'Eb4',d:0.5},{note:'E4',d:0.5},{note:'Eb4',d:0.5},
+      {note:'E4',d:0.5},{note:'B3',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'A3',d:1},
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'A4',d:0.5},{note:'B4',d:1},
+      {note:'E4',d:0.5},{note:'Eb4',d:0.5},{note:'E4',d:0.5},{note:'Eb4',d:0.5},
+      {note:'E4',d:0.5},{note:'B3',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'A3',d:1},
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'A4',d:0.5},{note:'B4',d:1},
+      {note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:1},
+    ],
+  },
+};
+
+function getTutorials() {
+  if(currentLang === 'zh') return TUTORIALS_ZH;
+  if(currentLang === 'es') return TUTORIALS_ES;
+  return TUTORIALS_EN;
+}
 let TUTORIALS = getTutorials();
 
 // ─── Dynamic note-window helpers ─────────────────────────────
@@ -3226,7 +3442,7 @@ const UI = (() => {
 
     if(App.connected && App.calibrated) return; // no hints needed
 
-    const zh = currentLang === 'zh';
+    const zh = currentLang === 'zh'; const es = currentLang === 'es';
 
     if(!App.connected) {
       // Highlight connect button and show bubble next to it
@@ -3236,7 +3452,7 @@ const UI = (() => {
       if(wrap) {
         const bubble = document.createElement('div');
         bubble.className = 'btn-hint-bubble';
-        bubble.innerHTML = `<span class="btn-hint-icon">🔌</span>${zh ? '点击<strong>连接</strong>外骨骼' : 'Click to connect your exoskeleton'}`;
+        bubble.innerHTML = `<span class="btn-hint-icon">🔌</span>${zh ? '点击<strong>连接</strong>外骨骼' : es ? 'Haz clic para <strong>conectar</strong>' : 'Click to connect your exoskeleton'}`;
         wrap.appendChild(bubble);
       }
     } else if(!App.calibrated) {
@@ -3247,7 +3463,7 @@ const UI = (() => {
       if(wrap) {
         const bubble = document.createElement('div');
         bubble.className = 'btn-hint-bubble';
-        bubble.innerHTML = `<span class="btn-hint-icon">✋</span>${zh ? '放平手掌，点击<strong>校准</strong>' : 'Rest hand flat, then <strong>Calibrate</strong>'}`;
+        bubble.innerHTML = `<span class="btn-hint-icon">✋</span>${zh ? '放平手掌，点击<strong>校准</strong>' : es ? 'Mano plana, luego <strong>Calibrar</strong>' : 'Rest hand flat, then <strong>Calibrate</strong>'}`;
         wrap.appendChild(bubble);
       }
     }
@@ -3281,7 +3497,7 @@ const UI = (() => {
   function renderPresets() {
     const strip = document.getElementById('preset-strip');
     strip.innerHTML = Object.entries(PRESETS).map(([k,v])=>`
-      <button class="preset-btn ${App.currentPreset===k?'active':''}" data-p="${k}">${currentLang==='zh' && v.nameZh ? v.nameZh : v.name}</button>
+      <button class="preset-btn ${App.currentPreset===k?'active':''}" data-p="${k}">${currentLang==='zh' && v.nameZh ? v.nameZh : currentLang==='es' && v.nameEs ? v.nameEs : v.name}</button>
     `).join('');
     strip.querySelectorAll('.preset-btn').forEach(b=>{
       b.addEventListener('click',()=>App.setPreset(b.dataset.p));
@@ -3596,7 +3812,7 @@ const UI = (() => {
       `;
       document.body.appendChild(toast);
     }
-    const msg = currentLang === 'zh' ? '🎹 音符映射已更新' : '🎹 Mapping shifted';
+    const msg = currentLang === 'zh' ? '🎹 音符映射已更新' : currentLang === 'es' ? '🎹 Mapeo actualizado' : '🎹 Mapping shifted';
     toast.textContent = msg;
     toast.style.opacity = '1';
     clearTimeout(toast._timer);
@@ -3736,9 +3952,8 @@ const PianoRoll = (() => {
           const w = Math.max(18, Math.round(pxPerSec * 0.35));
           return `
             <div class="pr-note-block"
-              data-evidx="${evIdx}" data-finger="${f}"
-              style="left:${x}px;width:${w}px;background:${color}99;border-color:${color};"
-              title="${noteName}">
+              data-evidx="${evIdx}" data-finger="${f}" data-time="${ev.time}"
+              style="left:${x}px;width:${w}px;background:${color}99;border-color:${color};cursor:grab;">
               <span class="pr-note-del" data-del-ev="${evIdx}" data-del-f="${f}">✕</span>
             </div>`;
         }).join('');
@@ -3791,10 +4006,52 @@ const PianoRoll = (() => {
       });
     });
 
-    // Click note block = open pitch editor
+    // Note block: drag to move, click to edit pitch
     body.querySelectorAll('.pr-note-block').forEach(block => {
+      let dragStartX = null;
+      let dragStartTime = null;
+      let didDrag = false;
+      let laneW = 0;
+
+      block.addEventListener('mousedown', e => {
+        if(e.target.closest('.pr-note-del')) return;
+        e.stopPropagation();
+        e.preventDefault();
+        didDrag = false;
+        dragStartX = e.clientX;
+        dragStartTime = parseFloat(block.dataset.time);
+        const lane = block.closest('.pr-lane');
+        laneW = lane ? lane.getBoundingClientRect().width : 9999;
+        block.style.cursor = 'grabbing';
+
+        const onMove = mv => {
+          const dx = mv.clientX - dragStartX;
+          if(Math.abs(dx) > 3) didDrag = true;
+          if(!didDrag) return;
+          const evIdx = parseInt(block.dataset.evidx);
+          const newTime = Math.max(0, parseFloat((dragStartTime + dx / pxPerSec).toFixed(3)));
+          editEvents[evIdx].time = newTime;
+          block.style.left = Math.round(newTime * pxPerSec) + 'px';
+          block.dataset.time = newTime;
+        };
+
+        const onUp = () => {
+          block.style.cursor = 'grab';
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+          if(didDrag) {
+            editEvents.sort((a,b) => a.time - b.time);
+            render();
+          }
+        };
+
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+
       block.addEventListener('click', e => {
         if(e.target.closest('.pr-note-del')) return;
+        if(didDrag) return; // was a drag, not a click
         e.stopPropagation();
         const evIdx = parseInt(block.dataset.evidx);
         const finger = block.dataset.finger;
@@ -4062,28 +4319,6 @@ document.addEventListener('DOMContentLoaded', () => {
     AudioEngine.setVolume(parseInt(e.target.value)/100);
     document.getElementById('volume-val').textContent=e.target.value;
   });
-
-  // Instrument buttons
-  const instGrid=document.getElementById('inst-grid');
-  const INST_LABELS = {
-    sine: { en:'🎵 Sine',  zh:'🎵 正弦波' },
-    soft: { en:'🎹 Soft',  zh:'🎹 柔和' },
-    bell: { en:'🔔 Bell',  zh:'🔔 钟声' },
-    pad:  { en:'🧘 Pad',   zh:'🧘 氛围' },
-  };
-  function renderInstGrid() {
-    instGrid.innerHTML=Object.entries(INST_LABELS).map(([k,l])=>`
-      <button class="inst-btn ${App.customInstrument===k?'active':''}" data-i="${k}">${l[currentLang]||l.en}</button>
-    `).join('');
-    instGrid.querySelectorAll('.inst-btn').forEach(b=>{
-      b.addEventListener('click', ()=>{
-        instGrid.querySelectorAll('.inst-btn').forEach(x=>x.classList.remove('active'));
-        b.classList.add('active');
-        App.customInstrument=b.dataset.i;
-      });
-    });
-  }
-  renderInstGrid();
 
   // Piano Roll
   document.getElementById('pr-close-btn').addEventListener('click', ()=>PianoRoll.close());
