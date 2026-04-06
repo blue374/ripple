@@ -3286,7 +3286,7 @@ const App = (() => {
     const open   = openBaseline[f] ?? baseline[f] ?? rawVal;
     const closed = closedBaseline[f] ?? rawVal;
     const range  = Math.abs(closed - open);
-    if(range < 100) return 0;
+    if(range < 10) return 0; // allow small ranges for thumb encoder
     return Math.min(1, Math.abs(rawVal - open) / range);
   }
 
@@ -4533,14 +4533,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Settings sliders
   document.getElementById('thresh-on').addEventListener('input', e=>{
-    const v=parseInt(e.target.value);
+    const v=parseFloat(e.target.value);
     App.setThreshOn(v);
-    document.getElementById('thresh-on-val').textContent=v.toLocaleString();
+    document.getElementById('thresh-on-val').textContent=v.toFixed(2);
   });
   document.getElementById('thresh-off').addEventListener('input', e=>{
-    const v=parseInt(e.target.value);
+    const v=parseFloat(e.target.value);
     App.setThreshOff(v);
-    document.getElementById('thresh-off-val').textContent=v.toLocaleString();
+    document.getElementById('thresh-off-val').textContent=v.toFixed(2);
   });
   document.getElementById('filter-size').addEventListener('input', e=>{
     App.setFilterSize(parseInt(e.target.value));
