@@ -1332,8 +1332,8 @@
           <input type="range" id="thresh-on" min="0.01" max="0.99" step="0.01" value="0.30">
         </div>
         <div class="setting-group">
-          <label for="thresh-off">Release (fraction of trigger): <span id="thresh-off-val">0.50</span></label>
-          <input type="range" id="thresh-off" min="0.01" max="0.99" step="0.01" value="0.50">
+          <label for="thresh-off">Release (fraction of trigger): <span id="thresh-off-val">0.60</span></label>
+          <input type="range" id="thresh-off" min="0.01" max="0.99" step="0.01" value="0.60">
         </div>
         <div class="setting-group">
           <label for="filter-size">Smoothing (filter frames): <span id="filter-val">12</span></label>
@@ -3056,7 +3056,7 @@ const App = (() => {
   let calibSamples={};
 
   // Hysteresis thresholds (match server.py defaults)
-  let threshOn=0.3, threshOff=0.5;
+  let threshOn=0.3, threshOff=0.6;
   let thumbThreshOn=0.3, thumbThreshOff=0.15; // kept for compat, unused (all use threshOn/Off now)
   let filterSize=12;
   const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
