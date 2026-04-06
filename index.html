@@ -1332,8 +1332,8 @@
           <input type="range" id="thresh-on" min="0.01" max="0.99" step="0.01" value="0.30">
         </div>
         <div class="setting-group">
-          <label for="thresh-off">Release (fraction of trigger): <span id="thresh-off-val">0.80</span></label>
-          <input type="range" id="thresh-off" min="0.01" max="0.99" step="0.01" value="0.80">
+          <label for="thresh-off">Release drop (0–1): <span id="thresh-off-val">0.20</span></label>
+          <input type="range" id="thresh-off" min="0.01" max="0.99" step="0.01" value="0.20">
         </div>
         <div class="setting-group">
           <label for="filter-size">Smoothing (filter frames): <span id="filter-val">12</span></label>
@@ -3056,10 +3056,11 @@ const App = (() => {
   let calibSamples={};
 
   // Hysteresis thresholds (match server.py defaults)
-  let threshOn=0.3, threshOff=0.8;
+  let threshOn=0.3, threshOff=0.2;
   let thumbThreshOn=0.3, thumbThreshOff=0.15; // kept for compat, unused (all use threshOn/Off now)
   let filterSize=12;
   const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
+  const fingerPeak={thumb:0,index:0,middle:0,ring:0,pinky:0};
 
   // Tutorial state
   let mode='play'; // 'play' | 'tutorial'
@@ -3092,7 +3093,7 @@ const App = (() => {
   }
 
   function clearBuffers() {
-    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; });
+    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerPeak[f]=0; });
   }
 
   // Called by Serial on each 10-value packet
@@ -3125,20 +3126,29 @@ const App = (() => {
       _debugRaw[f] = raw;
       _debugDrop[f] = parseFloat(norm.toFixed(3));
       _debugBase[f] = Math.round(baseline[f] || 0);
+
+      // Track rolling peak per finger (reset when finger is inactive)
+      if(!fingerPeak[f]) fingerPeak[f] = 0;
+      if(activeFingers.has(f)) {
+        // Update peak while active
+        if(norm > fingerPeak[f]) fingerPeak[f] = norm;
+      } else {
+        // Reset peak when not active
+        fingerPeak[f] = norm;
+      }
       if(norm > (_debugMaxDrop[f]||0)) _debugMaxDrop[f] = parseFloat(norm.toFixed(3));
 
-      // Hysteresis using normalized 0-1 values
-      // threshOn: trigger level (e.g. 0.3 = 30% bent)
-      // threshOff: fraction of threshOn to release at (e.g. 0.5 = release at 15%)
-      const releaseLevel = threshOn * threshOff;
+      // Trigger: norm exceeds threshOn
+      // Release: norm has dropped 0.2 below the peak seen since activation
+      const dropFromPeak = fingerPeak[f] - norm;
       if(activeFingers.has(f)) {
-        if(norm > releaseLevel) newActive.add(f);
+        if(dropFromPeak < threshOff) newActive.add(f); // stay active until drop >= threshOff
       } else {
-        if(norm > threshOn) newActive.add(f);
+        if(norm > threshOn) newActive.add(f); // trigger
       }
 
-      // Tutorial release tracking — re-arms when finger returns below release level
-      if(mode==='tutorial' && norm < releaseLevel) tutReady.add(f);
+      // Tutorial release tracking — re-arms when peak-drop exceeds release threshold
+      if(mode==='tutorial' && dropFromPeak >= threshOff) tutReady.add(f);
     }
 
     const changed = newActive.size!==activeFingers.size || [...newActive].some(f=>!activeFingers.has(f));
