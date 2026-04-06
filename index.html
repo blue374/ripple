@@ -1332,8 +1332,8 @@
           <input type="range" id="thresh-on" min="0.01" max="0.99" step="0.01" value="0.30">
         </div>
         <div class="setting-group">
-          <label for="thresh-off">Release (fraction of trigger): <span id="thresh-off-val">0.60</span></label>
-          <input type="range" id="thresh-off" min="0.01" max="0.99" step="0.01" value="0.60">
+          <label for="thresh-off">Release (fraction of trigger): <span id="thresh-off-val">0.80</span></label>
+          <input type="range" id="thresh-off" min="0.01" max="0.99" step="0.01" value="0.80">
         </div>
         <div class="setting-group">
           <label for="filter-size">Smoothing (filter frames): <span id="filter-val">12</span></label>
@@ -3056,7 +3056,7 @@ const App = (() => {
   let calibSamples={};
 
   // Hysteresis thresholds (match server.py defaults)
-  let threshOn=0.3, threshOff=0.6;
+  let threshOn=0.3, threshOff=0.8;
   let thumbThreshOn=0.3, thumbThreshOff=0.15; // kept for compat, unused (all use threshOn/Off now)
   let filterSize=12;
   const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
@@ -3107,7 +3107,7 @@ const App = (() => {
     // Collect calibration samples
     if(!calibrated && calibSamples && Object.keys(calibSamples).length>0) {
       FINGERS.forEach(f=>{
-        const raw = f==='thumb' ? vals[0] + vals[1] : vals[FINGER_CFG[f].idx];
+        const raw = f==='thumb' ? vals[0] : vals[FINGER_CFG[f].idx];
         calibSamples[f].push(raw);
       });
     }
@@ -3118,7 +3118,7 @@ const App = (() => {
 
     for(const f of FINGERS) {
       const cfg = FINGER_CFG[f];
-      const raw = f==='thumb' ? vals[0] + vals[1] : vals[cfg.idx];
+      const raw = f==='thumb' ? vals[0] : vals[cfg.idx];
       const filtered = filterValue(f, raw);
       const rawDrop = baseline[f] - filtered;
       const norm = getNormalized(f, raw); // 0=open, 1=fist
@@ -3219,7 +3219,7 @@ const App = (() => {
   let closedBaseline={}; // raw values with hand closed (fist)
 
   function getRawVal(f, vals) {
-    return f==='thumb' ? vals[0]+vals[1] : vals[FINGER_CFG[f].idx];
+    return f==='thumb' ? vals[0] : vals[FINGER_CFG[f].idx];
   }
 
   // Collect 2s of samples, return averages per finger
@@ -3247,13 +3247,18 @@ const App = (() => {
     clearBuffers();
 
     // ── Phase 1: Open hand ─────────────────────────────────────────────
-    UI.showCalibModal('open');
-    await new Promise(r=>setTimeout(r,500)); // let modal render
+    UI.showCalibModal('open', 'reading');
+    await new Promise(r=>setTimeout(r,2000)); // 2s to read instructions
+    UI.showCalibModal('open', 'recording');
     await new Promise(r=>setTimeout(r,2000)); // 2s stabilize
     openBaseline = await collectSamples(1500);
 
+    // ── Pause between phases ──────────────────────────────────────────
+    UI.showCalibModal('between');
+    await new Promise(r=>setTimeout(r,2000)); // 2s to read next instruction
+
     // ── Phase 2: Closed fist ───────────────────────────────────────────
-    UI.showCalibModal('close');
+    UI.showCalibModal('close', 'recording');
     await new Promise(r=>setTimeout(r,2000)); // 2s stabilize
     closedBaseline = await collectSamples(1500);
 
@@ -3807,31 +3812,51 @@ const UI = (() => {
     }
   }
 
-  function showCalibModal(phase) {
+  function showCalibModal(phase, state) {
     const modal = document.getElementById('calib-modal');
     modal.style.display = 'flex';
-    if(phase === 'open') {
-      document.getElementById('calib-icon').textContent = '🖐️';
-      document.getElementById('calib-title').textContent = 'Step 1 — Open Hand';
-      document.getElementById('calib-desc').textContent = 'Relax your hand completely and spread your fingers open. Hold still for 2 seconds while we record your resting position.';
-    } else {
-      document.getElementById('calib-icon').textContent = '✊';
-      document.getElementById('calib-title').textContent = 'Step 2 — Make a Fist';
-      document.getElementById('calib-desc').textContent = 'Now close your hand into a fist as fully as you can. Hold for 2 seconds while we record your fully bent position.';
-    }
-    document.getElementById('calib-status').textContent = 'Stabilizing…';
+    if(modal._timerId) { clearInterval(modal._timerId); modal._timerId = null; }
     document.getElementById('calib-progress-bar').style.width = '0%';
-    // Animate progress bar over ~3.5s (2s stabilize + 1.5s sample)
-    let start = Date.now();
-    const dur = 3500;
-    const id = setInterval(() => {
-      const pct = Math.min(100, (Date.now()-start)/dur*100);
-      document.getElementById('calib-progress-bar').style.width = pct+'%';
-      if(pct < 57) document.getElementById('calib-status').textContent = 'Stabilizing…';
-      else document.getElementById('calib-status').textContent = 'Recording…';
-      if(pct >= 100) clearInterval(id);
-    }, 50);
-    modal._timerId = id;
+
+    if(phase === 'open' && state === 'reading') {
+      document.getElementById('calib-icon').textContent = '🖐️';
+      document.getElementById('calib-title').textContent = 'Step 1 of 2 — Open Hand';
+      document.getElementById('calib-desc').textContent = 'Relax your hand completely and spread your fingers open. Get ready — the recording will start in 2 seconds.';
+      document.getElementById('calib-status').textContent = 'Get ready…';
+    } else if(phase === 'open' && state === 'recording') {
+      document.getElementById('calib-icon').textContent = '🖐️';
+      document.getElementById('calib-title').textContent = 'Step 1 of 2 — Hold Still';
+      document.getElementById('calib-desc').textContent = 'Keep your hand open and relaxed. Recording your resting position…';
+      document.getElementById('calib-status').textContent = 'Stabilizing…';
+      let start = Date.now(); const dur = 3500;
+      const id = setInterval(() => {
+        const pct = Math.min(100, (Date.now()-start)/dur*100);
+        document.getElementById('calib-progress-bar').style.width = pct+'%';
+        if(pct < 57) document.getElementById('calib-status').textContent = 'Stabilizing…';
+        else document.getElementById('calib-status').textContent = 'Recording open hand…';
+        if(pct >= 100) clearInterval(id);
+      }, 50);
+      modal._timerId = id;
+    } else if(phase === 'between') {
+      document.getElementById('calib-icon').textContent = '👊';
+      document.getElementById('calib-title').textContent = 'Great! Now Step 2 of 2';
+      document.getElementById('calib-desc').textContent = 'Open hand recorded! Now get ready to close your hand into a tight fist. Recording will start in 2 seconds.';
+      document.getElementById('calib-status').textContent = 'Get ready…';
+    } else if(phase === 'close' && state === 'recording') {
+      document.getElementById('calib-icon').textContent = '✊';
+      document.getElementById('calib-title').textContent = 'Step 2 of 2 — Make a Fist';
+      document.getElementById('calib-desc').textContent = 'Close your hand into the tightest fist you can make. Hold it there…';
+      document.getElementById('calib-status').textContent = 'Stabilizing…';
+      let start = Date.now(); const dur = 3500;
+      const id = setInterval(() => {
+        const pct = Math.min(100, (Date.now()-start)/dur*100);
+        document.getElementById('calib-progress-bar').style.width = pct+'%';
+        if(pct < 57) document.getElementById('calib-status').textContent = 'Stabilizing…';
+        else document.getElementById('calib-status').textContent = 'Recording closed fist…';
+        if(pct >= 100) clearInterval(id);
+      }, 50);
+      modal._timerId = id;
+    }
   }
 
   function hideCalibModal() {
