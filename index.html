@@ -1332,7 +1332,7 @@
           <input type="range" id="thresh-on" min="0.01" max="0.99" step="0.01" value="0.30">
         </div>
         <div class="setting-group">
-          <label for="thresh-off">Straighten threshold (release): <span id="thresh-off-val">0.50</span></label>
+          <label for="thresh-off">Release (fraction of trigger): <span id="thresh-off-val">0.50</span></label>
           <input type="range" id="thresh-off" min="0.01" max="0.99" step="0.01" value="0.50">
         </div>
         <div class="setting-group">
@@ -3127,15 +3127,18 @@ const App = (() => {
       _debugBase[f] = Math.round(baseline[f] || 0);
       if(norm > (_debugMaxDrop[f]||0)) _debugMaxDrop[f] = parseFloat(norm.toFixed(3));
 
-      // Hysteresis using normalized 0-1 values (same thresholds for all fingers)
+      // Hysteresis using normalized 0-1 values
+      // threshOn: trigger level (e.g. 0.3 = 30% bent)
+      // threshOff: fraction of threshOn to release at (e.g. 0.5 = release at 15%)
+      const releaseLevel = threshOn * threshOff;
       if(activeFingers.has(f)) {
-        if(norm > threshOff) newActive.add(f);
+        if(norm > releaseLevel) newActive.add(f);
       } else {
         if(norm > threshOn) newActive.add(f);
       }
 
-      // Tutorial release tracking — re-arms when finger is mostly open
-      if(mode==='tutorial' && norm < 0.15) tutReady.add(f);
+      // Tutorial release tracking — re-arms when finger returns below release level
+      if(mode==='tutorial' && norm < releaseLevel) tutReady.add(f);
     }
 
     const changed = newActive.size!==activeFingers.size || [...newActive].some(f=>!activeFingers.has(f));
