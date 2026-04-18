@@ -1787,7 +1787,7 @@ const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 const TUT_FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 
 const FINGER_CFG = {
-  thumb:  { idx: 1, range: 139000, w: 80, h: 108, mt: 80, color: '#ff4d4d', rc: '255,77,77' },
+  thumb:  { idx: 1, range: 139000, w: 80, h: 108, mt: 80, color: '#ff4d4d', rc: '255,77,77', dir: -1 },
   index:  { idx: 3, range: 140000, w: 68, h: 168, mt: 12, color: '#ff8c2a', rc: '255,140,42' },
   middle: { idx: 4, range: 139000, w: 68, h: 192, mt: 0,  color: '#e6b800', rc: '230,184,0' },
   ring:   { idx: 5, range: 184000, w: 68, h: 168, mt: 12, color: '#22c55e', rc: '34,197,94' },
@@ -3309,8 +3309,10 @@ const App = (() => {
     if(rawVal < fingerObsMin[f]) fingerObsMin[f] = rawVal;
     if(rawVal > fingerObsMax[f]) fingerObsMax[f] = rawVal;
 
-    // Use the adaptive range — whichever end is "open" vs "closed" based on calibration direction
-    const calibDir = closed > open ? 1 : -1; // +1 if encoder increases on bend, -1 if decreases
+    // Use per-finger direction config (dir:1 = increases on bend, dir:-1 = decreases on bend)
+    // Fall back to calibration-detected direction if not specified
+    const cfgDir = FINGER_CFG[f]?.dir;
+    const calibDir = cfgDir !== undefined ? cfgDir : (closed > open ? 1 : -1);
     const adaptOpen   = calibDir > 0 ? fingerObsMin[f] : fingerObsMax[f];
     const adaptClosed = calibDir > 0 ? fingerObsMax[f] : fingerObsMin[f];
     const range = adaptClosed - adaptOpen;
