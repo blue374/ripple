@@ -1829,10 +1829,10 @@ const DRUMS = ['kick','snare','hihat','tom','clap','cymbal'];
 
 const PRESETS = {
   therapy: { name:'🎵 Harp', nameZh:'🎵 竖琴', nameEs:'🎵 Arpa', instrument:'harp', mapping:{thumb:'C_maj',index:'F_maj',middle:'Am',ring:'G_maj',pinky:'Em'} },
-  piano:   { name:'🎹 Piano',   nameZh:'🎹 钢琴', nameEs:'🎹 Piano', instrument:'soft',  mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'} },
+  piano:   { name:'🎹 Piano',   nameZh:'🎹 钢琴', nameEs:'🎹 Piano', instrument:'soft',  mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'} },
   chords:  { name:'🎸 Chords',  nameZh:'🎸 和弦', nameEs:'🎸 Acordes', instrument:'soft',  mapping:{thumb:'C_maj',index:'D_maj',middle:'E_maj',ring:'G_maj',pinky:'A_maj'} },
   drums:   { name:'🥁 Drums',   nameZh:'🥁 打击乐', nameEs:'🥁 Batería', instrument:'drums', mapping:{thumb:'kick',index:'snare',middle:'hihat',ring:'tom',pinky:'clap'} },
-  custom:  { name:'✏️ Custom',  nameZh:'✏️ 自定义', nameEs:'✏️ Personalizado', instrument:'sine',  mapping:{thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'} },
+  custom:  { name:'✏️ Custom',  nameZh:'✏️ 自定义', nameEs:'✏️ Personalizado', instrument:'sine',  mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'} },
 };
 
 const TUTORIALS_EN = {
@@ -3482,7 +3482,7 @@ const App = (() => {
   function exitTutorial() {
     stopDemo();
     mode='play'; tutState={current:null,step:0,completed:false,windowStart:0,songNotes:[]};
-    PRESETS.piano.mapping={thumb:'C',index:'D',middle:'E',ring:'F',pinky:'G'};
+    PRESETS.piano.mapping={thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'};
     AudioEngine.stopAll(); activeFingers=new Set();
     document.getElementById('tut-browser').classList.remove('hidden');
     document.getElementById('tut-active-panel').classList.add('hidden');
@@ -4523,6 +4523,11 @@ document.addEventListener('DOMContentLoaded', () => {
       ['play','tutorial','record','settings'].forEach(id=>{
         document.getElementById('tab-'+id).classList.toggle('hidden', id!==tab.dataset.tab);
       });
+      // Reset piano mapping when returning to Play tab so tutorial doesn't leave stale notes
+      if(tab.dataset.tab === 'play' && App.mode !== 'tutorial') {
+        PRESETS.piano.mapping = {thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'};
+        UI.syncAll();
+      }
     });
   });
 
