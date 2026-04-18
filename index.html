@@ -1328,8 +1328,8 @@
       <div class="panel-title" data-i18n="configuration">Configuration</div>
       <div class="settings-grid">
         <div class="setting-group">
-          <label for="thresh-on">Bend threshold (trigger): <span id="thresh-on-val">0.30</span></label>
-          <input type="range" id="thresh-on" min="0.01" max="0.99" step="0.01" value="0.30">
+          <label for="thresh-on">Bend threshold (trigger): <span id="thresh-on-val">0.40</span></label>
+          <input type="range" id="thresh-on" min="0.01" max="0.99" step="0.01" value="0.40">
         </div>
         <div class="setting-group">
           <label for="thresh-off">Release drop (0–1): <span id="thresh-off-val">0.20</span></label>
@@ -3058,11 +3058,13 @@ const App = (() => {
   let calibSamples={};
 
   // Hysteresis thresholds (match server.py defaults)
-  let threshOn=0.3, threshOff=0.2;
+  let threshOn=0.4, threshOff=0.2;
   let thumbThreshOn=0.3, thumbThreshOff=0.15; // kept for compat, unused (all use threshOn/Off now)
   let filterSize=12;
   const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
   const fingerPeak={thumb:0,index:0,middle:0,ring:0,pinky:0};
+  // Armed = finger has dropped below threshold and is ready to trigger again
+  const fingerArmed={thumb:true,index:true,middle:true,ring:true,pinky:true};
   // Adaptive normalization min/max — starts from calibration, self-corrects as user plays
   let fingerObsMin={thumb:null,index:null,middle:null,ring:null,pinky:null};
   let fingerObsMax={thumb:null,index:null,middle:null,ring:null,pinky:null};
@@ -3098,7 +3100,7 @@ const App = (() => {
   }
 
   function clearBuffers() {
-    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerPeak[f]=0; fingerObsMin[f]=null; fingerObsMax[f]=null; });
+    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerPeak[f]=0; fingerArmed[f]=true; fingerObsMin[f]=null; fingerObsMax[f]=null; });
   }
 
   // Called by Serial on each 10-value packet
@@ -3144,9 +3146,17 @@ const App = (() => {
       // Release: norm has dropped 0.2 below the peak seen since activation
       const dropFromPeak = fingerPeak[f] - norm;
       if(activeFingers.has(f)) {
-        if(dropFromPeak < threshOff) newActive.add(f); // stay active until drop >= threshOff
+        if(dropFromPeak < threshOff) {
+          newActive.add(f); // stay active until drop >= threshOff
+        } else {
+          // Finger is releasing — disarm so it can't immediately re-trigger
+          fingerArmed[f] = false;
+        }
       } else {
-        if(norm > threshOn) newActive.add(f); // trigger
+        // Re-arm once norm drops clearly below the trigger threshold
+        if(norm < threshOn * 0.7) fingerArmed[f] = true;
+        // Only trigger if armed (finger returned to low zone since last release)
+        if(fingerArmed[f] && norm > threshOn) newActive.add(f);
       }
 
       // Tutorial release tracking — re-arms when peak-drop exceeds release threshold
