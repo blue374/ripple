@@ -3063,6 +3063,9 @@ const App = (() => {
   let filterSize=12;
   const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
   const fingerPeak={thumb:0,index:0,middle:0,ring:0,pinky:0};
+  // Adaptive normalization min/max — starts from calibration, self-corrects as user plays
+  let fingerObsMin={thumb:null,index:null,middle:null,ring:null,pinky:null};
+  let fingerObsMax={thumb:null,index:null,middle:null,ring:null,pinky:null};
 
   // Tutorial state
   let mode='play'; // 'play' | 'tutorial'
@@ -3095,7 +3098,7 @@ const App = (() => {
   }
 
   function clearBuffers() {
-    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerPeak[f]=0; });
+    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerPeak[f]=0; fingerObsMin[f]=null; fingerObsMax[f]=null; });
   }
 
   // Called by Serial on each 10-value packet
@@ -3276,6 +3279,11 @@ const App = (() => {
     for(const f of FINGERS) {
       baseline[f] = openBaseline[f];
     }
+    // Seed adaptive min/max from calibration values
+    FINGERS.forEach(f => {
+      fingerObsMin[f] = Math.min(openBaseline[f] ?? 0, closedBaseline[f] ?? 0);
+      fingerObsMax[f] = Math.max(openBaseline[f] ?? 0, closedBaseline[f] ?? 0);
+    });
     calibrated=true;
     UI.hideCalibModal();
     UI.syncAll();
@@ -3284,9 +3292,20 @@ const App = (() => {
   function getNormalized(f, rawVal) {
     const open   = openBaseline[f] ?? baseline[f] ?? rawVal;
     const closed = closedBaseline[f] ?? rawVal;
-    const range  = Math.abs(closed - open);
-    if(range < 10) return 0; // allow small ranges for thumb encoder
-    return Math.min(1, Math.abs(rawVal - open) / range);
+
+    // Adapt observed min/max over time so range self-corrects
+    if(fingerObsMin[f] === null) fingerObsMin[f] = open;
+    if(fingerObsMax[f] === null) fingerObsMax[f] = closed;
+    if(rawVal < fingerObsMin[f]) fingerObsMin[f] = rawVal;
+    if(rawVal > fingerObsMax[f]) fingerObsMax[f] = rawVal;
+
+    // Use the adaptive range — whichever end is "open" vs "closed" based on calibration direction
+    const calibDir = closed > open ? 1 : -1; // +1 if encoder increases on bend, -1 if decreases
+    const adaptOpen   = calibDir > 0 ? fingerObsMin[f] : fingerObsMax[f];
+    const adaptClosed = calibDir > 0 ? fingerObsMax[f] : fingerObsMin[f];
+    const range = adaptClosed - adaptOpen;
+    if(Math.abs(range) < 10) return 0;
+    return Math.max(0, Math.min(1, (rawVal - adaptOpen) / range));
   }
 
   function setPreset(p) {
