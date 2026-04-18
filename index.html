@@ -1787,7 +1787,7 @@ const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 const TUT_FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 
 const FINGER_CFG = {
-  thumb:  { idx: 0, range: 139000, w: 80, h: 108, mt: 80, color: '#ff4d4d', rc: '255,77,77' },
+  thumb:  { idx: 1, range: 139000, w: 80, h: 108, mt: 80, color: '#ff4d4d', rc: '255,77,77' },
   index:  { idx: 3, range: 140000, w: 68, h: 168, mt: 12, color: '#ff8c2a', rc: '255,140,42' },
   middle: { idx: 4, range: 139000, w: 68, h: 192, mt: 0,  color: '#e6b800', rc: '230,184,0' },
   ring:   { idx: 5, range: 184000, w: 68, h: 168, mt: 12, color: '#22c55e', rc: '34,197,94' },
@@ -3107,10 +3107,7 @@ const App = (() => {
 
     // Collect calibration samples
     if(!calibrated && calibSamples && Object.keys(calibSamples).length>0) {
-      FINGERS.forEach(f=>{
-        const raw = f==='thumb' ? vals[0] : vals[FINGER_CFG[f].idx];
-        calibSamples[f].push(raw);
-      });
+      FINGERS.forEach(f=>{ calibSamples[f].push(vals[FINGER_CFG[f].idx]); });
     }
 
     if(!calibrated) return;
@@ -3119,7 +3116,7 @@ const App = (() => {
 
     for(const f of FINGERS) {
       const cfg = FINGER_CFG[f];
-      const raw = f==='thumb' ? vals[0] : vals[cfg.idx];
+      const raw = vals[cfg.idx];
       const filtered = filterValue(f, raw);
       const rawDrop = baseline[f] - filtered;
       const norm = getNormalized(f, raw); // 0=open, 1=fist
@@ -3229,7 +3226,7 @@ const App = (() => {
   let closedBaseline={}; // raw values with hand closed (fist)
 
   function getRawVal(f, vals) {
-    return f==='thumb' ? vals[0] : vals[FINGER_CFG[f].idx];
+    return vals[FINGER_CFG[f].idx];
   }
 
   // Collect 2s of samples, return averages per finger
