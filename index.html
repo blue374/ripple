@@ -3064,7 +3064,11 @@ const App = (() => {
   // Hysteresis thresholds (match server.py defaults)
   let threshOn=0.4, threshOff=0.2;
   let thumbThreshOn=0.3, thumbThreshOff=0.15; // kept for compat, unused
-  let switchThreshold=1000000; // raw ADC value above which a tactile switch is considered pressed
+  let switchThreshold=1000000; // fallback global threshold (overridden per-finger after calibration)
+  let fingerRestMin={thumb:0,index:0,middle:0,ring:0,pinky:0};   // resting baseline per finger
+  let fingerPressMax=0;  // max value seen when thumb pressed during calibration
+  let fingerOnThresh={thumb:0,index:0,middle:0,ring:0,pinky:0};  // trigger threshold per finger
+  let fingerOffThresh={thumb:0,index:0,middle:0,ring:0,pinky:0}; // release threshold per finger (lower, for slow-decay support)
   let filterSize=12;
   const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
   const fingerPeak={thumb:0,index:0,middle:0,ring:0,pinky:0};
@@ -3116,7 +3120,8 @@ const App = (() => {
 
   function onPacket(vals) {
     if(!connected) return;
-
+    // Feed calibration collector if active
+    if(App._collectHook) { App._collectHook(vals); return; }
     if(!calibrated) return;
 
     const newActive = new Set();
@@ -3124,29 +3129,36 @@ const App = (() => {
     for(const f of FINGERS) {
       const cfg = FINGER_CFG[f];
       const raw = vals[cfg.idx];
-      const pressed = raw > switchThreshold;
+
+      // Use per-finger calibrated thresholds; fall back to global if not calibrated yet
+      const onThresh  = fingerOnThresh[f]  || switchThreshold;
+      const offThresh = fingerOffThresh[f] || Math.round(switchThreshold * 0.5);
+
+      // Hysteresis: trigger on onThresh, release on lower offThresh (handles slow decay)
+      const pressed  = raw > onThresh;
+      const released = raw <= offThresh;
 
       _debugRaw[f] = raw;
-      _debugDrop[f] = pressed ? 1 : 0;   // 1 = pressed, 0 = released
-      _debugBase[f] = switchThreshold;
+      _debugDrop[f] = pressed ? 1 : (released ? 0 : 0.5); // 1=pressed, 0=released, 0.5=decaying
+      _debugBase[f] = onThresh;
       if(raw > (_debugMaxDrop[f]||0)) _debugMaxDrop[f] = raw;
 
       if(activeFingers.has(f)) {
-        if(pressed) {
-          newActive.add(f); // stay active while switch is held
+        if(!released) {
+          newActive.add(f); // stay active until raw falls below offThresh
         } else {
-          // Switch released — disarm so bounce can't re-trigger immediately
+          // Fully released — disarm to prevent bounce re-trigger
           fingerArmed[f] = false;
         }
       } else {
-        // Re-arm once switch is fully released (raw below threshold)
-        if(!pressed) fingerArmed[f] = true;
-        // Only trigger if armed
+        // Re-arm once fully released
+        if(released) fingerArmed[f] = true;
+        // Only trigger if armed and above onThresh
         if(fingerArmed[f] && pressed) newActive.add(f);
       }
 
-      // Tutorial release tracking — re-arm when switch released
-      if(mode==='tutorial' && !pressed) tutReady.add(f);
+      // Tutorial release tracking — re-arm when fully released
+      if(mode==='tutorial' && released) tutReady.add(f);
     }
 
     const changed = newActive.size!==activeFingers.size || [...newActive].some(f=>!activeFingers.has(f));
@@ -3230,11 +3242,61 @@ const App = (() => {
     return vals[FINGER_CFG[f].idx];
   }
 
+  // Collect raw samples from live packets over durationMs, return per-finger averages
+  async function collectRawSamples(durationMs) {
+    const samples = {};
+    FINGERS.forEach(f => { samples[f] = []; });
+    const end = Date.now() + durationMs;
+    // Temporarily hook onPacket to collect raw vals
+    const _orig = App._collectHook;
+    App._collectHook = vals => {
+      FINGERS.forEach(f => { samples[f].push(vals[FINGER_CFG[f].idx]); });
+    };
+    await new Promise(r => setTimeout(r, durationMs));
+    App._collectHook = null;
+    const avgs = {};
+    FINGERS.forEach(f => {
+      const s = samples[f];
+      avgs[f] = s.length > 0 ? s.reduce((a,b)=>a+b,0)/s.length : 0;
+    });
+    return avgs;
+  }
+
   async function doCalibrate() {
     if(!connected) return;
-    // Tactile switches need no calibration — just mark as ready
-    calibrated=true;
+    calibrated = false;
     clearBuffers();
+
+    // ── Phase 1: Rest — record minimum baseline ───────────────────────
+    UI.showCalibModal('rest', 'reading');
+    await new Promise(r => setTimeout(r, 2000)); // 2s to read
+    UI.showCalibModal('rest', 'recording');
+    await new Promise(r => setTimeout(r, 1500)); // stabilise
+    const restVals = await collectRawSamples(1500);
+    FINGERS.forEach(f => { fingerRestMin[f] = restVals[f]; });
+
+    // ── Phase 2: Press thumb — record maximum ─────────────────────────
+    UI.showCalibModal('thumb', 'reading');
+    await new Promise(r => setTimeout(r, 2000)); // 2s to read
+    UI.showCalibModal('thumb', 'recording');
+    await new Promise(r => setTimeout(r, 1500)); // stabilise
+    const pressVals = await collectRawSamples(1500);
+    fingerPressMax = pressVals['thumb'];
+
+    // ── Compute per-finger thresholds ─────────────────────────────────
+    // Trigger at 50% of range above rest; release at 25% (handles slow decay)
+    FINGERS.forEach(f => {
+      const range = fingerPressMax - fingerRestMin[f];
+      fingerOnThresh[f]  = Math.round(fingerRestMin[f] + range * 0.50);
+      fingerOffThresh[f] = Math.round(fingerRestMin[f] + range * 0.25);
+    });
+    // Also update global switchThreshold to the midpoint for fallback/display
+    switchThreshold = Math.round(fingerRestMin['thumb'] + (fingerPressMax - fingerRestMin['thumb']) * 0.50);
+    document.getElementById('switch-threshold-val').textContent = switchThreshold.toLocaleString();
+    document.getElementById('switch-threshold').value = Math.min(4000000, switchThreshold);
+
+    calibrated = true;
+    UI.hideCalibModal();
     UI.syncAll();
   }
 
@@ -3555,6 +3617,9 @@ const App = (() => {
     set customInstrument(v){ customInstrument=v; AudioEngine.setInstrument(v); },
     get switchThreshold(){return switchThreshold},
     setSwitchThreshold(v){switchThreshold=v},
+    get fingerOnThresh(){return fingerOnThresh},
+    get fingerOffThresh(){return fingerOffThresh},
+    get fingerRestMin(){return fingerRestMin},
     setThreshOn(v){threshOn=v},
     setThreshOff(v){threshOff=v},
     get thumbThreshOn(){return thumbThreshOn},
@@ -3562,6 +3627,7 @@ const App = (() => {
     setThumbThreshOn(v){thumbThreshOn=v},
     setThumbThreshOff(v){thumbThreshOff=v},
     setFilterSize(v){filterSize=v},
+    _collectHook: null,
     manualPress, manualRelease,
     startDemo, stopDemo,
     get demoPlaying(){return demoPlaying},
@@ -3799,44 +3865,38 @@ const UI = (() => {
     if(modal._timerId) { clearInterval(modal._timerId); modal._timerId = null; }
     document.getElementById('calib-progress-bar').style.width = '0%';
 
-    if(phase === 'open' && state === 'reading') {
-      document.getElementById('calib-icon').textContent = '🖐️';
-      document.getElementById('calib-title').textContent = 'Step 1 of 2 — Open Hand';
-      document.getElementById('calib-desc').textContent = 'Relax your hand completely and spread your fingers open. Get ready — the recording will start in 2 seconds.';
+    const setBar = (dur) => {
+      let start = Date.now();
+      const id = setInterval(() => {
+        const pct = Math.min(100, (Date.now()-start)/dur*100);
+        document.getElementById('calib-progress-bar').style.width = pct+'%';
+        if(pct >= 100) clearInterval(id);
+      }, 50);
+      modal._timerId = id;
+    };
+
+    if(phase === 'rest' && state === 'reading') {
+      document.getElementById('calib-icon').textContent = '🤚';
+      document.getElementById('calib-title').textContent = 'Step 1 of 2 — Rest Your Hand';
+      document.getElementById('calib-desc').textContent = 'Do not press any switches. Keep your hand relaxed and still. Recording will begin in 2 seconds.';
       document.getElementById('calib-status').textContent = 'Get ready…';
-    } else if(phase === 'open' && state === 'recording') {
-      document.getElementById('calib-icon').textContent = '🖐️';
+    } else if(phase === 'rest' && state === 'recording') {
+      document.getElementById('calib-icon').textContent = '🤚';
       document.getElementById('calib-title').textContent = 'Step 1 of 2 — Hold Still';
-      document.getElementById('calib-desc').textContent = 'Keep your hand open and relaxed. Recording your resting position…';
-      document.getElementById('calib-status').textContent = 'Stabilizing…';
-      let start = Date.now(); const dur = 3500;
-      const id = setInterval(() => {
-        const pct = Math.min(100, (Date.now()-start)/dur*100);
-        document.getElementById('calib-progress-bar').style.width = pct+'%';
-        if(pct < 57) document.getElementById('calib-status').textContent = 'Stabilizing…';
-        else document.getElementById('calib-status').textContent = 'Recording open hand…';
-        if(pct >= 100) clearInterval(id);
-      }, 50);
-      modal._timerId = id;
-    } else if(phase === 'between') {
-      document.getElementById('calib-icon').textContent = '👊';
-      document.getElementById('calib-title').textContent = 'Great! Now Step 2 of 2';
-      document.getElementById('calib-desc').textContent = 'Open hand recorded! Now get ready to close your hand into a tight fist. Recording will start in 2 seconds.';
+      document.getElementById('calib-desc').textContent = 'Keep all fingers relaxed — do not press anything. Recording the resting baseline…';
+      document.getElementById('calib-status').textContent = 'Recording rest values…';
+      setBar(3000);
+    } else if(phase === 'thumb' && state === 'reading') {
+      document.getElementById('calib-icon').textContent = '👍';
+      document.getElementById('calib-title').textContent = 'Step 2 of 2 — Press Your Thumb';
+      document.getElementById('calib-desc').textContent = 'Now press and hold only your thumb switch as hard as you can. Recording will begin in 2 seconds.';
       document.getElementById('calib-status').textContent = 'Get ready…';
-    } else if(phase === 'close' && state === 'recording') {
-      document.getElementById('calib-icon').textContent = '✊';
-      document.getElementById('calib-title').textContent = 'Step 2 of 2 — Make a Fist';
-      document.getElementById('calib-desc').textContent = 'Close your hand into the tightest fist you can make. Hold it there…';
-      document.getElementById('calib-status').textContent = 'Stabilizing…';
-      let start = Date.now(); const dur = 3500;
-      const id = setInterval(() => {
-        const pct = Math.min(100, (Date.now()-start)/dur*100);
-        document.getElementById('calib-progress-bar').style.width = pct+'%';
-        if(pct < 57) document.getElementById('calib-status').textContent = 'Stabilizing…';
-        else document.getElementById('calib-status').textContent = 'Recording closed fist…';
-        if(pct >= 100) clearInterval(id);
-      }, 50);
-      modal._timerId = id;
+    } else if(phase === 'thumb' && state === 'recording') {
+      document.getElementById('calib-icon').textContent = '👍';
+      document.getElementById('calib-title').textContent = 'Step 2 of 2 — Hold Thumb Down';
+      document.getElementById('calib-desc').textContent = 'Keep your thumb pressed firmly. This sets the maximum value for all fingers…';
+      document.getElementById('calib-status').textContent = 'Recording thumb press…';
+      setBar(3000);
     }
   }
 
