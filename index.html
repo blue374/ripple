@@ -1253,14 +1253,14 @@
 
   <!-- Tabs -->
   <div class="tabs">
-    <button class="tab active" data-tab="tutorial">Tutorial</button>
-    <button class="tab" data-tab="play">Play</button>
+    <button class="tab" data-tab="tutorial">Tutorial</button>
+    <button class="tab active" data-tab="play">Play</button>
     <button class="tab" data-tab="record">Record</button>
     <button class="tab" data-tab="settings">Settings</button>
   </div>
 
   <!-- PLAY TAB -->
-  <div id="tab-play" class="hidden">
+  <div id="tab-play">
     <!-- Presets -->
     <div class="preset-strip" id="preset-strip"></div>
 
@@ -1286,7 +1286,7 @@
   </div>
 
   <!-- TUTORIAL TAB -->
-  <div id="tab-tutorial">
+  <div id="tab-tutorial" class="hidden">
     <div class="panel" id="tut-browser">
       <div class="panel-title" data-i18n="chooseSong">Choose a Song</div>
       <div class="tutorial-list" id="tutorial-list"></div>
@@ -1298,6 +1298,9 @@
         <button class="btn-sm" id="tut-demo-btn">▶ Demo</button>
         <button class="btn-sm hidden stop" id="tut-demo-stop-btn">⏹ Stop Demo</button>
         <button class="btn-sm" id="tut-reset-btn">↺ Restart</button>
+        <button class="btn-sm play" id="tut-rec-start-btn">⏺ Record</button>
+        <button class="btn-sm stop hidden" id="tut-rec-stop-btn">⏹ Stop Rec</button>
+        <span class="rec-indicator hidden" id="tut-rec-indicator"><span class="rec-dot"></span></span>
         <button class="btn-sm danger" id="tut-exit-btn">Exit Tutorial</button>
       </div>
     </div>
@@ -1638,6 +1641,8 @@ function applyLang() {
 
   // Tutorial buttons
   const db = document.getElementById('tut-demo-btn'); if(db) db.textContent = t('demo');
+  const trb = document.getElementById('tut-rec-start-btn'); if(trb) trb.textContent = '⏺ '+t('startRecording').replace('⏺ ','');
+  const trsb = document.getElementById('tut-rec-stop-btn'); if(trsb) trsb.textContent = '⏹ '+t('recStop').replace('⏹ ','');
   const dsb = document.getElementById('tut-demo-stop-btn'); if(dsb) dsb.textContent = t('stopDemo');
   const rb = document.getElementById('tut-reset-btn'); if(rb) rb.textContent = t('restart');
   const eb = document.getElementById('tut-exit-btn'); if(eb) eb.textContent = t('exitTutorial');
@@ -1756,6 +1761,22 @@ function initSplash() {
 // ═══════════════════════════════════════════════════════
 
 // Returns {root, quality} for two-line display
+// Solfège map for Chinese display (note letter → syllable)
+const SOLFEGE = {
+  'C':'Do','D':'Re','E':'Mi','F':'Fa','G':'Sol','A':'La','B':'Ti',
+  'Db':'Re♭','Eb':'Mi♭','Gb':'Sol♭','Ab':'La♭','Bb':'Ti♭',
+  'C#':'Do#','D#':'Re#','F#':'Fa#','G#':'Sol#','A#':'La#',
+};
+
+function noteToSolfege(noteKey) {
+  // Strip octave number: C4 → C, Bb3 → Bb, Eb4 → Eb
+  const m = noteKey.match(/^([A-G][b#]?)(\d?)$/);
+  if(!m) return noteKey;
+  const letter = m[1];
+  const syl = SOLFEGE[letter] || letter;
+  return m[2] ? syl : syl; // octave number dropped in ZH display
+}
+
 function formatChord(key) {
   if (!key || key === 'none') return { root: '—', quality: '' };
   const zh = currentLang === 'zh'; const es = currentLang === 'es';
@@ -1772,18 +1793,20 @@ function formatChord(key) {
   // Major chord: e.g. C_maj, Bb3_maj
   if (key.includes('_maj')) {
     const root = key.replace('_maj','');
-    return { root, quality: zh ? '大调' : es ? 'mayor' : 'major' };
+    return { root: zh ? noteToSolfege(root) : root, quality: zh ? '大调' : es ? 'mayor' : 'major' };
   }
   // Minor chord: ends with 'm' but not 'dim', e.g. Am, Cm
   if (/^[A-G][b#]?m$/.test(key)) {
-    return { root: key.slice(0,-1), quality: zh ? '小调' : es ? 'menor' : 'minor' };
+    const letter = key.slice(0,-1);
+    return { root: zh ? noteToSolfege(letter) : letter, quality: zh ? '小调' : es ? 'menor' : 'minor' };
   }
   // 7th chord: e.g. G7, Bb7
   if (/^[A-G][b#]?\d?7$/.test(key)) {
     const root = key.replace('7','');
-    return { root, quality: zh ? '七和弦' : es ? '7ª' : '7th' };
+    return { root: zh ? noteToSolfege(root) : root, quality: zh ? '七和弦' : es ? '7ª' : '7th' };
   }
-  // Plain note (C, D4, Bb3, etc.)
+  // Plain note (C, D4, Bb3, etc.) — use solfège for ZH
+  if (zh) return { root: noteToSolfege(key), quality: '' };
   return { root: key, quality: '' };
 }
 
@@ -2193,11 +2216,15 @@ const TUTORIALS_ZH = {
   molihua: {
     name:'茉莉花', nameEn:'Jasmine Flower', difficulty:'Beginner', bpm:88,
     sequence:[
-      {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},
-      {note:'D4',d:1},{note:'C4',d:3},
-      {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'A4',d:0.5},
-      {note:'A4',d:0.75},{note:'G4',d:0.25},{note:'G4',d:3},
-      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:3},
+      // 好一朵美丽的茉莉花 (3 5 3 2 | 1 -)
+      {note:'E4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      // 好一朵美丽的茉莉花 (3 5 3 5 | 5. 6 5 -)
+      {note:'E4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:2},
+      // 芬芳美丽满枝桠 (3 3 5 6 5 3 5)
+      {note:'E4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:1},
+      // 又香又白人人夸 (6 5 3 2 | 1 -)
+      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:3},
     ],
   },
 
@@ -2384,9 +2411,9 @@ const TUTORIALS_ZH = {
   yuexin: {
     name:'月亮代表我的心', nameEn:'The Moon Represents My Heart', difficulty:'Medium', bpm:76,
     sequence:[
-      // 你问我爱你有多深
-      {note:'C4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'G4',d:1},
-      {note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      // 你问我爱你有多深 (1 2 3 3 | 2 1 5-)
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'C4',d:1},{note:'G4',d:2},
       // 我也不轻易开口
       {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'E4',d:1},
       {note:'D4',d:1},{note:'D4',d:3},
@@ -2409,28 +2436,32 @@ const TUTORIALS_ZH = {
 
   // ── 送别 — C D E G A C5 (6 notes, shifts for C5) ────────────────
   songbie: {
-    name:'送别', nameEn:'Farewell', difficulty:'Medium', bpm:76,
+    name:'送别', nameEn:'Farewell', difficulty:'Medium', bpm:72,
     sequence:[
-      // 长亭外，古道边 (E D E long, G A long G, E)
-      {note:'E4',d:1},{note:'D4',d:1},{note:'E4',d:2},
-      {note:'G4',d:1},{note:'A4',d:2},{note:'G4',d:1},
-      // 芳草碧连天
-      {note:'E4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'G4',d:1},{note:'G4',d:4},
-      // 晚风拂柳笛声残
-      {note:'A4',d:1},{note:'G4',d:1},{note:'A4',d:2},
-      {note:'C5',d:1},{note:'C5',d:1},{note:'A4',d:2},{note:'G4',d:4},
-      // 夕阳山外山
-      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'C4',d:4},
-      // 天之涯，地之角
-      {note:'E4',d:1},{note:'G4',d:1},{note:'A4',d:2},
-      {note:'C5',d:1},{note:'A4',d:1},{note:'G4',d:2},
-      // 知交半零落
-      {note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'C4',d:4},
-      // 一壶浊酒尽余欢
-      {note:'A4',d:1},{note:'G4',d:1},{note:'A4',d:2},
-      {note:'C5',d:1},{note:'C5',d:1},{note:'A4',d:2},{note:'G4',d:4},
-      // 今宵别梦寒
-      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'C4',d:4},
+      // 长亭外，古道边 (3 2 1 | 3 5-)
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
+      {note:'E4',d:1},{note:'G4',d:2},
+      // 芳草碧连天 (3 5 6 | 5--)
+      {note:'E4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'G4',d:3},
+      // 晚风拂柳笛声残 (5 3 2 | 3 2-)
+      {note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'E4',d:1},{note:'D4',d:2},
+      // 夕阳山外山 (6₁ 1 2 | 1--)
+      {note:'A3',d:1},{note:'C4',d:1},{note:'D4',d:1},
+      {note:'C4',d:3},
+      // 天之涯，地之角 (3 2 1 | 3 5-)
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
+      {note:'E4',d:1},{note:'G4',d:2},
+      // 知交半零落 (3 5 6 | 5--)
+      {note:'E4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'G4',d:3},
+      // 一壶浊酒尽余欢 (6 5 3 | 5--)
+      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},
+      {note:'G4',d:3},
+      // 今宵别梦寒 (2 1 2 | 1--)
+      {note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},
+      {note:'C4',d:3},
     ],
   },
 
@@ -2438,18 +2469,18 @@ const TUTORIALS_ZH = {
   chuntian: {
     name:'春天在哪里', nameEn:'Where Is Spring', difficulty:'Easy', bpm:108,
     sequence:[
-      // 春天在哪里呀
-      {note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:2},
-      // 春天在哪里
-      {note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:1},
-      // 春天在那青翠的山林里
+      // 春天在哪里呀 (5 5 3 3 5-)
+      {note:'G4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'G4',d:2},
+      // 春天在哪里 (5 5 3 3 5)
+      {note:'G4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'G4',d:1},
+      // 春天在那青翠的山林里 (6 6 5 6 | 5 3 5 3 2 1)
       {note:'A4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'A4',d:0.5},
       {note:'G4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},
-      // 这里有红花呀
+      // 这里有红花呀 (3 5 3 2 1)
       {note:'E4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
-      // 这里有绿草
+      // 这里有绿草 (3 2 1)
       {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
-      // 还有那会唱歌的小黄鹂
+      // 还有那会唱歌的小黄鹂 (2 3 5 6 | 5 3 5 3 | 2 1-)
       {note:'D4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'A4',d:0.5},
       {note:'G4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},
       {note:'D4',d:1},{note:'C4',d:3},
@@ -2507,9 +2538,9 @@ const TUTORIALS_ZH = {
   shuya: {
     name:'数鸭子', nameEn:'Counting Ducks', difficulty:'Easy', bpm:112,
     sequence:[
-      // 门前大桥下，游过一群鸭
-      {note:'C4',d:1},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:2},
-      {note:'C4',d:1},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      // 门前大桥下 (5 3 6 5 3 5-) 游过一群鸭 (5 3 6 5 2 1-)
+      {note:'G4',d:1},{note:'E4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:2},
+      {note:'G4',d:1},{note:'E4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'D4',d:1},{note:'C4',d:2},
       // 快来快来数一数，二四六七八
       {note:'G4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'G4',d:0.5},{note:'E4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},
       {note:'D4',d:1},{note:'D4',d:1},{note:'D4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:2},
@@ -3807,7 +3838,7 @@ const UI = (() => {
                  box-shadow:${active?`0 0 20px ${cfg.color}44`:isNext?`0 0 12px ${cfg.color}55`:'none'};
                  outline:${isNext&&!active?`2px solid ${cfg.color}66`:'none'};
                ">
-            <span class="finger-note" style="color:${active?'#fff':cfg.color};font-size:${Math.min(cfg.w*0.38,38)}px">${sound}</span>
+            <span class="finger-note" style="color:${active?'#fff':cfg.color};font-size:${Math.min(cfg.w*0.38,38)}px">${currentLang==='zh'&&sound?noteToSolfege(sound):sound}</span>
           </div>
           <span class="finger-label">${tFinger(f)}</span>
         </div>
@@ -3850,7 +3881,7 @@ const UI = (() => {
       el.style.outline=isNext&&!active?`2px solid ${cfg.color}66`:'none';
       // Update note label
       const noteEl = el.querySelector('.finger-note');
-      if(noteEl) { noteEl.textContent = preset?.mapping[f]||''; }
+      if(noteEl) { const s=preset?.mapping[f]||''; noteEl.textContent = currentLang==='zh'&&s ? noteToSolfege(s) : s; }
     });
 
     // update tut status line
@@ -3858,7 +3889,7 @@ const UI = (() => {
     if(line) {
       if(!App.connected) line.textContent=t('connectToStart');
       else if(!App.calibrated) line.textContent=t('clickCalibrate');
-      else if(activeSet.size>0) line.textContent=t('playing')+[...activeSet].map(f=>preset?.mapping[f]||f).join(' + ');
+      else if(activeSet.size>0) line.textContent=t('playing')+[...activeSet].map(f=>{ const s=preset?.mapping[f]||f; return currentLang==='zh'&&s?noteToSolfege(s):s; }).join(' + ');
       else line.textContent=t('bendToPlay');
     }
   }
@@ -3869,7 +3900,7 @@ const UI = (() => {
     if(!App.calibrated) { line.textContent=t('clickCalibrate'); return; }
     if(activeSet.size>0) {
       const p=PRESETS[preset];
-      line.textContent=t('playing')+[...activeSet].map(f=>p.mapping[f]).join(' + ');
+      line.textContent=t('playing')+[...activeSet].map(f=>{ const s=p.mapping[f]||''; return currentLang==='zh'&&s?noteToSolfege(s):s; }).join(' + ');
     } else {
       line.textContent=t('bendToPlay');
     }
@@ -4060,12 +4091,12 @@ const UI = (() => {
       <div class="tut-progress-bar"><div class="tut-progress-fill" style="width:${pct}%"></div></div>
       <div style="color:var(--text);font-size:0.82rem;font-weight:600;margin-bottom:8px;">${t('pressThis')}</div>
       <div class="tut-next-finger" style="color:${cfg.color}">${tFinger(nextF)}</div>
-      <div style="font-size:0.85rem;font-weight:600;color:${cfg.color};opacity:0.9;margin-bottom:12px;">${nextNote}</div>
+      <div style="font-size:0.85rem;font-weight:600;color:${cfg.color};opacity:0.9;margin-bottom:12px;">${currentLang==='zh' ? noteToSolfege(nextNote) : nextNote}</div>
       <div class="tut-sequence">${dots}</div>
       <div id="tut-mapping-row" style="display:flex;justify-content:center;gap:14px;margin-top:14px;flex-wrap:wrap;">
         ${FINGERS.map(f=>`
           <div style="text-align:center;">
-            <div style="color:${FINGER_CFG[f].color};font-weight:800;font-size:1rem;">${mapping[f]||''}</div>
+            <div style="color:${FINGER_CFG[f].color};font-weight:800;font-size:1rem;">${currentLang==='zh'&&mapping[f] ? noteToSolfege(mapping[f]) : (mapping[f]||'')} </div>
             <div style="color:var(--text);font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.07em;margin-top:2px;">${tFinger(f)}</div>
           </div>
         `).join('')}
@@ -4562,6 +4593,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Tutorial buttons
   document.getElementById('tut-reset-btn').addEventListener('click', ()=>App.resetTutorial());
+  document.getElementById('tut-rec-start-btn').addEventListener('click', ()=>{
+    App.startRecording();
+    document.getElementById('tut-rec-start-btn').classList.add('hidden');
+    document.getElementById('tut-rec-stop-btn').classList.remove('hidden');
+    document.getElementById('tut-rec-indicator').classList.remove('hidden');
+  });
+  document.getElementById('tut-rec-stop-btn').addEventListener('click', ()=>{
+    App.stopRecording();
+    document.getElementById('tut-rec-start-btn').classList.remove('hidden');
+    document.getElementById('tut-rec-stop-btn').classList.add('hidden');
+    document.getElementById('tut-rec-indicator').classList.add('hidden');
+  });
   document.getElementById('tut-exit-btn').addEventListener('click', ()=>{ App.stopDemo(); App.exitTutorial(); });
   document.getElementById('tut-demo-btn').addEventListener('click', ()=>{
     const id = App.tutState.current;
