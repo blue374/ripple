@@ -3186,7 +3186,7 @@ const App = (() => {
       const pressed  = sensorPressDir > 0 ? raw > onThresh : raw < onThresh;
 
       _debugRaw[f] = raw;
-      _debugDrop[f] = pressed ? 1 : (released ? 0 : 0.5);
+      _debugDrop[f] = activeFingers.has(f) ? 1 : 0; // 1 = active/on, 0 = inactive/off
       _debugBase[f] = onThresh;
       if(sensorPressDir > 0 ? raw > (_debugMaxDrop[f]||0) : raw < (_debugMaxDrop[f]||Infinity))
         _debugMaxDrop[f] = raw;
