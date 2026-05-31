@@ -3108,11 +3108,6 @@ const App = (() => {
   const fingerArmed={thumb:true,index:true,middle:true,ring:true,pinky:true};
   // Raw peak while switch is held — used for instant release on slow decay
   const fingerRawPeak={thumb:0,index:0,middle:0,ring:0,pinky:0};
-  // Debounce: count consecutive packets confirming press or release before acting
-  const fingerPressCount={thumb:0,index:0,middle:0,ring:0,pinky:0};
-  const fingerReleaseCount={thumb:0,index:0,middle:0,ring:0,pinky:0};
-  const DEBOUNCE_PRESS   = 2; // packets in a row required to confirm ON
-  const DEBOUNCE_RELEASE = 3; // packets in a row required to confirm OFF
   // Adaptive normalization min/max — starts from calibration, self-corrects as user plays
   let fingerObsMin={thumb:null,index:null,middle:null,ring:null,pinky:null};
   let fingerObsMax={thumb:null,index:null,middle:null,ring:null,pinky:null};
@@ -3148,7 +3143,7 @@ const App = (() => {
   }
 
   function clearBuffers() {
-    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerPeak[f]=0; fingerArmed[f]=true; fingerRawPeak[f]=0; fingerPressCount[f]=0; fingerReleaseCount[f]=0; fingerObsMin[f]=null; fingerObsMax[f]=null; });
+    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerPeak[f]=0; fingerArmed[f]=true; fingerRawPeak[f]=0; fingerObsMin[f]=null; fingerObsMax[f]=null; });
   }
 
   // Called by Serial on each 10-value packet
@@ -3167,77 +3162,48 @@ const App = (() => {
 
     for(const f of FINGERS) {
       const cfg = FINGER_CFG[f];
-      const raw = vals[cfg.idx];
+      // Apply moving average filter — smooths fluctuations before any threshold comparison
+      const raw = Math.round(filterValue(f, vals[cfg.idx]));
 
-      // Use per-finger calibrated thresholds; fall back to global if not calibrated yet
+      // Per-finger calibrated thresholds; fall back to global if not yet calibrated
       const onThresh  = fingerOnThresh[f]  || (sensorPressDir > 0 ? switchThreshold : -switchThreshold);
-      const offThresh = fingerOffThresh[f] || (sensorPressDir > 0 ? Math.round(switchThreshold * 0.5) : Math.round(-switchThreshold * 0.5));
+      const offThresh = fingerOffThresh[f] || (sensorPressDir > 0 ? Math.round(switchThreshold * 0.5) : Math.round(switchThreshold * 1.5));
 
-      // Track "peak" while active:
-      //   dir +1: peak = maximum raw (highest value seen while pressed)
-      //   dir -1: peak = minimum raw (lowest value seen while pressed)
+      // Track peak while active for instant release on slow-decay (no-resistor) sensors
       if(activeFingers.has(f)) {
-        if(sensorPressDir > 0) {
-          if(raw > fingerRawPeak[f]) fingerRawPeak[f] = raw;
-        } else {
-          if(raw < fingerRawPeak[f]) fingerRawPeak[f] = raw;
-        }
+        if(sensorPressDir > 0 ? raw > fingerRawPeak[f] : raw < fingerRawPeak[f])
+          fingerRawPeak[f] = raw;
       } else {
-        fingerRawPeak[f] = raw;
+        fingerRawPeak[f] = raw; // reset peak while idle
       }
 
-      // Instant release: fires as soon as value moves 15% of range back toward rest
-      const range = Math.abs((fingerPressMax - fingerRestMin[f])) || switchThreshold;
-      const peakDelta = sensorPressDir > 0
-        ? fingerRawPeak[f] - raw          // dir+1: raw dropped from high peak
-        : raw - fingerRawPeak[f];         // dir-1: raw rose from low peak
-      const peakReleased  = peakDelta > range * 0.15;
+      const range = Math.abs(fingerPressMax - fingerRestMin[f]) || switchThreshold;
+      const peakDelta = sensorPressDir > 0 ? fingerRawPeak[f] - raw : raw - fingerRawPeak[f];
+      // Peak-drop release only fires while actively pressed (avoids false releases at rest)
+      const peakReleased   = activeFingers.has(f) && peakDelta > range * 0.15;
       const threshReleased = sensorPressDir > 0 ? raw <= offThresh : raw >= offThresh;
       const released = peakReleased || threshReleased;
-
-      // Triggered when raw crosses onThresh toward the "pressed" direction
-      const pressed = sensorPressDir > 0 ? raw > onThresh : raw < onThresh;
+      const pressed  = sensorPressDir > 0 ? raw > onThresh : raw < onThresh;
 
       _debugRaw[f] = raw;
-      _debugDrop[f] = pressed ? 1 : (released ? 0 : 0.5); // 1=pressed, 0=released, 0.5=decaying
+      _debugDrop[f] = pressed ? 1 : (released ? 0 : 0.5);
       _debugBase[f] = onThresh;
       if(sensorPressDir > 0 ? raw > (_debugMaxDrop[f]||0) : raw < (_debugMaxDrop[f]||Infinity))
         _debugMaxDrop[f] = raw;
 
-      // ── Debounce: accumulate consecutive confirmations before changing state ──
+      // Simple hysteresis state machine with re-arm guard
       if(activeFingers.has(f)) {
-        // Currently ON — look for a confirmed release
-        if(released) {
-          fingerReleaseCount[f]++;
-          fingerPressCount[f] = 0;
+        if(!released) {
+          newActive.add(f); // stay active while not fully released
         } else {
-          fingerReleaseCount[f] = 0;
-        }
-        if(fingerReleaseCount[f] < DEBOUNCE_RELEASE) {
-          newActive.add(f); // stay active until release is confirmed
-        } else {
-          // Release confirmed — disarm to prevent immediate re-trigger
-          fingerReleaseCount[f] = 0;
-          fingerArmed[f] = false;
+          fingerArmed[f] = false; // disarm to prevent immediate re-trigger
         }
       } else {
-        // Currently OFF — re-arm when released, trigger when press is confirmed
-        if(released) {
-          fingerArmed[f] = true;
-          fingerPressCount[f] = 0;
-        }
-        if(fingerArmed[f] && pressed) {
-          fingerPressCount[f]++;
-          fingerReleaseCount[f] = 0;
-        } else {
-          fingerPressCount[f] = 0;
-        }
-        if(fingerArmed[f] && fingerPressCount[f] >= DEBOUNCE_PRESS) {
-          newActive.add(f);
-        }
+        if(released) fingerArmed[f] = true; // re-arm when clearly at rest
+        if(fingerArmed[f] && pressed) newActive.add(f);
       }
 
-      // Tutorial release tracking — re-arm when fully released
+      // Tutorial release tracking
       if(mode==='tutorial' && released) tutReady.add(f);
     }
 
