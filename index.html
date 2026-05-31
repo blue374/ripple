@@ -3104,10 +3104,15 @@ const App = (() => {
   let filterSize=12;
   const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
   const fingerPeak={thumb:0,index:0,middle:0,ring:0,pinky:0};
-  // Armed = finger has dropped below threshold and is ready to trigger again
+  // Armed = finger has returned to rest zone and is ready to trigger again
   const fingerArmed={thumb:true,index:true,middle:true,ring:true,pinky:true};
   // Raw peak while switch is held — used for instant release on slow decay
   const fingerRawPeak={thumb:0,index:0,middle:0,ring:0,pinky:0};
+  // Debounce: count consecutive packets confirming press or release before acting
+  const fingerPressCount={thumb:0,index:0,middle:0,ring:0,pinky:0};
+  const fingerReleaseCount={thumb:0,index:0,middle:0,ring:0,pinky:0};
+  const DEBOUNCE_PRESS   = 2; // packets in a row required to confirm ON
+  const DEBOUNCE_RELEASE = 3; // packets in a row required to confirm OFF
   // Adaptive normalization min/max — starts from calibration, self-corrects as user plays
   let fingerObsMin={thumb:null,index:null,middle:null,ring:null,pinky:null};
   let fingerObsMax={thumb:null,index:null,middle:null,ring:null,pinky:null};
@@ -3143,7 +3148,7 @@ const App = (() => {
   }
 
   function clearBuffers() {
-    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerPeak[f]=0; fingerArmed[f]=true; fingerRawPeak[f]=0; fingerObsMin[f]=null; fingerObsMax[f]=null; });
+    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerPeak[f]=0; fingerArmed[f]=true; fingerRawPeak[f]=0; fingerPressCount[f]=0; fingerReleaseCount[f]=0; fingerObsMin[f]=null; fingerObsMax[f]=null; });
   }
 
   // Called by Serial on each 10-value packet
@@ -3196,20 +3201,40 @@ const App = (() => {
       _debugRaw[f] = raw;
       _debugDrop[f] = pressed ? 1 : (released ? 0 : 0.5); // 1=pressed, 0=released, 0.5=decaying
       _debugBase[f] = onThresh;
-      if(raw > (_debugMaxDrop[f]||0)) _debugMaxDrop[f] = raw;
+      if(sensorPressDir > 0 ? raw > (_debugMaxDrop[f]||0) : raw < (_debugMaxDrop[f]||Infinity))
+        _debugMaxDrop[f] = raw;
 
+      // ── Debounce: accumulate consecutive confirmations before changing state ──
       if(activeFingers.has(f)) {
-        if(!released) {
-          newActive.add(f); // stay active until raw falls below offThresh
+        // Currently ON — look for a confirmed release
+        if(released) {
+          fingerReleaseCount[f]++;
+          fingerPressCount[f] = 0;
         } else {
-          // Fully released — disarm to prevent bounce re-trigger
+          fingerReleaseCount[f] = 0;
+        }
+        if(fingerReleaseCount[f] < DEBOUNCE_RELEASE) {
+          newActive.add(f); // stay active until release is confirmed
+        } else {
+          // Release confirmed — disarm to prevent immediate re-trigger
+          fingerReleaseCount[f] = 0;
           fingerArmed[f] = false;
         }
       } else {
-        // Re-arm once fully released
-        if(released) fingerArmed[f] = true;
-        // Only trigger if armed and above onThresh
-        if(fingerArmed[f] && pressed) newActive.add(f);
+        // Currently OFF — re-arm when released, trigger when press is confirmed
+        if(released) {
+          fingerArmed[f] = true;
+          fingerPressCount[f] = 0;
+        }
+        if(fingerArmed[f] && pressed) {
+          fingerPressCount[f]++;
+          fingerReleaseCount[f] = 0;
+        } else {
+          fingerPressCount[f] = 0;
+        }
+        if(fingerArmed[f] && fingerPressCount[f] >= DEBOUNCE_PRESS) {
+          newActive.add(f);
+        }
       }
 
       // Tutorial release tracking — re-arm when fully released
