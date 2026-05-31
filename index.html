@@ -3289,75 +3289,10 @@ const App = (() => {
   }
 
   // Collect raw samples from live packets over durationMs, return per-finger averages
-  async function collectRawSamples(durationMs) {
-    const samples = {};
-    FINGERS.forEach(f => { samples[f] = []; });
-    const end = Date.now() + durationMs;
-    // Temporarily hook onPacket to collect raw vals
-    const _orig = App._collectHook;
-    App._collectHook = vals => {
-      FINGERS.forEach(f => { samples[f].push(vals[FINGER_CFG[f].idx]); });
-    };
-    await new Promise(r => setTimeout(r, durationMs));
-    App._collectHook = null;
-    const avgs = {};
-    FINGERS.forEach(f => {
-      const s = samples[f];
-      avgs[f] = s.length > 0 ? s.reduce((a,b)=>a+b,0)/s.length : 0;
-    });
-    return avgs;
-  }
-
   async function doCalibrate() {
     if(!connected) return;
-    calibrated = false;
     clearBuffers();
-
-    // ── Phase 1: Rest — record minimum baseline ───────────────────────
-    UI.showCalibModal('rest', 'reading');
-    await new Promise(r => setTimeout(r, 2000)); // 2s to read
-    UI.showCalibModal('rest', 'recording');
-    await new Promise(r => setTimeout(r, 1500)); // stabilise
-    const restVals = await collectRawSamples(1500);
-    FINGERS.forEach(f => { fingerRestMin[f] = restVals[f]; });
-
-    // ── Phase 2: Press thumb — record maximum ─────────────────────────
-    UI.showCalibModal('thumb', 'reading');
-    await new Promise(r => setTimeout(r, 2000)); // 2s to read
-    UI.showCalibModal('thumb', 'recording');
-    await new Promise(r => setTimeout(r, 1500)); // stabilise
-    const pressVals = await collectRawSamples(1500);
-    fingerPressMax = pressVals['index'];
-
-    // ── Detect sensor direction ────────────────────────────────────────
-    // sensorPressDir: +1 = pressing gives HIGH value (rest < press)
-    //                 -1 = pressing gives LOW value  (rest > press)
-    sensorPressDir = fingerPressMax >= fingerRestMin['index'] ? 1 : -1;
-
-    // ── Compute per-finger thresholds ─────────────────────────────────
-    // For both directions: trigger at 50% of range from rest toward press,
-    // release at 25% (leaving a hysteresis gap for slow-decay sensors)
-    FINGERS.forEach(f => {
-      const rest  = fingerRestMin[f];
-      const press = fingerPressMax; // thumb calibration applies to all fingers
-      const range = Math.abs(press - rest);
-      if(sensorPressDir > 0) {
-        // High = pressed: trigger above rest+50%, release below rest+25%
-        fingerOnThresh[f]  = Math.round(rest + range * 0.50);
-        fingerOffThresh[f] = Math.round(rest + range * 0.25);
-      } else {
-        // Low = pressed: trigger below rest-50%, release above rest-25%
-        fingerOnThresh[f]  = Math.round(rest - range * 0.50);
-        fingerOffThresh[f] = Math.round(rest - range * 0.25);
-      }
-    });
-    // Update global switchThreshold for the slider display
-    switchThreshold = fingerOnThresh['thumb'];
-    document.getElementById('switch-threshold-val').textContent = switchThreshold.toLocaleString();
-    document.getElementById('switch-threshold').value = Math.min(4000000, Math.max(100000, Math.abs(switchThreshold)));
-
     calibrated = true;
-    UI.hideCalibModal();
     UI.syncAll();
   }
 
