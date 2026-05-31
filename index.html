@@ -3289,10 +3289,64 @@ const App = (() => {
   }
 
   // Collect raw samples from live packets over durationMs, return per-finger averages
+  async function collectRawSamples(durationMs) {
+    const samples = {};
+    FINGERS.forEach(f => { samples[f] = []; });
+    App._collectHook = vals => {
+      FINGERS.forEach(f => { samples[f].push(vals[FINGER_CFG[f].idx]); });
+    };
+    await new Promise(r => setTimeout(r, durationMs));
+    App._collectHook = null;
+    const avgs = {};
+    FINGERS.forEach(f => {
+      const s = samples[f];
+      avgs[f] = s.length > 0 ? s.reduce((a,b)=>a+b,0)/s.length : 0;
+    });
+    return avgs;
+  }
+
   async function doCalibrate() {
     if(!connected) return;
+    calibrated = false;
     clearBuffers();
+
+    // ── Phase 1: Rest — record baseline ───────────────────────────────
+    UI.showCalibModal('rest', 'reading');
+    await new Promise(r => setTimeout(r, 2000));
+    UI.showCalibModal('rest', 'recording');
+    await new Promise(r => setTimeout(r, 1500));
+    const restVals = await collectRawSamples(1500);
+    FINGERS.forEach(f => { fingerRestMin[f] = restVals[f]; });
+
+    // ── Phase 2: Press index finger — record max ───────────────────────
+    UI.showCalibModal('thumb', 'reading');
+    await new Promise(r => setTimeout(r, 2000));
+    UI.showCalibModal('thumb', 'recording');
+    await new Promise(r => setTimeout(r, 1500));
+    const pressVals = await collectRawSamples(1500);
+    fingerPressMax = pressVals['thumb'];
+
+    // ── Detect sensor direction ────────────────────────────────────────
+    sensorPressDir = fingerPressMax >= fingerRestMin['thumb'] ? 1 : -1;
+
+    // ── Compute per-finger thresholds ─────────────────────────────────
+    FINGERS.forEach(f => {
+      const rest  = fingerRestMin[f];
+      const range = Math.abs(fingerPressMax - rest);
+      if(sensorPressDir > 0) {
+        fingerOnThresh[f]  = Math.round(rest + range * 0.50);
+        fingerOffThresh[f] = Math.round(rest + range * 0.25);
+      } else {
+        fingerOnThresh[f]  = Math.round(rest - range * 0.50);
+        fingerOffThresh[f] = Math.round(rest - range * 0.25);
+      }
+    });
+    switchThreshold = fingerOnThresh['thumb'];
+    document.getElementById('switch-threshold-val').textContent = switchThreshold.toLocaleString();
+    document.getElementById('switch-threshold').value = Math.min(4000000, Math.max(100000, Math.abs(switchThreshold)));
+
     calibrated = true;
+    UI.hideCalibModal();
     UI.syncAll();
   }
 
@@ -3883,15 +3937,15 @@ const UI = (() => {
       document.getElementById('calib-status').textContent = 'Recording rest values…';
       setBar(3000);
     } else if(phase === 'thumb' && state === 'reading') {
-      document.getElementById('calib-icon').textContent = '☝️';
-      document.getElementById('calib-title').textContent = 'Step 2 of 2 — Press Your Index Finger';
-      document.getElementById('calib-desc').textContent = 'Now press and hold only your index finger switch as hard as you can. Recording will begin in 2 seconds.';
+      document.getElementById('calib-icon').textContent = '👍';
+      document.getElementById('calib-title').textContent = 'Step 2 of 2 — Press Your Thumb';
+      document.getElementById('calib-desc').textContent = 'Now press and hold only your thumb switch as hard as you can. Recording will begin in 2 seconds.';
       document.getElementById('calib-status').textContent = 'Get ready…';
     } else if(phase === 'thumb' && state === 'recording') {
-      document.getElementById('calib-icon').textContent = '☝️';
-      document.getElementById('calib-title').textContent = 'Step 2 of 2 — Hold Index Finger Down';
-      document.getElementById('calib-desc').textContent = 'Keep your index finger pressed firmly. This sets the maximum value for all fingers…';
-      document.getElementById('calib-status').textContent = 'Recording index finger press…';
+      document.getElementById('calib-icon').textContent = '👍';
+      document.getElementById('calib-title').textContent = 'Step 2 of 2 — Hold Thumb Down';
+      document.getElementById('calib-desc').textContent = 'Keep your thumb pressed firmly. This sets the maximum value for all fingers…';
+      document.getElementById('calib-status').textContent = 'Recording thumb press…';
       setBar(3000);
     }
   }
