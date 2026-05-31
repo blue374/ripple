@@ -3327,12 +3327,12 @@ const App = (() => {
     UI.showCalibModal('thumb', 'recording');
     await new Promise(r => setTimeout(r, 1500)); // stabilise
     const pressVals = await collectRawSamples(1500);
-    fingerPressMax = pressVals['thumb'];
+    fingerPressMax = pressVals['index'];
 
     // ── Detect sensor direction ────────────────────────────────────────
     // sensorPressDir: +1 = pressing gives HIGH value (rest < press)
     //                 -1 = pressing gives LOW value  (rest > press)
-    sensorPressDir = fingerPressMax >= fingerRestMin['thumb'] ? 1 : -1;
+    sensorPressDir = fingerPressMax >= fingerRestMin['index'] ? 1 : -1;
 
     // ── Compute per-finger thresholds ─────────────────────────────────
     // For both directions: trigger at 50% of range from rest toward press,
@@ -3948,15 +3948,15 @@ const UI = (() => {
       document.getElementById('calib-status').textContent = 'Recording rest values…';
       setBar(3000);
     } else if(phase === 'thumb' && state === 'reading') {
-      document.getElementById('calib-icon').textContent = '👍';
-      document.getElementById('calib-title').textContent = 'Step 2 of 2 — Press Your Thumb';
-      document.getElementById('calib-desc').textContent = 'Now press and hold only your thumb switch as hard as you can. Recording will begin in 2 seconds.';
+      document.getElementById('calib-icon').textContent = '☝️';
+      document.getElementById('calib-title').textContent = 'Step 2 of 2 — Press Your Index Finger';
+      document.getElementById('calib-desc').textContent = 'Now press and hold only your index finger switch as hard as you can. Recording will begin in 2 seconds.';
       document.getElementById('calib-status').textContent = 'Get ready…';
     } else if(phase === 'thumb' && state === 'recording') {
-      document.getElementById('calib-icon').textContent = '👍';
-      document.getElementById('calib-title').textContent = 'Step 2 of 2 — Hold Thumb Down';
-      document.getElementById('calib-desc').textContent = 'Keep your thumb pressed firmly. This sets the maximum value for all fingers…';
-      document.getElementById('calib-status').textContent = 'Recording thumb press…';
+      document.getElementById('calib-icon').textContent = '☝️';
+      document.getElementById('calib-title').textContent = 'Step 2 of 2 — Hold Index Finger Down';
+      document.getElementById('calib-desc').textContent = 'Keep your index finger pressed firmly. This sets the maximum value for all fingers…';
+      document.getElementById('calib-status').textContent = 'Recording index finger press…';
       setBar(3000);
     }
   }
