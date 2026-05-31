@@ -3097,9 +3097,10 @@ const App = (() => {
   let thumbThreshOn=0.3, thumbThreshOff=0.15; // kept for compat, unused
   let switchThreshold=1000000; // fallback global threshold (overridden per-finger after calibration)
   let fingerRestMin={thumb:0,index:0,middle:0,ring:0,pinky:0};   // resting baseline per finger
-  let fingerPressMax=0;  // max value seen when thumb pressed during calibration
+  let fingerPressMax=0;  // pressed value seen during calibration (may be lower than rest if sensor is inverted)
   let fingerOnThresh={thumb:0,index:0,middle:0,ring:0,pinky:0};  // trigger threshold per finger
-  let fingerOffThresh={thumb:0,index:0,middle:0,ring:0,pinky:0}; // release threshold per finger (lower, for slow-decay support)
+  let fingerOffThresh={thumb:0,index:0,middle:0,ring:0,pinky:0}; // release threshold per finger
+  let sensorPressDir=1; // +1 = pressing gives HIGH value, -1 = pressing gives LOW value
   let filterSize=12;
   const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
   const fingerPeak={thumb:0,index:0,middle:0,ring:0,pinky:0};
@@ -3164,26 +3165,33 @@ const App = (() => {
       const raw = vals[cfg.idx];
 
       // Use per-finger calibrated thresholds; fall back to global if not calibrated yet
-      const onThresh  = fingerOnThresh[f]  || switchThreshold;
-      const offThresh = fingerOffThresh[f] || Math.round(switchThreshold * 0.5);
+      const onThresh  = fingerOnThresh[f]  || (sensorPressDir > 0 ? switchThreshold : -switchThreshold);
+      const offThresh = fingerOffThresh[f] || (sensorPressDir > 0 ? Math.round(switchThreshold * 0.5) : Math.round(-switchThreshold * 0.5));
 
-      // Track raw peak while active (reset when released)
+      // Track "peak" while active:
+      //   dir +1: peak = maximum raw (highest value seen while pressed)
+      //   dir -1: peak = minimum raw (lowest value seen while pressed)
       if(activeFingers.has(f)) {
-        if(raw > fingerRawPeak[f]) fingerRawPeak[f] = raw;
+        if(sensorPressDir > 0) {
+          if(raw > fingerRawPeak[f]) fingerRawPeak[f] = raw;
+        } else {
+          if(raw < fingerRawPeak[f]) fingerRawPeak[f] = raw;
+        }
       } else {
         fingerRawPeak[f] = raw;
       }
 
-      // Instant release: fires as soon as value drops X% from its peak (no-resistor support)
-      // Also fires when raw crosses below offThresh (resistor present)
-      const range = (fingerPressMax - fingerRestMin[f]) || switchThreshold;
-      const dropFromPeak = fingerRawPeak[f] - raw;
-      const peakReleased = dropFromPeak > range * 0.15; // 15% drop from peak = released
-      const threshReleased = raw <= offThresh;
+      // Instant release: fires as soon as value moves 15% of range back toward rest
+      const range = Math.abs((fingerPressMax - fingerRestMin[f])) || switchThreshold;
+      const peakDelta = sensorPressDir > 0
+        ? fingerRawPeak[f] - raw          // dir+1: raw dropped from high peak
+        : raw - fingerRawPeak[f];         // dir-1: raw rose from low peak
+      const peakReleased  = peakDelta > range * 0.15;
+      const threshReleased = sensorPressDir > 0 ? raw <= offThresh : raw >= offThresh;
       const released = peakReleased || threshReleased;
 
-      // Hysteresis: trigger on onThresh, release on lower offThresh (handles slow decay)
-      const pressed  = raw > onThresh;
+      // Triggered when raw crosses onThresh toward the "pressed" direction
+      const pressed = sensorPressDir > 0 ? raw > onThresh : raw < onThresh;
 
       _debugRaw[f] = raw;
       _debugDrop[f] = pressed ? 1 : (released ? 0 : 0.5); // 1=pressed, 0=released, 0.5=decaying
@@ -3330,17 +3338,32 @@ const App = (() => {
     const pressVals = await collectRawSamples(1500);
     fingerPressMax = pressVals['thumb'];
 
+    // ── Detect sensor direction ────────────────────────────────────────
+    // sensorPressDir: +1 = pressing gives HIGH value (rest < press)
+    //                 -1 = pressing gives LOW value  (rest > press)
+    sensorPressDir = fingerPressMax >= fingerRestMin['thumb'] ? 1 : -1;
+
     // ── Compute per-finger thresholds ─────────────────────────────────
-    // Trigger at 50% of range above rest; release at 25% (handles slow decay)
+    // For both directions: trigger at 50% of range from rest toward press,
+    // release at 25% (leaving a hysteresis gap for slow-decay sensors)
     FINGERS.forEach(f => {
-      const range = fingerPressMax - fingerRestMin[f];
-      fingerOnThresh[f]  = Math.round(fingerRestMin[f] + range * 0.50);
-      fingerOffThresh[f] = Math.round(fingerRestMin[f] + range * 0.25);
+      const rest  = fingerRestMin[f];
+      const press = fingerPressMax; // thumb calibration applies to all fingers
+      const range = Math.abs(press - rest);
+      if(sensorPressDir > 0) {
+        // High = pressed: trigger above rest+50%, release below rest+25%
+        fingerOnThresh[f]  = Math.round(rest + range * 0.50);
+        fingerOffThresh[f] = Math.round(rest + range * 0.25);
+      } else {
+        // Low = pressed: trigger below rest-50%, release above rest-25%
+        fingerOnThresh[f]  = Math.round(rest - range * 0.50);
+        fingerOffThresh[f] = Math.round(rest - range * 0.25);
+      }
     });
-    // Also update global switchThreshold to the midpoint for fallback/display
-    switchThreshold = Math.round(fingerRestMin['thumb'] + (fingerPressMax - fingerRestMin['thumb']) * 0.50);
+    // Update global switchThreshold for the slider display
+    switchThreshold = fingerOnThresh['thumb'];
     document.getElementById('switch-threshold-val').textContent = switchThreshold.toLocaleString();
-    document.getElementById('switch-threshold').value = Math.min(4000000, switchThreshold);
+    document.getElementById('switch-threshold').value = Math.min(4000000, Math.max(100000, Math.abs(switchThreshold)));
 
     calibrated = true;
     UI.hideCalibModal();
