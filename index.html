@@ -4654,4 +4654,4597 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 </body>
+</html>      --border: rgba(80,60,40,0.35);
+      --text: #1a1208;
+      --muted: #6b5840;
+      --accent: #e84855;
+      --accent2: #6366f1;
+      --orb1: 232,72,85;
+      --orb2: 99,102,241;
+      --btn1: 232,72,85;
+      --diff-b: #15803d; --diff-e: #0369a1; --diff-m: #c2410c; --diff-h: #9f1239;
+      --grad2: #e8e2da;
+    }
+
+    /* Dynamic background using theme vars */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse at 15% 10%, rgba(var(--orb1),0.18) 0%, transparent 45%),
+        radial-gradient(ellipse at 85% 15%, rgba(var(--orb2),0.14) 0%, transparent 40%),
+        radial-gradient(ellipse at 50% 60%, rgba(var(--orb1),0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 90%, rgba(var(--orb2),0.10) 0%, transparent 40%),
+        linear-gradient(160deg, var(--grad1) 0%, var(--grad2) 50%, var(--grad1) 100%);
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      top: -100px;
+      right: -100px;
+      animation: drift 12s ease-in-out infinite alternate;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(circle, rgba(var(--orb1),0.07) 0%, transparent 70%);
+    }
+    @keyframes drift {
+      0%   { transform: translate(0,0) scale(1); }
+      100% { transform: translate(-60px,80px) scale(1.15); }
+    }
+
+    /* ── SPLASH SCREEN ── */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, #0a0a18 0%, #12122a 50%, #0a0a18 100%);
+      overflow: auto;
+    }
+    #splash::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(155,140,255,0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(255,140,200,0.15) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .splash-inner {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 60px 24px;
+      max-width: 640px;
+      width: 100%;
+    }
+    .splash-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 3.5rem;
+      color: #fff;
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+    .splash-tagline {
+      font-size: 0.9rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 56px;
+    }
+    .splash-section-title {
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 18px;
+    }
+    /* Language picker */
+    .lang-picker {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 56px;
+    }
+    .lang-btn {
+      font-family: 'DM Mono', monospace;
+      padding: 12px 0;
+      width: 160px;
+      border-radius: 12px;
+      border: 2px solid rgba(var(--btn1),0.5);
+      background: rgba(var(--btn1),0.18);
+      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.18s;
+      text-align: center;
+    }
+    .lang-btn:hover { background: rgba(var(--btn1),0.38); color: #fff; border-color: rgba(var(--btn1),0.8); }
+    .lang-btn.active { border-color: rgba(var(--btn1),1); color: #fff; background: rgba(var(--btn1),0.88); box-shadow: 0 0 20px rgba(var(--btn1),0.45); }
+    /* Theme grid */
+    .theme-grid {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 56px;
+      flex-wrap: wrap;
+    }
+    .theme-card {
+      width: 180px;
+      flex-shrink: 0;
+      border-radius: 12px;
+      padding: 14px 10px 10px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.18s;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .theme-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.3); }
+    .theme-card.selected { border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+    .theme-card .theme-preview {
+      width: 100%;
+      height: 44px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .theme-card .theme-name {
+      font-size: 0.74rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+    }
+    .theme-card.selected .theme-name { color: #fff; font-weight: 500; }
+    /* Enter button */
+    .splash-enter-btn {
+      font-family: 'DM Mono', monospace;
+      padding: 16px 64px;
+      border-radius: 14px;
+      border: 2px solid rgba(var(--btn1),0.9);
+      background: rgba(var(--btn1),0.88);
+      color: #fff;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 30px rgba(var(--btn1),0.35);
+    }
+    .splash-enter-btn:hover {
+      background: rgba(var(--btn1),1);
+      box-shadow: 0 0 44px rgba(var(--btn1),0.6);
+      transform: translateY(-1px);
+    }
+    .splash-fade-out {
+      animation: splashFade 0.5s ease forwards;
+    }
+    @keyframes splashFade {
+      to { opacity: 0; pointer-events: none; }
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+      position: relative;
+    }
+
+    .header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 3.5rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--text) 40%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
+    }
+
+    .header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    /* Back to splash button — top-right of header */
+    #back-to-splash {
+      position: absolute;
+      top: 0;
+      right: 0;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    #back-to-splash:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    /* Warning */
+    .warning {
+      background: rgba(250,200,50,0.08);
+      border: 1px solid rgba(250,200,50,0.3);
+      border-radius: 10px;
+      padding: 14px 20px;
+      margin-bottom: 28px;
+      text-align: center;
+      font-size: 0.95rem;
+      color: #ffd700;
+    }
+
+    .warning a { color: #ffd700; }
+    .hidden { display: none !important; }
+
+    /* Control bar */
+    .control-bar {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      padding: 10px 22px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s;
+      background: var(--surface2);
+    }
+
+    .btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: var(--surface2);
+      opacity: 0.9;
+    }
+
+    .btn:disabled { opacity: 0.3; cursor: default; }
+
+    /* All colored buttons use var(--text) so they're readable on every theme */
+    .btn-connect { 
+      border-color: rgba(var(--orb1),0.8); 
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(var(--orb1),0.85), rgba(var(--orb1),0.65));
+      box-shadow: 0 0 20px rgba(var(--orb1),0.4);
+    }
+    .btn-connect:hover:not(:disabled) { 
+      background: linear-gradient(135deg, rgba(var(--orb1),1), rgba(var(--orb1),0.8));
+      box-shadow: 0 0 28px rgba(var(--orb1),0.6);
+      opacity: 1;
+    }
+    .btn-disconnect { 
+      border-color: rgba(200,60,60,0.5); 
+      color: var(--text);
+      background: linear-gradient(135deg, rgba(200,60,60,0.22), rgba(200,60,60,0.08));
+      box-shadow: 0 0 16px rgba(200,60,60,0.12);
+    }
+    .btn-disconnect:hover:not(:disabled) { 
+      background: linear-gradient(135deg, rgba(200,60,60,0.36), rgba(200,60,60,0.18));
+      opacity: 1;
+    }
+    .btn-calibrate { 
+      border-color: rgba(var(--orb2),0.8); 
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(var(--orb2),0.75), rgba(var(--orb2),0.55));
+      box-shadow: 0 0 20px rgba(var(--orb2),0.35);
+    }
+    .btn-calibrate:hover:not(:disabled) { 
+      background: linear-gradient(135deg, rgba(var(--orb2),0.95), rgba(var(--orb2),0.75));
+      box-shadow: 0 0 28px rgba(var(--orb2),0.5);
+      opacity: 1;
+    }
+    .btn-calibrated { 
+      border-color: rgba(60,180,100,0.5); 
+      color: var(--text);
+      background: linear-gradient(135deg, rgba(60,180,100,0.22), rgba(60,180,100,0.08));
+      box-shadow: 0 0 16px rgba(60,180,100,0.12);
+    }
+    .btn-recalibrate { 
+      border-color: rgba(180,140,20,0.8); 
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(180,140,20,0.80), rgba(180,140,20,0.60));
+      box-shadow: 0 0 14px rgba(180,140,20,0.3);
+    }
+    .btn-recalibrate:hover:not(:disabled) { 
+      background: linear-gradient(135deg, rgba(180,140,20,0.95), rgba(180,140,20,0.75));
+      opacity: 1;
+    }
+    .btn-stop-sound {
+      border-color: rgba(120,120,120,0.5);
+      color: var(--text);
+      background: linear-gradient(135deg, rgba(120,120,120,0.18), rgba(120,120,120,0.06));
+      box-shadow: 0 0 14px rgba(120,120,120,0.1);
+      font-size: 0.8rem;
+      padding: 8px 16px;
+    }
+    .btn-stop-sound:hover:not(:disabled) {
+      background: linear-gradient(135deg, rgba(200,60,60,0.28), rgba(200,60,60,0.12));
+      border-color: rgba(200,60,60,0.5);
+      opacity: 1;
+    }
+    .btn-stop-sound:disabled { opacity: 0.25; cursor: default; }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 28px;
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .tab {
+      flex: 1;
+      font-family: 'DM Mono', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 10px;
+      border-radius: 7px;
+      border: none;
+      background: rgba(var(--btn1),0.30);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+
+    .tab.active {
+      background: rgba(var(--btn1),0.92);
+      color: #ffffff;
+      font-weight: 800;
+      opacity: 1;
+      border: 2px solid rgba(var(--btn1),1);
+      box-shadow: 0 0 18px rgba(var(--btn1),0.5);
+    }
+    .tab:not(.active):hover { background: rgba(var(--btn1),0.50); color: var(--text); }
+
+    /* Preset strip */
+    .preset-strip {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .preset-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 9px 18px;
+      border-radius: 20px;
+      border: 2px solid rgba(var(--btn1),0.55);
+      background: rgba(var(--btn1),0.12);
+      color: rgba(var(--btn1),1);
+      opacity: 0.85;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .preset-btn:hover { opacity: 1; border-color: rgba(var(--btn1),0.8); background: rgba(var(--btn1),0.25); }
+
+    .preset-btn.active {
+      background: rgba(var(--btn1),0.90);
+      border-color: rgba(var(--btn1),1);
+      color: #ffffff;
+      font-weight: 800;
+      opacity: 1;
+      box-shadow: 0 0 18px rgba(var(--btn1),0.45);
+    }
+
+    /* Panel */
+    .panel {
+      background: var(--surface);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 32px;
+      margin-bottom: 20px;
+    }
+
+    .panel-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 22px;
+    }
+
+    /* Hand visualization */
+    .hand-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 14px;
+      padding: 28px 0 14px;
+    }
+
+    .finger-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .finger {
+      border-radius: 16px 16px 8px 8px;
+      background: var(--surface3);
+      border: 2px solid var(--border);
+      transition: all 0.08s ease;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .finger::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: inherit;
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 0.08s;
+    }
+
+    .finger.active {
+      transform: scaleY(0.95) translateY(2px);
+    }
+
+    .finger.clickable { cursor: pointer; }
+    .finger.clickable:hover { border-color: var(--accent); }
+
+    .finger-note {
+      font-size: clamp(0.9rem, 3.5vw, 1.6rem);
+      font-weight: 900;
+      text-align: center;
+      padding: 6px 4px 4px;
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      overflow: hidden;
+      word-break: break-word;
+      hyphens: auto;
+    }
+
+    .finger-label {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .status-line {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-top: 16px;
+      min-height: 1.2em;
+      transition: all 0.2s;
+    }
+
+    /* Mapping grid — 2 columns on mobile, 5 on wider screens */
+    .mapping-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 480px) { .mapping-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .mapping-cell {
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 8px 10px;
+      text-align: center;
+      transition: all 0.15s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mapping-cell.clickable { cursor: pointer; }
+    .mapping-cell.clickable:hover {
+      border-color: var(--accent);
+      background: rgba(var(--orb1),0.1);
+    }
+
+    /* Two-line chord display */
+    .mapping-cell .note-root {
+      font-size: 1.8rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .mapping-cell .note-quality {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.85;
+      line-height: 1;
+      min-height: 0.8em;
+    }
+    .mapping-cell .fname { font-size: 0.7rem; color: #111111; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+
+    /* Settings */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 600px) { .settings-grid { grid-template-columns: 1fr; } }
+
+    .setting-group label {
+      display: block;
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .instrument-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .inst-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.86rem;
+      padding: 8px 10px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .inst-btn.active {
+      border-color: rgba(249,115,22,0.5);
+      color: #f97316;
+      background: rgba(249,115,22,0.08);
+    }
+
+    .inst-btn:hover:not(.active) { color: var(--text); border-color: var(--border); }
+
+    /* Tutorial */
+    .tutorial-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .tut-group {
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 20px 14px;
+      background: rgba(var(--orb1),0.05);
+    }
+    .tut-group-header {
+      font-size: 1.0rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid currentColor;
+    }
+    .tut-group-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .tutorial-card {
+      background: rgba(var(--btn1),0.32);
+      border: 1px solid rgba(var(--btn1),0.55);
+      border-radius: 14px;
+      padding: 18px 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .tutorial-card:hover { border-color: rgba(var(--btn1),0.8); background: rgba(var(--btn1),0.30); }
+    .tutorial-card.active-tut { border-color: rgba(var(--orb1),0.5); background: rgba(var(--orb1),0.08); }
+
+    .tut-name { font-size: 1.05rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+    .tut-meta { font-size: 0.78rem; opacity: 0.85; font-weight: 700; color: var(--text); }
+
+    .difficulty-beginner { color: var(--diff-b); }
+    .difficulty-easy     { color: var(--diff-e); }
+    .difficulty-medium   { color: var(--diff-m); }
+    .difficulty-hard     { color: var(--diff-h); }
+
+    /* Tutorial active view */
+    .tutorial-active {
+      text-align: center;
+    }
+
+    .tut-progress-bar {
+      height: 4px;
+      background: var(--surface2);
+      border-radius: 2px;
+      margin: 16px 0;
+      overflow: hidden;
+    }
+
+    .tut-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .tut-next-label {
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .tut-next-finger {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+    }
+
+    .tut-sequence {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .seq-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(var(--orb1),0.25);
+      border: 1px solid rgba(var(--orb1),0.45);
+      transition: all 0.15s;
+    }
+
+    .seq-dot.done { background: var(--green); border-color: var(--green); }
+    .seq-dot.current { background: var(--accent); border-color: var(--accent); transform: scale(1.4); }
+
+    .tut-complete {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+
+    /* Recording */
+    .rec-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .rec-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.86rem;
+      color: #ef4444;
+    }
+
+    .rec-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ef4444;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .recording-list {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .recording-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .rec-info { font-size: 0.9rem; }
+    .rec-dur { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+    /* Piano Roll Editor */
+    .pianoroll-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .pianoroll-modal {
+      background: rgba(20,20,35,0.97);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 860px;
+      max-height: 90vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    }
+    .pianoroll-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .pianoroll-header h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem;
+      color: var(--text);
+    }
+    .pianoroll-toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 12px 24px;
+      border-bottom: 1px solid rgba(var(--orb1),0.12);
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .pr-tool-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.82rem;
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .pr-tool-btn:hover { color: var(--text); border-color: var(--border); }
+    .pr-tool-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(155,140,255,0.12); }
+    .pr-tool-btn.play { border-color: rgba(74,222,128,0.4); color: var(--green); }
+    .pr-tool-btn.stop { border-color: rgba(239,68,68,0.4); color: #ef4444; }
+    .pr-tool-btn.danger { border-color: rgba(239,68,68,0.3); color: rgba(239,68,68,0.7); }
+    .pr-tool-btn.save { border-color: rgba(155,140,255,0.5); color: var(--accent); }
+    .pianoroll-body {
+      flex: 1;
+      overflow: auto;
+      padding: 16px 24px;
+    }
+    .pr-track {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+      gap: 0;
+    }
+    .pr-track-label {
+      width: 64px;
+      flex-shrink: 0;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding-right: 10px;
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 1px;
+    }
+    .pr-track-name { font-weight: 500; }
+    .pr-track-note { color: var(--muted); font-size: 0.86rem; }
+    .pr-lane {
+      flex: 1;
+      height: 36px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+    .pr-lane:hover { background: var(--surface2); }
+    .pr-note-block {
+      position: absolute;
+      top: 4px;
+      height: calc(100% - 8px);
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      font-family: 'DM Mono', monospace;
+      color: rgba(255,255,255,0.9);
+      transition: filter 0.1s;
+      user-select: none;
+      min-width: 18px;
+      box-sizing: border-box;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .pr-note-block:hover { filter: brightness(1.3); }
+    .pr-note-block.selected { outline: 2px solid #fff; outline-offset: 1px; }
+    .pr-note-block .pr-note-del {
+      position: absolute;
+      top: -4px; right: -4px;
+      width: 14px; height: 14px;
+      background: #ef4444;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      color: #fff;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .pr-note-block:hover .pr-note-del { display: flex; }
+    .pr-timeline {
+      position: relative;
+      height: 18px;
+      margin-left: 64px;
+      margin-bottom: 4px;
+    }
+    .pr-tick {
+      position: absolute;
+      top: 0;
+      font-size: 0.82rem;
+      color: var(--muted);
+      transform: translateX(-50%);
+    }
+    .pr-note-popup {
+      position: fixed;
+      background: rgba(20,20,35,0.98);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      z-index: 300;
+      min-width: 180px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    .pr-note-popup-title {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .pr-chord-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      max-width: 220px;
+    }
+    .pr-chord-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.86rem;
+      padding: 3px 7px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .pr-chord-btn:hover { color: var(--text); border-color: var(--border); }
+    .pr-chord-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(155,140,255,0.15); }
+
+    .btn-sm {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.82rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.12s;
+      white-space: nowrap;
+    }
+
+    .btn-sm:hover { color: var(--text); border-color: var(--accent); }
+    .btn-sm.play {
+      border-color: rgba(34,197,94,0.9);
+      color: #ffffff;
+      background: rgba(34,197,94,0.82);
+      font-weight: 700;
+      box-shadow: 0 0 16px rgba(34,197,94,0.4);
+    }
+    .btn-sm.play:hover {
+      background: rgba(34,197,94,1);
+      box-shadow: 0 0 24px rgba(34,197,94,0.6);
+      color: #ffffff;
+    }
+    .btn-sm.stop { border-color: rgba(200,60,60,0.4); color: #c84040; }
+    .btn-sm.danger {
+      border-color: rgba(200,60,60,0.8);
+      color: #ffffff;
+      background: rgba(200,60,60,0.75);
+      font-weight: 700;
+    }
+    .btn-sm.danger:hover { background: rgba(220,50,50,1); border-color: rgba(220,50,50,1); color: #ffffff; box-shadow: 0 0 14px rgba(200,60,60,0.5); }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 20px;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      max-width: 520px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+    }
+
+    .modal-section-title {
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 16px 0 8px;
+    }
+
+    .chord-category {
+      margin-bottom: 12px;
+    }
+
+    .chord-grid-modal {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chord-btn-modal {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.86rem;
+      padding: 7px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+
+    .chord-btn-modal:hover { color: var(--text); border-color: var(--accent); }
+
+    .chord-btn-modal.selected {
+      border-color: rgba(var(--orb1),0.6);
+      color: var(--accent);
+      background: rgba(var(--orb1),0.1);
+    }
+
+    .drum-btn-modal {
+      border-color: rgba(var(--orb2),0.35);
+      color: var(--accent2);
+    }
+
+    .drum-btn-modal.selected {
+      background: rgba(var(--orb2),0.12);
+      border-color: rgba(var(--orb2),0.6);
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .modal-footer button {
+      flex: 1;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.9rem;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+
+    .modal-footer button:hover { color: var(--text); }
+
+    /* Ripple animation on finger press */
+    @keyframes rippleOut {
+      0% { box-shadow: 0 0 0 0 rgba(var(--rc), 0.4); }
+      100% { box-shadow: 0 0 0 18px rgba(var(--rc), 0); }
+    }
+    /* ── SIDE HINTS ── */
+    #side-hints { display: none; } /* replaced by inline button hints */
+
+    .btn-hint-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+    }
+    .btn-hint-bubble {
+      position: absolute;
+      left: calc(100% + 10px);
+      top: 50%;
+      transform: translateY(-50%);
+      background: linear-gradient(135deg, rgba(255,220,60,0.97), rgba(255,190,20,0.97));
+      color: #1a1200;
+      border-radius: 10px;
+      padding: 7px 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      line-height: 1.35;
+      white-space: nowrap;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      z-index: 60;
+      pointer-events: none;
+      animation: hintPop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .btn-hint-bubble::before {
+      content: '';
+      position: absolute;
+      right: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      border-width: 6px 8px 6px 0;
+      border-style: solid;
+      border-color: transparent rgba(255,205,20,0.97) transparent transparent;
+    }
+    .btn-hint-icon {
+      margin-right: 5px;
+    }
+    .btn-highlighted {
+      box-shadow: 0 0 0 3px rgba(255,220,60,0.9), 0 0 18px rgba(255,200,40,0.6) !important;
+      animation: hintPulse 1.2s ease-in-out infinite;
+    }
+    @keyframes hintPulse {
+      0%,100% { box-shadow: 0 0 0 3px rgba(255,220,60,0.9), 0 0 18px rgba(255,200,40,0.5); }
+      50%      { box-shadow: 0 0 0 5px rgba(255,220,60,0.6), 0 0 28px rgba(255,200,40,0.8); }
+    }
+    /* tut-diff-header replaced by tut-group */
+    @media (max-width: 760px) {
+      .btn-hint-bubble { left: auto; right: auto; top: calc(100% + 8px); transform: none; white-space: normal; width: 160px; }
+      .btn-hint-bubble::before { right: auto; left: 20px; top: auto; bottom: 100%; transform: none;
+        border-width: 0 6px 8px 6px; border-color: transparent transparent rgba(255,205,20,0.97) transparent; }
+    }
+  </style>
+</head>
+<body class="theme-dark">
+
+<!-- ── SPLASH SCREEN ── -->
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-logo">Ripple</div>
+    <div class="splash-tagline" id="splash-tagline">Music Therapy System</div>
+
+    <!-- Language -->
+    <div class="splash-section-title" id="splash-lang-label">Language · 语言 · Idioma</div>
+    <div class="lang-picker">
+      <button class="lang-btn active" data-lang="en">English</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="es">Español</button>
+    </div>
+
+    <!-- Theme -->
+    <div class="splash-section-title" id="splash-theme-label">Choose a Theme</div>
+    <div class="theme-grid" id="theme-grid"></div>
+
+    <button class="splash-enter-btn" id="splash-enter">Enter →</button>
+  </div>
+</div>
+
+<!-- ── SIDE HINTS ── -->
+<div id="side-hints"></div>
+
+<div class="app">
+  <div class="header">
+    <h1>Ripple</h1>
+    <p id="app-tagline">Finger Rehabilitation Through Music</p>
+    <button id="back-to-splash">⚙ Theme &amp; Language</button>
+  </div>
+
+  <div id="browser-warning" class="warning hidden">
+    ⚠️ Web Serial API not supported. Please use <a href="https://www.google.com/chrome/" target="_blank">Chrome</a> or Edge.
+  </div>
+
+  <!-- Controls -->
+  <div class="control-bar">
+    <button id="stop-sound-btn" class="btn btn-stop-sound" disabled>⏹ Stop Sound</button>
+    <div class="btn-hint-wrap" id="connect-hint-wrap">
+      <button id="connect-btn" class="btn btn-connect">Connect</button>
+    </div>
+    <div class="btn-hint-wrap" id="calibrate-hint-wrap">
+      <button id="calibrate-btn" class="btn btn-calibrate" disabled>Calibrate</button>
+      <button id="recalibrate-btn" class="btn btn-recalibrate hidden">Re-calibrate</button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab" data-tab="tutorial">Tutorial</button>
+    <button class="tab active" data-tab="play">Play</button>
+    <button class="tab" data-tab="record">Record</button>
+    <button class="tab" data-tab="settings">Settings</button>
+  </div>
+
+  <!-- PLAY TAB -->
+  <div id="tab-play">
+    <!-- Presets -->
+    <div class="preset-strip" id="preset-strip"></div>
+
+    <!-- Quick record bar -->
+    <div style="display:flex;justify-content:center;margin-bottom:20px;gap:10px;align-items:center;">
+      <button class="btn-sm play" id="play-rec-start-btn">⏺ Start Recording</button>
+      <button class="btn-sm stop hidden" id="play-rec-stop-btn">⏹ Stop Recording</button>
+      <span class="rec-indicator hidden" id="play-rec-indicator"><span class="rec-dot"></span> Recording</span>
+    </div>
+
+    <!-- Hand -->
+    <div class="panel">
+      <div class="panel-title" data-i18n="handViz">Hand Visualization</div>
+      <div class="hand-wrap" id="hand-wrap"></div>
+      <div class="status-line" id="status-line">Connect exoskeleton to start</div>
+    </div>
+
+    <!-- Mapping -->
+    <div class="panel">
+      <div class="panel-title" data-i18n="currentMapping">Current Mapping</div>
+      <div class="mapping-grid" id="mapping-grid"></div>
+    </div>
+  </div>
+
+  <!-- TUTORIAL TAB -->
+  <div id="tab-tutorial" class="hidden">
+    <div class="panel" id="tut-browser">
+      <div class="panel-title" data-i18n="chooseSong">Choose a Song</div>
+      <div class="tutorial-list" id="tutorial-list"></div>
+    </div>
+
+    <div class="panel hidden" id="tut-active-panel">
+      <div class="tutorial-active" id="tut-active-content"></div>
+      <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap; align-items:center;">
+        <button class="btn-sm" id="tut-demo-btn">▶ Demo</button>
+        <button class="btn-sm hidden stop" id="tut-demo-stop-btn">⏹ Stop Demo</button>
+        <button class="btn-sm" id="tut-reset-btn">↺ Restart</button>
+        <button class="btn-sm play" id="tut-rec-start-btn">⏺ Record</button>
+        <button class="btn-sm stop hidden" id="tut-rec-stop-btn">⏹ Stop Rec</button>
+        <span class="rec-indicator hidden" id="tut-rec-indicator"><span class="rec-dot"></span></span>
+        <button class="btn-sm danger" id="tut-exit-btn">Exit Tutorial</button>
+      </div>
+    </div>
+
+    <div class="panel hidden" id="tut-hand-panel">
+      <div class="panel-title" data-i18n="handViz">Hand Visualization</div>
+      <div class="hand-wrap" id="tut-hand-wrap"></div>
+      <div class="status-line" id="tut-status-line">Connect exoskeleton to start</div>
+    </div>
+  </div>
+
+  <!-- RECORD TAB -->
+  <div id="tab-record" class="hidden">
+    <div class="panel">
+      <div class="panel-title" data-i18n="tabRecord">Recording</div>
+      <div class="rec-controls">
+        <button class="btn-sm play" id="rec-start-btn">⏺ Start Recording</button>
+        <button class="btn-sm stop hidden" id="rec-stop-btn">⏹ Stop</button>
+        <span class="rec-indicator hidden" id="rec-indicator"><span class="rec-dot"></span> Recording</span>
+      </div>
+      <div class="recording-list" id="recording-list"></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div id="tab-settings" class="hidden">
+    <div class="panel">
+      <div class="panel-title" data-i18n="configuration">Configuration</div>
+      <div class="settings-grid">
+        <div class="setting-group" style="grid-column:1/-1">
+          <label for="switch-threshold">Switch threshold (raw ADC): <span id="switch-threshold-val">1,000,000</span></label>
+          <input type="range" id="switch-threshold" min="100000" max="4000000" step="50000" value="1000000">
+        </div>
+        <div class="setting-group">
+          <label for="thresh-on">Bend threshold (trigger): <span id="thresh-on-val">0.40</span></label>
+          <input type="range" id="thresh-on" min="0.01" max="0.99" step="0.01" value="0.40">
+        </div>
+        <div class="setting-group">
+          <label for="thresh-off">Release drop (0–1): <span id="thresh-off-val">0.20</span></label>
+          <input type="range" id="thresh-off" min="0.01" max="0.99" step="0.01" value="0.20">
+        </div>
+        <div class="setting-group">
+          <label for="filter-size">Smoothing (filter frames): <span id="filter-val">12</span></label>
+          <input type="range" id="filter-size" min="1" max="30" value="12">
+        </div>
+
+        <div class="setting-group">
+          <label for="volume-range">Volume: <span id="volume-val">70</span>%</label>
+          <input type="range" id="volume-range" min="5" max="100" value="70">
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🔧 Debug Mode</div>
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.88rem;color:var(--text);">
+        <input type="checkbox" id="debug-toggle" style="accent-color:var(--accent);width:18px;height:18px;">
+        Show live encoder values (connect &amp; calibrate first)
+      </label>
+    </div>
+    <div class="panel" id="debug-panel" style="display:none;">
+      <div class="panel-title">📊 Encoder Debug</div>
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:12px;">Bend each finger fully to record max drop values. Green = currently active.</div>
+      <div id="debug-table" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;text-align:center;"></div>
+      <div style="margin-top:16px;padding:12px;background:var(--surface2);border-radius:10px;">
+        <div style="font-size:0.72rem;color:var(--muted);margin-bottom:6px;">💡 Suggested thresholds (bend all fingers fully first):</div>
+        <div id="debug-suggest" style="font-size:0.82rem;font-family:'DM Mono',monospace;color:var(--text);line-height:1.8;"></div>
+      </div>
+      <button id="debug-reset-btn" class="btn" style="margin-top:12px;font-size:0.78rem;padding:6px 16px;">↺ Reset Max Values</button>
+    </div>
+  </div>
+</div>
+
+<!-- Calibration Modal -->
+<div id="calib-modal" style="
+  display:none; position:fixed; inset:0; z-index:9999;
+  background:rgba(0,0,0,0.75); backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  align-items:center; justify-content:center;
+">
+  <div style="
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:24px; padding:40px 48px; max-width:480px; width:90%;
+    text-align:center; box-shadow:0 24px 60px rgba(0,0,0,0.4);
+  ">
+    <div id="calib-icon" style="font-size:4rem;margin-bottom:16px;">✋</div>
+    <div id="calib-title" style="font-size:1.4rem;font-weight:700;color:var(--text);margin-bottom:10px;"></div>
+    <div id="calib-desc" style="font-size:0.92rem;color:var(--muted);line-height:1.6;margin-bottom:24px;"></div>
+    <div id="calib-progress-wrap" style="width:100%;background:var(--surface2);border-radius:99px;height:8px;overflow:hidden;margin-bottom:16px;">
+      <div id="calib-progress-bar" style="height:100%;width:0%;background:var(--accent);border-radius:99px;transition:width 0.1s linear;"></div>
+    </div>
+    <div id="calib-status" style="font-size:0.8rem;color:var(--muted);font-family:'DM Mono',monospace;"></div>
+  </div>
+</div>
+
+<!-- Piano Roll Editor -->
+<div id="pianoroll-overlay" class="pianoroll-overlay hidden">
+  <div class="pianoroll-modal">
+    <div class="pianoroll-header">
+      <h3 id="pr-title">Edit Recording</h3>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="pr-tool-btn save" id="pr-save-btn">💾 Save</button>
+        <button class="pr-tool-btn danger" id="pr-close-btn">✕ Close</button>
+      </div>
+    </div>
+    <div class="pianoroll-toolbar">
+      <button class="pr-tool-btn play" id="pr-play-btn">▶ Play</button>
+      <button class="pr-tool-btn stop hidden" id="pr-stop-btn">⏹ Stop</button>
+      <span id="pr-hint" style="color:var(--muted);font-size:0.65rem;margin-left:4px;">Click lane to add note · Click note to change pitch · Hover note → ✕ to delete</span>
+    </div>
+    <div class="pianoroll-body" id="pr-body"></div>
+  </div>
+</div>
+<!-- Note pitch popup -->
+<div id="pr-note-popup" class="pr-note-popup hidden"></div>
+
+<!-- Chord Selector Modal -->
+<div id="chord-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <h3>Map <span id="modal-finger-label" style="color:var(--accent)"></span></h3>
+    <div id="chord-modal-body"></div>
+    <div class="modal-footer">
+      <button id="modal-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  I18N
+// ═══════════════════════════════════════════════════════
+const I18N = {
+  en: {
+    tagline: 'Finger Rehabilitation Through Music',
+    connect: 'Connect', disconnect: 'Disconnect', stopSound: '⏹ Stop Sound', resumeSound: '▶ Resume Sound',
+    calibrate: 'Calibrate', recalibrate: 'Re-calibrate',
+    connecting: 'Connecting…', calibrating: 'Calibrating…',
+    tabPlay: 'Play', tabTutorial: 'Tutorial', tabRecord: 'Record', tabSettings: 'Settings',
+    handViz: 'Hand Visualization', currentMapping: 'Current Mapping',
+    chooseSong: 'Choose a Song',
+    startRecording: '⏺ Start Recording', stopRecording: '⏹ Stop Recording',
+    recStop: '⏹ Stop',
+    recording: 'Recording',
+    demo: '▶ Demo', stopDemo: '⏹ Stop Demo', restart: '↺ Restart', exitTutorial: 'Exit Tutorial',
+    connectToStart: 'Connect exoskeleton to start',
+    keepStill: 'Keep hand still…',
+    clickCalibrate: 'Click Calibrate and keep hand still',
+    bendToPlay: 'Bend fingers to play',
+    playing: 'Playing: ',
+    configuration: 'Configuration',
+    sensOn: 'Sensitivity ON threshold', sensOff: 'Release threshold',
+    smoothing: 'Smoothing (filter frames)', volume: 'Volume',
+    customInstrument: 'Custom Instrument',
+    customInstrumentSub: 'for Custom preset',
+    browserWarning: '⚠️ Web Serial API not supported. Please use Chrome or Edge.',
+    pressThis: 'Press this finger:',
+    step: 'Step',
+    complete: '🎉 Complete!',
+    youPlayed: 'You played',
+    noRecordings: 'No recordings yet.',
+    events: 'events',
+    editTitle: 'Edit ·',
+    editRecording: 'Edit Recording',
+    save: '💾 Save', close: '✕ Close',
+    pianoRollHint: 'Drag notes to move · Click note to change pitch · Click lane to add · Hover → ✕ delete',
+    zoomLabel: 'px/s',
+    singleNotes: 'Single Notes', majorChords: 'Major Chords', minorChords: 'Minor Chords',
+    seventhChords: '7th Chords', drums: 'Drums', none: 'None',
+    changeNote: 'Change note for',
+    currentLabel: 'Current: ',
+    splashBtn: '⚙ Theme & Language',
+    splashTheme: 'Choose a Theme',
+    splashLang: 'Language · 语言 · Idioma',
+    enter: 'Enter →',
+
+    diffBeginner: 'Beginner', diffEasy: 'Easy', diffMedium: 'Medium', diffHard: 'Hard',
+    notes: 'notes',
+    fingerNames: { thumb: 'thumb', index: 'index', middle: 'middle', ring: 'ring', pinky: 'pinky' },
+  },
+  zh: {
+    tagline: '音乐手指康复系统',
+    connect: '连接', disconnect: '断开连接', stopSound: '⏹ 停止声音', resumeSound: '▶ 继续播放',
+    calibrate: '校准', recalibrate: '重新校准',
+    connecting: '连接中…', calibrating: '校准中…',
+    tabPlay: '演奏', tabTutorial: '教程', tabRecord: '录音', tabSettings: '设置',
+    handViz: '手部可视化', currentMapping: '当前音符映射',
+    chooseSong: '选择歌曲',
+    startRecording: '⏺ 开始录音', stopRecording: '⏹ 停止录音',
+    recStop: '⏹ 停止',
+    recording: '录音中',
+    demo: '▶ 示范', stopDemo: '⏹ 停止示范', restart: '↺ 重新开始', exitTutorial: '退出教程',
+    connectToStart: '请连接外骨骼设备',
+    keepStill: '请保持手部静止…',
+    clickCalibrate: '点击校准并保持手部静止',
+    bendToPlay: '弯曲手指以演奏',
+    playing: '正在演奏：',
+    configuration: '配置',
+    sensOn: '触发灵敏度', sensOff: '释放阈值',
+    smoothing: '平滑帧数', volume: '音量',
+    customInstrument: '自定义乐器',
+    customInstrumentSub: '用于自定义预设',
+    browserWarning: '⚠️ 浏览器不支持 Web Serial API，请使用 Chrome 或 Edge。',
+    pressThis: '请弯曲此手指：',
+    step: '步骤',
+    complete: '🎉 完成！',
+    youPlayed: '您演奏了',
+    noRecordings: '暂无录音。',
+    events: '个音符',
+    editTitle: '编辑 ·',
+    editRecording: '编辑录音',
+    save: '💾 保存', close: '✕ 关闭',
+    pianoRollHint: '拖动音符移动 · 点击音符更改音高 · 点击轨道添加 · 悬停 → ✕ 删除',
+    zoomLabel: '像素/秒',
+    singleNotes: '单音', majorChords: '大调和弦', minorChords: '小调和弦',
+    seventhChords: '七和弦', drums: '打击乐', none: '无',
+    changeNote: '更改音符：',
+    currentLabel: '当前：',
+    splashBtn: '⚙ 主题与语言',
+    splashTheme: '选择主题',
+    splashLang: 'Language · 语言 · Idioma',
+    enter: '进入 →',
+
+    diffBeginner: '初级', diffEasy: '简单', diffMedium: '中级', diffHard: '高级',
+    notes: '个音符',
+    fingerNames: { thumb: '拇指', index: '食指', middle: '中指', ring: '无名指', pinky: '小指' },
+  },
+  es: {
+    tagline: 'Rehabilitación Dactilar con Música',
+    connect: 'Conectar', disconnect: 'Desconectar', stopSound: '⏹ Detener Sonido', resumeSound: '▶ Reanudar Sonido',
+    calibrate: 'Calibrar', recalibrate: 'Recalibrar',
+    connecting: 'Conectando…', calibrating: 'Calibrando…',
+    tabPlay: 'Tocar', tabTutorial: 'Tutorial', tabRecord: 'Grabar', tabSettings: 'Ajustes',
+    handViz: 'Visualización de Mano', currentMapping: 'Mapeo Actual',
+    chooseSong: 'Elige una Canción',
+    startRecording: '⏺ Iniciar Grabación', stopRecording: '⏹ Detener Grabación',
+    recStop: '⏹ Detener',
+    recording: 'Grabando',
+    demo: '▶ Demo', stopDemo: '⏹ Detener Demo', restart: '↺ Reiniciar', exitTutorial: 'Salir del Tutorial',
+    connectToStart: 'Conecta el exoesqueleto para empezar',
+    keepStill: 'Mantén la mano quieta…',
+    clickCalibrate: 'Haz clic en Calibrar y mantén la mano quieta',
+    bendToPlay: 'Dobla los dedos para tocar',
+    playing: 'Tocando: ',
+    configuration: 'Configuración',
+    sensOn: 'Umbral de activación', sensOff: 'Umbral de liberación',
+    smoothing: 'Suavizado (fotogramas)', volume: 'Volumen',
+    customInstrument: 'Instrumento personalizado',
+    customInstrumentSub: 'para el preset personalizado',
+    browserWarning: '⚠️ Web Serial API no es compatible. Usa Chrome o Edge.',
+    pressThis: 'Presiona este dedo:',
+    step: 'Paso',
+    complete: '🎉 ¡Completado!',
+    youPlayed: 'Tocaste',
+    noRecordings: 'Sin grabaciones aún.',
+    events: 'notas',
+    editTitle: 'Editar ·',
+    editRecording: 'Editar Grabación',
+    save: '💾 Guardar', close: '✕ Cerrar',
+    pianoRollHint: 'Arrastrar notas para mover · Clic en nota para cambiar tono · Clic en carril para añadir · Hover → ✕ borrar',
+    zoomLabel: 'px/s',
+    singleNotes: 'Notas Simples', majorChords: 'Acordes Mayores', minorChords: 'Acordes Menores',
+    seventhChords: 'Acordes de 7ª', drums: 'Percusión', none: 'Ninguno',
+    changeNote: 'Cambiar nota para',
+    currentLabel: 'Actual: ',
+    splashBtn: '⚙ Tema e Idioma',
+    splashTheme: 'Elige un Tema',
+    splashLang: 'Language · 语言 · Idioma',
+    enter: 'Entrar →',
+    diffBeginner: 'Principiante', diffEasy: 'Fácil', diffMedium: 'Medio', diffHard: 'Difícil',
+    notes: 'notas',
+    fingerNames: { thumb: 'pulgar', index: 'índice', middle: 'medio', ring: 'anular', pinky: 'meñique' },
+  }
+};
+
+let currentLang = 'en';
+function t(key) { return I18N[currentLang][key] || I18N.en[key] || key; }
+function tFinger(f) { return (I18N[currentLang].fingerNames || {})[f] || f; }
+
+function applyLang() {
+  // Update app title (Ripple ↔ 音动指尖)
+  const h1 = document.querySelector('.header h1');
+  if(h1) h1.textContent = currentLang==='zh' ? '音动指尖' : currentLang==='es' ? 'La Onda' : 'Ripple';
+  const appTagline = document.getElementById('app-tagline');
+  if(appTagline) appTagline.textContent = t('tagline');
+  const backBtn = document.getElementById('back-to-splash');
+  if(backBtn) backBtn.textContent = t('splashBtn');
+  const stopSoundBtn = document.getElementById('stop-sound-btn');
+  if(stopSoundBtn) stopSoundBtn.textContent = t('stopSound');
+
+  // Browser warning
+  const bw = document.getElementById('browser-warning');
+  if(bw && !bw.classList.contains('hidden')) bw.textContent = t('browserWarning');
+
+  // Tabs
+  document.querySelectorAll('.tab[data-tab]').forEach(tab => {
+    const key = { tutorial:'tabTutorial', play:'tabPlay', record:'tabRecord', settings:'tabSettings' }[tab.dataset.tab];
+    if(key) tab.textContent = t(key);
+  });
+
+  // data-i18n elements (panel titles)
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+
+  // Settings labels (replace text node before the <span> child)
+  const settingsMap = [
+    ['thresh-on', 'sensOn'], ['thresh-off', 'sensOff'],
+    ['filter-size', 'smoothing'], ['volume-range', 'volume'],
+  ];
+  settingsMap.forEach(([inputId, key]) => {
+    const label = document.querySelector(`label[for="${inputId}"]`);
+    if(label) {
+      // Replace first text node, preserving the <span> value
+      const span = label.querySelector('span');
+      const val = span ? span.outerHTML : '';
+      label.innerHTML = t(key) + ': ' + val;
+    }
+  });
+
+  // Custom instrument panel title
+  const custTitle = document.getElementById('custom-inst-title');
+  if(custTitle) custTitle.innerHTML = `${t('customInstrument')} <span style="opacity:0.6;font-size:0.85em">(${t('customInstrumentSub')})</span>`;
+
+  // Piano roll static strings
+  const prSave = document.getElementById('pr-save-btn'); if(prSave) prSave.textContent = t('save');
+  const prClose = document.getElementById('pr-close-btn'); if(prClose) prClose.textContent = t('close');
+  const prPlay = document.getElementById('pr-play-btn'); if(prPlay && !prPlay.classList.contains('hidden')) prPlay.textContent = '▶ ' + t('tabPlay');
+  const prHint = document.getElementById('pr-hint'); if(prHint) prHint.textContent = t('pianoRollHint');
+
+  // Record tab
+  const rsb = document.getElementById('rec-start-btn'); if(rsb) rsb.textContent = t('startRecording');
+  const rspb = document.getElementById('rec-stop-btn'); if(rspb) rspb.textContent = t('recStop');
+  const recInd = document.getElementById('rec-indicator');
+  if(recInd) recInd.innerHTML = `<span class="rec-dot"></span> ${t('recording')}`;
+  const prsb = document.getElementById('play-rec-start-btn'); if(prsb) prsb.textContent = t('startRecording');
+  const prspb = document.getElementById('play-rec-stop-btn'); if(prspb) prspb.textContent = t('stopRecording');
+  const playRecInd = document.getElementById('play-rec-indicator');
+  if(playRecInd) playRecInd.innerHTML = `<span class="rec-dot"></span> ${t('recording')}`;
+
+  // Tutorial buttons
+  const db = document.getElementById('tut-demo-btn'); if(db) db.textContent = t('demo');
+  const trb = document.getElementById('tut-rec-start-btn'); if(trb) trb.textContent = '⏺ '+t('startRecording').replace('⏺ ','');
+  const trsb = document.getElementById('tut-rec-stop-btn'); if(trsb) trsb.textContent = '⏹ '+t('recStop').replace('⏹ ','');
+  const dsb = document.getElementById('tut-demo-stop-btn'); if(dsb) dsb.textContent = t('stopDemo');
+  const rb = document.getElementById('tut-reset-btn'); if(rb) rb.textContent = t('restart');
+  const eb = document.getElementById('tut-exit-btn'); if(eb) eb.textContent = t('exitTutorial');
+
+  // Status lines — swap known phrases
+  ['status-line','tut-status-line'].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    const txt = el.textContent;
+    const phrases = ['connectToStart','bendToPlay','clickCalibrate','keepStill'];
+    for(const key of phrases) {
+      if(txt === I18N.en[key] || txt === I18N.zh[key]) { el.textContent = t(key); break; }
+    }
+  });
+
+  // Switch tutorial set to match language
+  TUTORIALS = getTutorials();
+  // Re-render dynamic UI if ready
+  if(typeof UI !== 'undefined') {
+    UI.renderConnectBtn();
+    UI.syncAll();
+    UI.updateHints();
+  }
+  // Re-render instrument grid with translated labels
+  // Re-render tutorial list so nameEn subtitle appears/disappears
+  if(typeof UI !== 'undefined') UI.renderTutorialList();
+}
+
+
+// ═══════════════════════════════════════════════════════
+//  THEMES
+// ═══════════════════════════════════════════════════════
+const THEMES = [
+  { id:'dark',  nameEn:'Dark',  nameZh:'深色', nameEs:'Oscuro', dark:true,  colors:['#0e0e1c','#a78bfa','#34d399'] },
+  { id:'light', nameEn:'Light', nameZh:'浅色', nameEs:'Claro',  dark:false, colors:['#f0ede8','#e84855','#6366f1'] },
+];
+
+let currentTheme = 'dark';
+
+function applyTheme(id) {
+  currentTheme = id;
+  document.body.className = `theme-${id}`;
+}
+
+// ── Splash logic ──
+function initSplash() {
+  const grid = document.getElementById('theme-grid');
+  let selectedLang = currentLang || 'en';
+  let selectedTheme = 'dark';
+
+  // Mark correct lang button active on init
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === selectedLang);
+  });
+
+  function renderGrid() {
+    grid.innerHTML = THEMES.map(th => themeCard(th, selectedTheme, selectedLang)).join('');
+    grid.querySelectorAll('.theme-card').forEach(card => {
+      card.addEventListener('click', () => {
+        selectedTheme = card.dataset.theme;
+        applyTheme(selectedTheme);
+        renderGrid();
+      });
+    });
+  }
+
+  function themeCard(th, sel, lang) {
+    const name = lang==='zh' ? th.nameZh : lang==='es' ? (th.nameEs||th.nameEn) : th.nameEn;
+    const [bg, c1, c2] = th.colors;
+    return `
+      <div class="theme-card ${sel===th.id?'selected':''}" data-theme="${th.id}">
+        <div class="theme-preview" style="background:linear-gradient(135deg,${bg} 0%,${c1}55 60%,${c2}44 100%);border:1px solid ${th.dark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.08)'}"></div>
+        <div class="theme-name">${name}</div>
+      </div>`;
+  }
+
+  function updateSplashText() {
+    // Splash logo changes with language
+    const logo = document.querySelector('.splash-logo');
+    if(logo) logo.textContent = selectedLang==='zh' ? '音动指尖' : selectedLang==='es' ? 'La Onda' : 'Ripple';
+    document.getElementById('splash-tagline').textContent = I18N[selectedLang].tagline;
+    document.getElementById('splash-theme-label').textContent = I18N[selectedLang].splashTheme;
+    document.getElementById('splash-lang-label').textContent = I18N[selectedLang].splashLang;
+    document.getElementById('splash-enter').textContent = I18N[selectedLang].enter;
+    renderGrid();
+  }
+
+  // Language buttons
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedLang = btn.dataset.lang;
+      currentLang = selectedLang;
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateSplashText();
+    });
+  });
+
+  // Enter button
+  document.getElementById('splash-enter').addEventListener('click', () => {
+    currentLang = selectedLang;
+    applyTheme(selectedTheme);
+    const splash = document.getElementById('splash');
+    splash.style.transition = 'opacity 0.5s ease';
+    splash.style.opacity = '0';
+    setTimeout(() => { splash.style.display = 'none'; applyLang(); }, 500);
+  });
+
+  // Init preview theme as midnight
+  applyTheme('dark');
+  updateSplashText();
+}
+
+// ═══════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════
+
+// Returns {root, quality} for two-line display
+// Solfège map for Chinese display (note letter → syllable)
+const SOLFEGE = {
+  'C':'Do','D':'Re','E':'Mi','F':'Fa','G':'Sol','A':'La','B':'Ti',
+  'Db':'Re♭','Eb':'Mi♭','Gb':'Sol♭','Ab':'La♭','Bb':'Ti♭',
+  'C#':'Do#','D#':'Re#','F#':'Fa#','G#':'Sol#','A#':'La#',
+};
+
+function noteToSolfege(noteKey) {
+  // Strip octave number: C4 → C, Bb3 → Bb, Eb4 → Eb
+  const m = noteKey.match(/^([A-G][b#]?)(\d?)$/);
+  if(!m) return noteKey;
+  const letter = m[1];
+  const syl = SOLFEGE[letter] || letter;
+  return m[2] ? syl : syl; // octave number dropped in ZH display
+}
+
+function formatChord(key) {
+  if (!key || key === 'none') return { root: '—', quality: '' };
+  const zh = currentLang === 'zh'; const es = currentLang === 'es';
+  // Drums
+  const drumNames = {
+    kick:  zh ? '底鼓' : es ? 'Bombo' : 'Kick',
+    snare: zh ? '军鼓' : es ? 'Caja' : 'Snare',
+    hihat: zh ? '踩镲' : es ? 'Platillo' : 'Hi-Hat',
+    tom:   zh ? '通鼓' : es ? 'Tom' : 'Tom',
+    clap:  zh ? '拍手' : es ? 'Palmada' : 'Clap',
+    cymbal:zh ? '铙钹' : es ? 'Címbalo' : 'Cymbal',
+  };
+  if (drumNames[key]) return { root: drumNames[key], quality: zh ? '打击' : 'drum' };
+  // Major chord: e.g. C_maj, Bb3_maj
+  if (key.includes('_maj')) {
+    const root = key.replace('_maj','');
+    return { root: zh ? noteToSolfege(root) : root, quality: zh ? '大调' : es ? 'mayor' : 'major' };
+  }
+  // Minor chord: ends with 'm' but not 'dim', e.g. Am, Cm
+  if (/^[A-G][b#]?m$/.test(key)) {
+    const letter = key.slice(0,-1);
+    return { root: zh ? noteToSolfege(letter) : letter, quality: zh ? '小调' : es ? 'menor' : 'minor' };
+  }
+  // 7th chord: e.g. G7, Bb7
+  if (/^[A-G][b#]?\d?7$/.test(key)) {
+    const root = key.replace('7','');
+    return { root: zh ? noteToSolfege(root) : root, quality: zh ? '七和弦' : es ? '7ª' : '7th' };
+  }
+  // Plain note (C, D4, Bb3, etc.) — use solfège for ZH
+  if (zh) return { root: noteToSolfege(key), quality: '' };
+  return { root: key, quality: '' };
+}
+
+const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
+const TUT_FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
+
+const FINGER_CFG = {
+  thumb:  { idx: 1, range: 139000, w: 80, h: 108, mt: 80, color: '#ff4d4d', rc: '255,77,77', dir: -1 },
+  index:  { idx: 3, range: 140000, w: 68, h: 168, mt: 12, color: '#ff8c2a', rc: '255,140,42' },
+  middle: { idx: 4, range: 139000, w: 68, h: 192, mt: 0,  color: '#e6b800', rc: '230,184,0' },
+  ring:   { idx: 5, range: 184000, w: 68, h: 168, mt: 12, color: '#22c55e', rc: '34,197,94' },
+  pinky:  { idx: 6, range: 168000, w: 68, h: 144, mt: 38, color: '#818cf8', rc: '129,140,248' },
+};
+
+const CHORDS = {
+  // Single notes oct3
+  'A3':[220],'B3':[247],'Bb3':[233],'C3':[131],'D3':[147],'E3':[165],'Eb3':[156],'F3':[175],'G3':[196],'Ab3':[208],
+  // Single notes oct4
+  'C4':[262],'D4':[294],'E4':[330],'F4':[349],'G4':[392],'A4':[440],'B4':[494],
+  'C#4':[277],'D#4':[311],'F#4':[370],'G#4':[415],'A#4':[466],
+  'Db4':[277],'Eb4':[311],'Gb4':[370],'Ab4':[415],'Bb4':[466],
+  // Keep old plain names as aliases for oct4
+  'C':[262],'D':[294],'E':[330],'F':[349],'G':[392],'A':[440],'B':[494],
+  'C#':[277],'D#':[311],'F#':[370],'G#':[415],'A#':[466],
+  'Db':[277],'Eb':[311],'Gb':[370],'Ab':[415],'Bb':[466],
+  // Oct 5
+  'C5':[523],'D5':[587],'E5':[659],'F5':[698],'G5':[784],'A5':[880],'B5':[988],
+  // Major chords
+  'C_maj':[262,330,392],'D_maj':[294,370,440],'E_maj':[330,415,494],
+  'F_maj':[349,440,523],'G_maj':[392,494,587],'A_maj':[440,554,659],'B_maj':[494,622,740],
+  'C#_maj':[277,349,415],'D#_maj':[311,392,466],'F#_maj':[370,466,554],
+  'G#_maj':[415,523,622],'A#_maj':[466,587,698],
+  'Db_maj':[277,349,415],'Eb_maj':[311,392,466],'Gb_maj':[370,466,554],
+  'Ab_maj':[415,523,622],'Bb_maj':[466,587,698],
+  // Minor chords
+  'Am':[440,523,659],'Bm':[494,587,740],'Cm':[262,311,392],
+  'Dm':[294,349,440],'Em':[330,392,494],'Fm':[349,415,523],'Gm':[392,466,587],
+  'C#m':[277,330,415],'D#m':[311,370,466],'F#m':[370,440,554],
+  'G#m':[415,494,622],'A#m':[466,554,698],
+  // 7th chords
+  'C7':[262,330,392,466],'D7':[294,370,440,523],'E7':[330,415,494,587],
+  'F7':[349,440,523,622],'G7':[392,494,587,698],'A7':[440,554,659,784],'B7':[494,622,740,880],
+  'none':[],
+};
+
+const DRUMS = ['kick','snare','hihat','tom','clap','cymbal'];
+
+const PRESETS = {
+  therapy: { name:'🎵 Harp', nameZh:'🎵 竖琴', nameEs:'🎵 Arpa', instrument:'harp', mapping:{thumb:'C_maj',index:'F_maj',middle:'Am',ring:'G_maj',pinky:'Em'} },
+  piano:   { name:'🎹 Piano',   nameZh:'🎹 钢琴', nameEs:'🎹 Piano', instrument:'soft',  mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'} },
+  chords:  { name:'🎸 Chords',  nameZh:'🎸 和弦', nameEs:'🎸 Acordes', instrument:'soft',  mapping:{thumb:'C_maj',index:'D_maj',middle:'E_maj',ring:'G_maj',pinky:'A_maj'} },
+  drums:   { name:'🥁 Drums',   nameZh:'🥁 打击乐', nameEs:'🥁 Batería', instrument:'drums', mapping:{thumb:'kick',index:'snare',middle:'hihat',ring:'tom',pinky:'clap'} },
+  custom:  { name:'✏️ Custom',  nameZh:'✏️ 自定义', nameEs:'✏️ Personalizado', instrument:'sine',  mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'} },
+};
+
+const TUTORIALS_EN = {
+  scale: {
+    name:'Simple Scale', difficulty:'Beginner',
+    sequence:[
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'C4',d:2},
+    ],
+  },
+  hotcross: {
+    name:'Hot Cross Buns', difficulty:'Beginner',
+    sequence:[
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'C4',d:0.5},{note:'C4',d:0.5},{note:'C4',d:0.5},{note:'C4',d:0.5},
+      {note:'D4',d:0.5},{note:'D4',d:0.5},{note:'D4',d:0.5},{note:'D4',d:0.5},
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+    ],
+  },
+  rain: {
+    name:'Rain Rain Go Away', difficulty:'Beginner',
+    sequence:[
+      // Rain rain go away
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},
+      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      // Come again another day
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},
+      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      // Little Johnny wants to play
+      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:2},
+    ],
+  },
+  mary: {
+    name:'Mary Had a Little Lamb', difficulty:'Easy',
+    sequence:[
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'D4',d:2},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'G4',d:2},
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:2},
+    ],
+  },
+  happy: {
+    // 8 notes → mapping shifts mid-song
+    name:'Happy Birthday', difficulty:'Easy',
+    sequence:[
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'F4',d:1},{note:'E4',d:2},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'G4',d:1},{note:'F4',d:2},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'C5',d:1},
+      {note:'A4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'Bb4',d:0.75},{note:'Bb4',d:0.25},{note:'A4',d:1},
+      {note:'F4',d:1},{note:'G4',d:1},{note:'F4',d:2},
+    ],
+  },
+  london: {
+    name:'London Bridge', difficulty:'Easy',
+    sequence:[
+      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:2},
+      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},{note:'D4',d:1},{note:'G4',d:2},
+    ],
+  },
+  twinkle: {
+    // 6 notes (C D E F G A) → mapping shifts when A4 needed
+    name:'Twinkle Twinkle', difficulty:'Easy',
+    sequence:[
+      {note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+    ],
+  },
+  brother: {
+    // 6 notes (C D E F G A) → mapping shifts for A4
+    name:'Are You Sleeping', difficulty:'Medium',
+    sequence:[
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'C4',d:1},{note:'G4',d:1},{note:'C4',d:2},
+      {note:'C4',d:1},{note:'G4',d:1},{note:'C4',d:2},
+    ],
+  },
+  jingle: {
+    name:'Jingle Bells (Chorus)', difficulty:'Medium',
+    sequence:[
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:4},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'E4',d:1},{note:'D4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:2},{note:'G4',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:4},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'D4',d:1},{note:'C4',d:4},
+    ],
+  },
+  ode: {
+    name:'Ode to Joy', difficulty:'Medium',
+    sequence:[
+      {note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'E4',d:1.5},{note:'D4',d:0.5},{note:'D4',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1.5},{note:'C4',d:0.5},{note:'C4',d:2},
+    ],
+  },
+  rowboat: {
+    // 6 notes (C4 D4 E4 F4 G4 C5) → shifts when C5 needed
+    name:'Row Row Row Your Boat', difficulty:'Medium',
+    sequence:[
+      {note:'C4',d:1.5},{note:'C4',d:1.5},{note:'C4',d:1},{note:'D4',d:0.5},{note:'E4',d:1.5},
+      {note:'E4',d:1.5},{note:'D4',d:0.5},{note:'E4',d:1},{note:'F4',d:0.5},{note:'G4',d:3},
+      {note:'C5',d:0.5},{note:'C5',d:0.5},{note:'C5',d:0.5},
+      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:0.5},
+      {note:'E4',d:0.5},{note:'E4',d:0.5},{note:'E4',d:0.5},
+      {note:'C4',d:0.5},{note:'C4',d:0.5},{note:'C4',d:0.5},
+      {note:'G4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'D4',d:0.5},{note:'C4',d:3},
+    ],
+  },
+  entertainer: {
+    // 6 notes (Bb3 C4 D4 E4 F4 G4) → shifts when G4 needed
+    name:'The Entertainer', difficulty:'Hard',
+    sequence:[
+      // Phrase A1: D C D Bb | D. F G | Eb D C D | Bb(long)
+      {note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:0.5},
+      {note:'D4',d:1},{note:'F4',d:0.5},{note:'G4',d:0.5},
+      {note:'Eb4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},
+      {note:'Bb3',d:2},
+      // Phrase A2: D C D Bb | D. G F | Eb D C | Bb(long)
+      {note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:0.5},
+      {note:'D4',d:1},{note:'G4',d:0.5},{note:'F4',d:0.5},
+      {note:'Eb4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},
+      {note:'Bb3',d:2},
+      // Phrase B: D C D Bb | D. F G | F E F | E F G | F E D E D C | D(long)
+      {note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:0.5},
+      {note:'D4',d:1},{note:'F4',d:0.5},{note:'G4',d:0.5},
+      {note:'F4',d:0.5},{note:'E4',d:0.5},{note:'F4',d:0.5},
+      {note:'E4',d:0.5},{note:'F4',d:0.5},{note:'G4',d:0.5},
+      {note:'F4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:0.5},
+      {note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},
+      {note:'D4',d:2},
+    ],
+  },
+  furelise: {
+    // 8 notes (A3 B3 C4 D4 Eb4 E4 A4 B4) → mapping shifts for upper notes
+    name:'Für Elise (Theme)', difficulty:'Hard',
+    sequence:[
+      {note:'E4',d:0.5},{note:'Eb4',d:0.5},{note:'E4',d:0.5},{note:'Eb4',d:0.5},
+      {note:'E4',d:0.5},{note:'B3',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'A3',d:1},
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'A4',d:0.5},{note:'B4',d:1},
+      {note:'E4',d:0.5},{note:'Eb4',d:0.5},{note:'E4',d:0.5},{note:'Eb4',d:0.5},
+      {note:'E4',d:0.5},{note:'B3',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'A3',d:1},
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'A4',d:0.5},{note:'B4',d:1},
+      {note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:1},
+    ],
+  },
+
+  // ── Yankee Doodle — C D E F G (5 notes, no shift) ──────────────
+  yankeedoodle: {
+    name:'Yankee Doodle', difficulty:'Easy', bpm:120,
+    sequence:[
+      // Verse
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'C4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      // A-riding on a pony
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:2},
+      // Stuck a feather in his cap and
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'E4',d:1},
+      // Called it macaroni
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'C4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      // Chorus — Yankee Doodle keep it up
+      {note:'C4',d:1.5},{note:'C4',d:0.5},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      // Yankee Doodle dandy
+      {note:'C4',d:1.5},{note:'C4',d:0.5},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:2},
+      // Mind the music and the step and
+      {note:'G4',d:1.5},{note:'G4',d:0.5},{note:'F4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'E4',d:1},
+      // With the girls be handy
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'C4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+    ],
+  },
+
+  // ── Old MacDonald — C D E G A (5 notes, no shift) ──────────────
+  oldmac: {
+    name:"Old MacDonald", difficulty:'Easy', bpm:110,
+    sequence:[
+      // Old MacDonald had a farm
+      {note:'C4',d:1},{note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      // E-I-E-I-O (Mi Re Mi Re Do)
+      {note:'E4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:4},
+      // And on this farm he had a duck
+      {note:'G4',d:1},{note:'C4',d:1},{note:'C4',d:1},{note:'C4',d:1},
+      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      // E-I-E-I-O
+      {note:'E4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:4},
+      // With a moo moo here, and a moo moo there
+      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:1},{note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:1},
+      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:1},
+      // Here a moo, there a moo, everywhere a moo moo
+      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},{note:'E4',d:0.5},
+      {note:'D4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:1},{note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:1},
+      // Old MacDonald had a farm, E-I-E-I-O
+      {note:'C4',d:1},{note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'E4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:4},
+    ],
+  },
+
+  // ── Oh Susanna — C D E G A (5 notes, no shift) ──────────────────
+  susanna: {
+    name:"Oh Susanna", difficulty:'Easy', bpm:116,
+    sequence:[
+      // Verse 1
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},{note:'E4',d:1},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:3},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},{note:'E4',d:1},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'C4',d:1},{note:'C4',d:3},
+      // Chorus — Oh Susanna
+      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1.5},{note:'E4',d:0.5},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1.5},{note:'E4',d:0.5},
+      {note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:2},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},{note:'E4',d:1},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'C4',d:1},{note:'C4',d:3},
+    ],
+  },
+
+  // ── When the Saints Go Marching In — C D E F G (5 notes, no shift) ──
+  saints: {
+    name:'When the Saints Go Marching In', difficulty:'Medium', bpm:112,
+    sequence:[
+      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:2},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'E4',d:2},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'C4',d:3},
+      // Repeat
+      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:2},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'E4',d:2},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'C4',d:3},
+    ],
+  },
+
+  // ── Amazing Grace — G major, B3 D4 E4 G4 A4 B4 D5 (7 notes, shifts) ──
+  amazinggrace: {
+    name:'Amazing Grace', difficulty:'Medium', bpm:76,
+    sequence:[
+      // Phrase 1: Amazing grace, how sweet the sound
+      {note:'D4',d:1},
+      {note:'G4',d:1.5},{note:'B4',d:0.5},{note:'G4',d:1},
+      {note:'B4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},
+      {note:'G4',d:3},
+      // Phrase 2: That saved a wretch like me
+      {note:'D4',d:1},
+      {note:'G4',d:1.5},{note:'B4',d:0.5},{note:'G4',d:1},
+      {note:'D4',d:1.5},{note:'B3',d:0.5},{note:'D4',d:1},
+      {note:'G4',d:3},
+      // Phrase 3: I once was lost but now am found
+      {note:'D4',d:1},
+      {note:'G4',d:1.5},{note:'B4',d:0.5},{note:'G4',d:1},
+      {note:'B4',d:1.5},{note:'D5',d:0.5},{note:'B4',d:1},
+      {note:'G4',d:3},
+      // Phrase 4: Was blind but now I see
+      {note:'G4',d:1},
+      {note:'G4',d:1.5},{note:'B4',d:0.5},{note:'D5',d:1},
+      {note:'B4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},
+      {note:'G4',d:3},
+    ],
+  },
+
+  // ── Greensleeves — A minor, Ab3 A3 B3 C4 D4 E4 F4 G4 (8 notes, shifts) ──
+  greensleeves: {
+    name:'Greensleeves', difficulty:'Hard', bpm:72,
+    sequence:[
+      // Part A — "Alas my love you do me wrong"
+      {note:'A3',d:1},
+      {note:'C4',d:2},{note:'D4',d:1},{note:'E4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1},
+      {note:'D4',d:2},{note:'B3',d:1},{note:'C4',d:2},{note:'A3',d:1},
+      {note:'A3',d:3},{note:'B3',d:2},{note:'G4',d:1},
+      {note:'G4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'D4',d:2},{note:'A3',d:1},
+      {note:'C4',d:2},{note:'D4',d:1},{note:'E4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1},
+      {note:'D4',d:2},{note:'B3',d:1},{note:'C4',d:2},{note:'A3',d:1},
+      {note:'A3',d:1.5},{note:'G4',d:0.5},{note:'F4',d:1},{note:'E4',d:1.5},{note:'F4',d:0.5},{note:'D4',d:1},
+      {note:'D4',d:3},
+      // Part B — "Greensleeves was all my joy"
+      {note:'G4',d:1},
+      {note:'C4',d:2},{note:'D4',d:1},{note:'E4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1},
+      {note:'D4',d:2},{note:'B3',d:1},{note:'G4',d:3},
+      {note:'F4',d:2},{note:'E4',d:1},{note:'D4',d:1.5},{note:'E4',d:0.5},{note:'F4',d:1},
+      {note:'E4',d:2},{note:'C4',d:1},
+      {note:'C4',d:2},{note:'D4',d:1},{note:'E4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1},
+      {note:'D4',d:2},{note:'B3',d:1},{note:'C4',d:2},{note:'A3',d:1},
+      {note:'A3',d:1.5},{note:'G4',d:0.5},{note:'F4',d:1},{note:'E4',d:1.5},{note:'F4',d:0.5},{note:'D4',d:1},
+      {note:'D4',d:3},
+    ],
+  },
+
+};
+
+const TUTORIALS_ZH = {
+  scale: {
+    name:'音阶练习', nameEn:'Simple Scale', difficulty:'Beginner',
+    sequence:[
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'C4',d:2},
+    ],
+  },
+
+  // 茉莉花 — C pentatonic: C D E G A (5 notes, no shift needed)
+  // 好一朵茉莉花: G A G E | D C(hold) | G A G A | A. G G(hold) | E D C(hold)
+  molihua: {
+    name:'茉莉花', nameEn:'Jasmine Flower', difficulty:'Beginner', bpm:88,
+    sequence:[
+      // 好一朵美丽的茉莉花 (3 5 3 2 | 1 -)
+      {note:'E4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      // 好一朵美丽的茉莉花 (3 5 3 5 | 5. 6 5 -)
+      {note:'E4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:2},
+      // 芬芳美丽满枝桠 (3 3 5 6 5 3 5)
+      {note:'E4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:1},
+      // 又香又白人人夸 (6 5 3 2 | 1 -)
+      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:3},
+    ],
+  },
+
+  // 两只老虎 — Frère Jacques melody, C major: C D E F G (5 notes, no shift)
+  liangzhi: {
+    name:'两只老虎', nameEn:'Two Tigers', difficulty:'Beginner', bpm:112,
+    sequence:[
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'C4',d:1},{note:'G4',d:1},{note:'C4',d:2},
+      {note:'C4',d:1},{note:'G4',d:1},{note:'C4',d:2},
+    ],
+  },
+
+  // 世上只有妈妈好 — 3/4 waltz, C pentatonic: C D E G A (5 notes, no shift)
+  // 世上只有妈妈好: E G(h.) | G E G A | G(h.) | E G(h.) | G E D C | D(h.) |
+  // 投进妈妈的怀抱: C D E G E D C | E(h.) | G E D E | D(h.) | C(h.)
+  mama: {
+    name:'世上只有妈妈好', nameEn:'Mother Is the Best', difficulty:'Easy', bpm:96,
+    sequence:[
+      {note:'E4',d:1},{note:'G4',d:2},
+      {note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:0.5},{note:'A4',d:0.5},
+      {note:'G4',d:3},
+      {note:'E4',d:1},{note:'G4',d:2},
+      {note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
+      {note:'D4',d:3},
+      {note:'C4',d:0.5},{note:'D4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:1},
+      {note:'E4',d:3},
+      {note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'D4',d:3},
+      {note:'C4',d:3},
+    ],
+  },
+
+  // 生日快乐 — C major: C D E F G A Bb C5 (8 notes, shifts for high notes)
+  happy: {
+    name:'生日快乐', nameEn:'Happy Birthday', difficulty:'Easy',
+    sequence:[
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'F4',d:1},{note:'E4',d:2},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'G4',d:1},{note:'F4',d:2},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'C5',d:1},
+      {note:'A4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'Bb4',d:0.75},{note:'Bb4',d:0.25},{note:'A4',d:1},
+      {note:'F4',d:1},{note:'G4',d:1},{note:'F4',d:2},
+    ],
+  },
+
+  // 小星星 — Twinkle, C pentatonic with F: C D E F G A (6 notes, shifts for A4)
+  twinkle: {
+    name:'小星星', nameEn:'Little Star (Twinkle)', difficulty:'Easy',
+    sequence:[
+      {note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+    ],
+  },
+
+  // 卖报歌 — Nie Er 1933, C pentatonic: C D E G A (5 notes, no shift)
+  // G G G E G A | G. E G | A A A A A G | A(h) |
+  // E E G E D C | D(h) | C E G A G E | C(h)
+  brother: {
+    name:'卖报歌', nameEn:"Newsboy's Song", difficulty:'Medium', bpm:120,
+    sequence:[
+      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'A4',d:0.5},
+      {note:'G4',d:1},{note:'E4',d:0.5},{note:'G4',d:0.5},
+      {note:'A4',d:0.5},{note:'A4',d:0.5},{note:'A4',d:0.5},{note:'A4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},
+      {note:'A4',d:2},
+      {note:'E4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},
+      {note:'D4',d:2},
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},
+      {note:'C4',d:2},
+    ],
+  },
+
+  // 友谊地久天长 (Auld Lang Syne) — correct melody, 3/4
+  // Notes: C4 D4 E4 G4 A4 C5 (6 notes, shifts up when C5 appears)
+  // G(pickup) | C. C D C | C E G(h.) | E. E C E | G(h.) |
+  // A. A A G | A C5 C5(h.) | A. E G A | A(h.) |
+  // G. G A G | G E G(h.) | D. D C E | G. E D C |
+  // E. E G A | A G E(h.) | C(h.) |
+  jingle: {
+    name:'友谊地久天长', nameEn:'Auld Lang Syne', difficulty:'Medium', bpm:84,
+    sequence:[
+      {note:'G4',d:1},
+      {note:'C4',d:1.5},{note:'C4',d:0.5},{note:'D4',d:1},{note:'C4',d:1},
+      {note:'C4',d:1},{note:'E4',d:1},{note:'G4',d:3},
+      {note:'E4',d:1.5},{note:'E4',d:0.5},{note:'C4',d:1},{note:'E4',d:1},
+      {note:'G4',d:3},
+      {note:'A4',d:1.5},{note:'A4',d:0.5},{note:'A4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'C5',d:1},{note:'C5',d:3},
+      {note:'A4',d:1.5},{note:'E4',d:0.5},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'A4',d:3},
+      {note:'G4',d:1.5},{note:'G4',d:0.5},{note:'A4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:3},
+      {note:'D4',d:1.5},{note:'D4',d:0.5},{note:'C4',d:1},{note:'E4',d:1},
+      {note:'G4',d:1.5},{note:'E4',d:0.5},{note:'D4',d:1},{note:'C4',d:1},
+      {note:'E4',d:1.5},{note:'E4',d:0.5},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:3},
+      {note:'C4',d:3},
+    ],
+  },
+
+  // 欢乐颂 — Ode to Joy, C major: C D E F G (5 notes, no shift)
+  ode: {
+    name:'欢乐颂', nameEn:'Ode to Joy', difficulty:'Medium',
+    sequence:[
+      {note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'E4',d:1.5},{note:'D4',d:0.5},{note:'D4',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1.5},{note:'C4',d:0.5},{note:'C4',d:2},
+    ],
+  },
+
+  // Row Row Row Your Boat — kept in ZH list as a universal favourite
+  rowboat: {
+    name:'划船之歌', nameEn:'Row Your Boat', difficulty:'Medium',
+    sequence:[
+      {note:'C4',d:1.5},{note:'C4',d:1.5},{note:'C4',d:1},{note:'D4',d:0.5},{note:'E4',d:1.5},
+      {note:'E4',d:1.5},{note:'D4',d:0.5},{note:'E4',d:1},{note:'F4',d:0.5},{note:'G4',d:3},
+      {note:'C5',d:0.5},{note:'C5',d:0.5},{note:'C5',d:0.5},
+      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:0.5},
+      {note:'E4',d:0.5},{note:'E4',d:0.5},{note:'E4',d:0.5},
+      {note:'C4',d:0.5},{note:'C4',d:0.5},{note:'C4',d:0.5},
+      {note:'G4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'D4',d:0.5},{note:'C4',d:3},
+    ],
+  },
+
+  // 梁祝主题 — Butterfly Lovers, C pentatonic: C D E G A C5 (6 notes)
+  // Correct opening: G G A | C5 A | G E | D(long) | C(long)
+  // Second phrase: E E G A G | E D E G | A G E D | C(long)
+  entertainer: {
+    name:'梁祝主题', nameEn:'Butterfly Lovers (Theme)', difficulty:'Hard', bpm:66,
+    sequence:[
+      {note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'C5',d:1.5},{note:'A4',d:0.5},
+      {note:'G4',d:1},{note:'E4',d:1},
+      {note:'D4',d:3},
+      {note:'C4',d:3},
+      {note:'E4',d:1},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'A4',d:1},{note:'G4',d:1},
+      {note:'E4',d:0.5},{note:'D4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},
+      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:3},
+      {note:'G4',d:1},{note:'G4',d:0.5},{note:'A4',d:0.5},{note:'C5',d:1},{note:'A4',d:1},
+      {note:'G4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:0.5},{note:'E4',d:0.5},
+      {note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:3},
+    ],
+  },
+
+  // 致爱丽丝 — Für Elise, A minor: A3 B3 C4 D4 Eb4 E4 A4 B4 (8 notes, shifts)
+  furelise: {
+    name:'致爱丽丝', nameEn:'Für Elise (Theme)', difficulty:'Hard',
+    sequence:[
+      {note:'E4',d:0.5},{note:'Eb4',d:0.5},{note:'E4',d:0.5},{note:'Eb4',d:0.5},
+      {note:'E4',d:0.5},{note:'B3',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'A3',d:1},
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'A4',d:0.5},{note:'B4',d:1},
+      {note:'E4',d:0.5},{note:'Eb4',d:0.5},{note:'E4',d:0.5},{note:'Eb4',d:0.5},
+      {note:'E4',d:0.5},{note:'B3',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'A3',d:1},
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'A4',d:0.5},{note:'B4',d:1},
+      {note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:1},
+    ],
+  },
+
+  // ── 月亮代表我的心 — C D E F G A (6 notes, shifts for A4) ──────
+  yuexin: {
+    name:'月亮代表我的心', nameEn:'The Moon Represents My Heart', difficulty:'Medium', bpm:76,
+    sequence:[
+      // 你问我爱你有多深 (1 2 3 3 | 2 1 5-)
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'C4',d:1},{note:'G4',d:2},
+      // 我也不轻易开口
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:3},
+      // 月亮代表我的心
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:3},
+      // 轻轻的一个吻 (D C D E G G)
+      {note:'D4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'G4',d:2},
+      // 已经打动我的心 (G E G A G E)
+      {note:'G4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:2},
+      // 深深的一段情 (D C D E G G)
+      {note:'D4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'G4',d:2},
+      // 教我思念到如今 (A G E D C C)
+      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'C4',d:2},
+      // 月亮代表我的心 (reprise)
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:3},
+    ],
+  },
+
+  // ── 送别 — C D E G A C5 (6 notes, shifts for C5) ────────────────
+  songbie: {
+    name:'送别', nameEn:'Farewell', difficulty:'Medium', bpm:72,
+    sequence:[
+      // 长亭外，古道边 (3 2 1 | 3 5-)
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
+      {note:'E4',d:1},{note:'G4',d:2},
+      // 芳草碧连天 (3 5 6 | 5--)
+      {note:'E4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'G4',d:3},
+      // 晚风拂柳笛声残 (5 3 2 | 3 2-)
+      {note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'E4',d:1},{note:'D4',d:2},
+      // 夕阳山外山 (6₁ 1 2 | 1--)
+      {note:'A3',d:1},{note:'C4',d:1},{note:'D4',d:1},
+      {note:'C4',d:3},
+      // 天之涯，地之角 (3 2 1 | 3 5-)
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
+      {note:'E4',d:1},{note:'G4',d:2},
+      // 知交半零落 (3 5 6 | 5--)
+      {note:'E4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'G4',d:3},
+      // 一壶浊酒尽余欢 (6 5 3 | 5--)
+      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},
+      {note:'G4',d:3},
+      // 今宵别梦寒 (2 1 2 | 1--)
+      {note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},
+      {note:'C4',d:3},
+    ],
+  },
+
+  // ── 春天在哪里 — C D E G A (5 notes, no shift) ──────────────────
+  chuntian: {
+    name:'春天在哪里', nameEn:'Where Is Spring', difficulty:'Easy', bpm:108,
+    sequence:[
+      // 春天在哪里呀 (5 5 3 3 5-)
+      {note:'G4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'G4',d:2},
+      // 春天在哪里 (5 5 3 3 5)
+      {note:'G4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'G4',d:1},
+      // 春天在那青翠的山林里 (6 6 5 6 | 5 3 5 3 2 1)
+      {note:'A4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'A4',d:0.5},
+      {note:'G4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},
+      // 这里有红花呀 (3 5 3 2 1)
+      {note:'E4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
+      // 这里有绿草 (3 2 1)
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
+      // 还有那会唱歌的小黄鹂 (2 3 5 6 | 5 3 5 3 | 2 1-)
+      {note:'D4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'A4',d:0.5},
+      {note:'G4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},
+      {note:'D4',d:1},{note:'C4',d:3},
+    ],
+  },
+
+  // ── 上学歌 — C D E F G A (6 notes, shifts for A4) ──────────────
+  shangxue: {
+    name:'上学歌', nameEn:'Going to School', difficulty:'Easy', bpm:104,
+    sequence:[
+      // 太阳当空照
+      {note:'G4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:2},
+      // 花儿对我笑
+      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'D4',d:2},
+      // 小鸟说早早早
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      // 你为什么背上小书包
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},
+      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:3},
+    ],
+  },
+
+  // ── 童年 (罗大佑) — C D E F G A (6 notes, shifts for F4 and A4) ──
+  tongning: {
+    name:'童年', nameEn:'Childhood (Luo Dayou)', difficulty:'Medium', bpm:92,
+    sequence:[
+      // 池塘边的榕树上 (E E E G G E D D)
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      // 知了在声声叫着夏天 (D D E D C D D)
+      {note:'D4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'D4',d:2},
+      // 操场边的秋千上
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      // 只有蝴蝶停在上面 (D D E D C C)
+      {note:'D4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      // 总是要等到睡觉前 (G G G A G F E D)
+      {note:'G4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      // 才知道功课只做了一点点 (E F G G A G F E D C)
+      {note:'E4',d:0.5},{note:'F4',d:0.5},{note:'G4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      // 总是要等到考试以前
+      {note:'G4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      // 才发现不会的还很多
+      {note:'E4',d:0.5},{note:'F4',d:0.5},{note:'G4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:3},
+    ],
+  },
+
+  // ── 数鸭子 — C D E G A (5 notes, no shift) ──────────────────────
+  shuya: {
+    name:'数鸭子', nameEn:'Counting Ducks', difficulty:'Easy', bpm:112,
+    sequence:[
+      // 门前大桥下 (5 3 6 5 3 5-) 游过一群鸭 (5 3 6 5 2 1-)
+      {note:'G4',d:1},{note:'E4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:2},
+      {note:'G4',d:1},{note:'E4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      // 快来快来数一数，二四六七八
+      {note:'G4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'G4',d:0.5},{note:'E4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:0.5},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'D4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:2},
+      // 阿门阿前一棵葡萄树
+      {note:'C4',d:1},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'G4',d:2},
+      // 阿东阿西几朵花
+      {note:'C4',d:1},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      // 阿上阿下几片叶子
+      {note:'E4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
+      // 我来数一数，二四六七八
+      {note:'C4',d:1},{note:'D4',d:1},{note:'D4',d:1},{note:'D4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:2},{note:'C4',d:2},
+    ],
+  },
+
+};
+
+// Active tutorial set — switches with language
+const TUTORIALS_ES = {
+  escala: {
+    name:'Escala Simple', difficulty:'Beginner',
+    sequence:[
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'C4',d:2},
+    ],
+  },
+  // Cumpleaños Feliz
+  cumple: {
+    name:'Cumpleaños Feliz', difficulty:'Easy',
+    sequence:[
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'F4',d:1},{note:'E4',d:2},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'G4',d:1},{note:'F4',d:2},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'C5',d:1},
+      {note:'A4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'Bb4',d:0.75},{note:'Bb4',d:0.25},{note:'A4',d:1},
+      {note:'F4',d:1},{note:'G4',d:1},{note:'F4',d:2},
+    ],
+  },
+  // Estrellita (Twinkle Twinkle)
+  estrellita: {
+    name:'Estrellita ¿Dónde Estás?', difficulty:'Easy',
+    sequence:[
+      {note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+    ],
+  },
+  // Los Pollitos
+  pollitos: {
+    name:'Los Pollitos', difficulty:'Easy', bpm:108,
+    sequence:[
+      // Los po-lli-tos di-cen pío pío pío
+      {note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      // cuando tienen hambre cuando tienen frío
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'D4',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'E4',d:1},{note:'D4',d:2},
+      // La mamá les busca el maíz y el trigo
+      {note:'G4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'G4',d:1},{note:'E4',d:2},
+      // les da su comida y les presta abrigo
+      {note:'G4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'G4',d:1},{note:'E4',d:2},
+      // Bajo sus dos alas acurrucaditos
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'E4',d:2},
+      // duermen los pollitos hasta el otro día
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'C4',d:2},
+    ],
+  },
+  // Cumbia del Abecedario (simplified)
+  abecedario: {
+    name:'El Abecedario', difficulty:'Easy', bpm:112,
+    sequence:[
+      {note:'C4',d:1},{note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:2},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+    ],
+  },
+  // La Bamba
+  bamba: {
+    name:'La Bamba', difficulty:'Medium', bpm:120,
+    sequence:[
+      // Pa-ra bai-lar la bam-ba
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      // se nece-si-ta una po-ca de gra-cia
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      // una po-ca de gra-cia y o-tra co-si-ta
+      {note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
+      {note:'D4',d:1},{note:'E4',d:1},{note:'G4',d:2},
+      // Bam-ba bam-ba
+      {note:'C4',d:1},{note:'E4',d:1},{note:'G4',d:2},
+      {note:'C4',d:1},{note:'E4',d:1},{note:'G4',d:2},
+    ],
+  },
+  // Cielito Lindo
+  cielito: {
+    name:'Cielito Lindo', difficulty:'Medium', bpm:84,
+    sequence:[
+      // De la Sie-rra Mo-re-na
+      {note:'E4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:2},
+      // Cie-li-to lin-do
+      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},{note:'E4',d:1},{note:'C4',d:2},
+      // vie-nen ba-jan-do
+      {note:'E4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'A4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:2},
+      // un par de o-ji-tos ne-gros
+      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},{note:'E4',d:1},{note:'C4',d:3},
+      // Ay ay ay ay
+      {note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
+      // can-ta y no llo-res
+      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},{note:'E4',d:1},{note:'C4',d:2},
+      // por-que can-tan-do se a-le-gran
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      // Cie-li-to lin-do los co-ra-zo-nes
+      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:3},
+    ],
+  },
+  // Ode to Joy — Himno a la Alegría
+  himno: {
+    name:'Himno a la Alegría', difficulty:'Medium',
+    sequence:[
+      {note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'E4',d:1.5},{note:'D4',d:0.5},{note:'D4',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1.5},{note:'C4',d:0.5},{note:'C4',d:2},
+    ],
+  },
+  // Cuando los Santos Marchan
+  santos: {
+    name:'Cuando los Santos Marchan', difficulty:'Medium', bpm:112,
+    sequence:[
+      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:2},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'E4',d:2},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'C4',d:3},
+      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
+      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:2},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'E4',d:2},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'C4',d:3},
+    ],
+  },
+  // Fur Elise
+  furelise: {
+    name:'Para Elisa', difficulty:'Hard',
+    sequence:[
+      {note:'E4',d:0.5},{note:'Eb4',d:0.5},{note:'E4',d:0.5},{note:'Eb4',d:0.5},
+      {note:'E4',d:0.5},{note:'B3',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'A3',d:1},
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'A4',d:0.5},{note:'B4',d:1},
+      {note:'E4',d:0.5},{note:'Eb4',d:0.5},{note:'E4',d:0.5},{note:'Eb4',d:0.5},
+      {note:'E4',d:0.5},{note:'B3',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'A3',d:1},
+      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'A4',d:0.5},{note:'B4',d:1},
+      {note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:1},
+    ],
+  },
+};
+
+function getTutorials() {
+  if(currentLang === 'zh') return TUTORIALS_ZH;
+  if(currentLang === 'es') return TUTORIALS_ES;
+  return TUTORIALS_EN;
+}
+let TUTORIALS = getTutorials();
+
+// ─── Dynamic note-window helpers ─────────────────────────────
+const CHROM = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+function noteToMidi(n) {
+  if(!n) return 60;
+  const m = n.match(/^([A-G][b#]?)(\d)$/);
+  if(!m) return 60;
+  const norm = {'C#':'Db','D#':'Eb','F#':'Gb','G#':'Ab','A#':'Bb'}[m[1]] || m[1];
+  const idx = CHROM.indexOf(norm);
+  return (parseInt(m[2]) + 1) * 12 + (idx >= 0 ? idx : 0);
+}
+function noteToFreq(n) {
+  return 440 * Math.pow(2, (noteToMidi(n) - 69) / 12);
+}
+function getFreqs(note) {
+  return CHORDS[note] || [noteToFreq(note)];
+}
+function getSongNotes(seq) {
+  const unique = [...new Set(seq.map(s => s.note).filter(Boolean))];
+  return unique.sort((a,b) => noteToMidi(a) - noteToMidi(b));
+}
+function getWindowStart(note, songNotes, currentStart) {
+  const idx = songNotes.indexOf(note);
+  if(idx < 0) return currentStart;
+  if(idx >= currentStart && idx < currentStart + TUT_FINGERS.length) return currentStart; // already visible
+  if(idx < currentStart) return Math.max(0, idx);                        // shift down
+  return Math.max(0, idx - 4);                                           // shift up
+}
+function buildWindowMapping(songNotes, windowStart) {
+  const mapping = {};
+  TUT_FINGERS.forEach((f, i) => { const n = songNotes[windowStart + i]; if(n) mapping[f] = n; });
+  return mapping;
+}
+function fingerForNote(note, songNotes, windowStart) {
+  const idx = songNotes.indexOf(note);
+  if(idx < 0) return TUT_FINGERS[0];
+  return TUT_FINGERS[Math.max(0, Math.min(TUT_FINGERS.length - 1, idx - windowStart))];
+}
+
+// ═══════════════════════════════════════════════════════
+//  AUDIO ENGINE
+// ═══════════════════════════════════════════════════════
+const AudioEngine = (() => {
+  const SR = 44100;
+  let ctx = null;
+  let masterGain = null;
+  let activeNodes = {}; // finger -> {osc nodes or buffer source}
+  let drumBuffers = {};
+  let volume = 0.7;
+  let instrument = 'harp';
+
+  function init() {
+    if (ctx) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SR });
+    masterGain = ctx.createGain();
+    masterGain.gain.value = volume;
+    masterGain.connect(ctx.destination);
+    buildDrums();
+  }
+
+  function resume() { ctx && ctx.state === 'suspended' && ctx.resume(); }
+
+  // ── Drum synthesis (ported from server.py) ──
+  function buildDrums() {
+    const drums = {
+      kick(sr) {
+        const dur = 0.4, n = Math.floor(sr*dur);
+        const buf = ctx.createBuffer(1, n, sr);
+        const d = buf.getChannelData(0);
+        for (let i=0;i<n;i++) {
+          const t=i/sr;
+          const freq = 55*Math.exp(-2*t);
+          d[i] = Math.sin(2*Math.PI*freq*t)*Math.exp(-3*t)
+               + 0.6*Math.sin(2*Math.PI*35*t)*Math.exp(-4*t)
+               + 0.2*(Math.random()*2-1)*Math.exp(-80*t);
+        }
+        normalize(d, 0.75); return buf;
+      },
+      snare(sr) {
+        const dur=0.3, n=Math.floor(sr*dur);
+        const buf=ctx.createBuffer(1,n,sr); const d=buf.getChannelData(0);
+        for(let i=0;i<n;i++){const t=i/sr;
+          d[i]=0.4*Math.sin(2*Math.PI*180*t)*Math.exp(-25*t)
+              +0.6*(Math.random()*2-1)*Math.exp(-18*t);}
+        normalize(d,0.75); return buf;
+      },
+      hihat(sr) {
+        const dur=0.12, n=Math.floor(sr*dur);
+        const buf=ctx.createBuffer(1,n,sr); const d=buf.getChannelData(0);
+        for(let i=0;i<n;i++){const t=i/sr; d[i]=(Math.random()*2-1)*Math.exp(-35*t);}
+        normalize(d,0.6); return buf;
+      },
+      tom(sr) {
+        const dur=0.4, n=Math.floor(sr*dur);
+        const buf=ctx.createBuffer(1,n,sr); const d=buf.getChannelData(0);
+        for(let i=0;i<n;i++){const t=i/sr;
+          const freq=90*Math.exp(-4*t);
+          d[i]=Math.sin(2*Math.PI*freq*t)*Math.exp(-8*t);}
+        normalize(d,0.75); return buf;
+      },
+      clap(sr) {
+        const dur=0.3, n=Math.floor(sr*dur);
+        const buf=ctx.createBuffer(1,n,sr); const d=buf.getChannelData(0);
+        for(let k=0;k<5;k++){
+          const off=Math.floor((k*0.012+Math.random()*0.005)*sr);
+          for(let i=0;i<n-off;i++){
+            const t=i/sr;
+            d[i+off]+=(Math.random()*2-1)*Math.exp(-60*t)*Math.pow(0.7,k);
+          }
+        }
+        for(let i=0;i<n;i++){const t=i/sr; d[i]*=Math.exp(-12*t);}
+        normalize(d,0.75); return buf;
+      },
+      cymbal(sr) {
+        const dur=0.8, n=Math.floor(sr*dur);
+        const buf=ctx.createBuffer(1,n,sr); const d=buf.getChannelData(0);
+        for(let i=0;i<n;i++){const t=i/sr;
+          d[i]=(Math.random()*2-1)*Math.exp(-2.5*t)
+              +0.4*(Math.random()*2-1)*Math.exp(-1*t);}
+        normalize(d,0.6); return buf;
+      },
+    };
+    for(const [name, fn] of Object.entries(drums)) {
+      drumBuffers[name] = fn(ctx.sampleRate);
+    }
+  }
+
+  function normalize(d, peak) {
+    let mx=0; for(let i=0;i<d.length;i++) mx=Math.max(mx,Math.abs(d[i]));
+    if(mx>0) for(let i=0;i<d.length;i++) d[i]=d[i]/mx*peak;
+  }
+
+  // ── Sustained tones (ported from server.py audio_callback) ──
+  function startFinger(finger, freqs, inst) {
+    stopFinger(finger);
+    if(!freqs||freqs.length===0) return;
+
+    const nodes = [];
+    const gainNode = ctx.createGain();
+    const attackTime = inst==='pad' ? 0.06 : inst==='bell' ? 0.01 : inst==='harp' ? 0.008 : 0.02;
+    const peakGain = inst==='pad' ? 0.22/Math.max(freqs.length,1) : 0.30/Math.max(freqs.length,1);
+    gainNode.gain.setValueAtTime(0, ctx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(peakGain, ctx.currentTime + attackTime);
+    gainNode.connect(masterGain);
+
+    if(inst==='harp') {
+      // Spread chord across wider octave range
+      const wideFreqs = freqs.map((f, i) => i === 0 ? f : f * 2);
+      const delay_ms = 120;
+      wideFreqs.forEach((freq, noteIdx) => {
+        const delay = noteIdx * (delay_ms / 1000);
+        const pluckGain = ctx.createGain();
+        pluckGain.gain.setValueAtTime(0, ctx.currentTime + delay);
+        pluckGain.gain.linearRampToValueAtTime(0.28 / Math.max(wideFreqs.length, 1), ctx.currentTime + delay + 0.008);
+        pluckGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 2.8);
+        pluckGain.connect(gainNode); // route through gainNode so stopFinger works
+
+        [1, 2].forEach((h, hi) => {
+          const o = ctx.createOscillator();
+          const hg = ctx.createGain();
+          o.type = 'sine';
+          o.frequency.value = freq * h;
+          hg.gain.value = hi === 0 ? 1.0 : 0.18;
+          o.connect(hg); hg.connect(pluckGain);
+          o.start(ctx.currentTime + delay);
+          setTimeout(() => { try { o.stop(); } catch(e) {} }, (delay + 3.0) * 1000);
+          nodes.push(o);
+        });
+        nodes.push(pluckGain); // track so disconnect works
+      });
+      gainNode.gain.cancelScheduledValues(ctx.currentTime);
+      gainNode.gain.setValueAtTime(peakGain * 3, ctx.currentTime);
+    } else for(const freq of freqs) {
+      if(inst==='sine') {
+        const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=freq;
+        o.connect(gainNode); o.start(); nodes.push(o);
+      } else if(inst==='soft') {
+        [1,2,3].forEach((h,i)=>{
+          const o=ctx.createOscillator(); const g=ctx.createGain();
+          o.frequency.value=freq*h; g.gain.value=[0.6,0.3,0.1][i];
+          o.connect(g); g.connect(gainNode); o.start(); nodes.push(o);
+        });
+      } else if(inst==='bell') {
+        [1,2.756,5.404].forEach((h,i)=>{
+          const o=ctx.createOscillator(); const g=ctx.createGain();
+          o.type='sine';
+          o.frequency.value=freq*h; g.gain.value=[1,0.4,0.15][i];
+          o.connect(g); g.connect(gainNode); o.start(); nodes.push(o);
+        });
+        gainNode.gain.cancelScheduledValues(ctx.currentTime);
+        gainNode.gain.setValueAtTime(peakGain, ctx.currentTime + attackTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5);
+      } else if(inst==='pad') {
+        [-0.003,0,0.003].forEach(detune=>{
+          const o=ctx.createOscillator(); const g=ctx.createGain();
+          o.frequency.value=freq*(1+detune); g.gain.value=0.33;
+          o.connect(g); g.connect(gainNode); o.start(); nodes.push(o);
+        });
+      }
+    }
+
+    activeNodes[finger] = { nodes, gainNode, inst };
+  }
+
+  function stopFinger(finger) {
+    const entry = activeNodes[finger];
+    if(!entry) return;
+    const { nodes, gainNode, inst } = entry;
+    const now = ctx.currentTime;
+    // Natural release time varies by instrument
+    const releaseTime = inst==='pad' ? 0.35 : inst==='bell' ? 0.8 : inst==='harp' ? 0.06 : inst==='soft' ? 0.25 : 0.18;
+    gainNode.gain.cancelScheduledValues(now);
+    gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + releaseTime);
+    setTimeout(()=>{
+      nodes.forEach(n=>{ try{n.stop();}catch(e){} });
+      try{gainNode.disconnect();}catch(e){}
+    }, (releaseTime + 0.05) * 1000);
+    delete activeNodes[finger];
+  }
+
+  function playDrum(name) {
+    init(); resume();
+    const buf = drumBuffers[name];
+    if(!buf) return;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.connect(masterGain);
+    src.start();
+  }
+
+  function setVolume(v) {
+    volume = v;
+    if(masterGain) masterGain.gain.value = v;
+  }
+
+  function setInstrument(i) { instrument = i; }
+  function getInstrument() { return instrument; }
+
+  // Update sustained notes for current active set
+  function updateActive(activeSet, preset) {
+    init(); resume();
+    const inst = preset.instrument;
+
+    // Stop fingers no longer active
+    for(const f of Object.keys(activeNodes)) {
+      if(!activeSet.has(f)) stopFinger(f);
+    }
+
+    if(inst==='drums') return;
+
+    // Start newly active fingers (always restart so repeated same note re-attacks cleanly)
+    for(const f of activeSet) {
+      const sound = preset.mapping[f];
+      const freqs = CHORDS[sound] || [];
+      // Always re-trigger if the finger is newly active (stopFinger called above for inactive)
+      if(!activeNodes[f]) {
+        startFinger(f, freqs, inst);
+      }
+    }
+  }
+
+  function triggerDrums(newlyPressed, preset) {
+    init(); resume();
+    if(preset.instrument!=='drums') return;
+    for(const f of newlyPressed) {
+      const sound = preset.mapping[f];
+      if(DRUMS.includes(sound)) playDrum(sound);
+    }
+  }
+
+  function stopAll() {
+    for(const f of Object.keys(activeNodes)) stopFinger(f);
+  }
+
+  function startFingerFreqs(finger, freqs, inst) {
+    init(); resume();
+    startFinger(finger, freqs, inst);
+  }
+
+  return { init, resume, updateActive, triggerDrums, playDrum, setVolume, setInstrument, getInstrument, stopAll, startFingerFreqs };
+})();
+
+// ═══════════════════════════════════════════════════════
+//  SERIAL
+// ═══════════════════════════════════════════════════════
+const Serial = (() => {
+  let port=null, reader=null, connected=false;
+  let buf = new Uint8Array(0);
+
+  async function connect() {
+    try {
+      port = await navigator.serial.requestPort();
+      await port.open({ baudRate: 921600 });
+      connected = true;
+      readLoop();
+      return true;
+    } catch(e) { console.error(e); return false; }
+  }
+
+  async function disconnect() {
+    connected = false;
+    if(reader) { try{await reader.cancel();}catch(e){} reader=null; }
+    if(port) { try{await port.close();}catch(e){} port=null; }
+    buf = new Uint8Array(0);
+  }
+
+  async function readLoop() {
+    while(port && port.readable && connected) {
+      reader = port.readable.getReader();
+      try {
+        while(true) {
+          const {value, done} = await reader.read();
+          if(done) break;
+          process(value);
+        }
+      } catch(e) { if(connected) console.error(e); }
+      finally { reader.releaseLock(); }
+    }
+  }
+
+  function process(data) {
+    const combined = new Uint8Array(buf.length + data.length);
+    combined.set(buf); combined.set(data, buf.length);
+    buf = combined;
+
+    while(buf.length >= 40) {
+      let hi = -1;
+      for(let i=0;i<buf.length-1;i++) {
+        if(buf[i]===0xAA && buf[i+1]===0x55) { hi=i; break; }
+      }
+      if(hi===-1) { buf=buf.slice(-1); break; }
+      if(hi+40>buf.length) { buf=buf.slice(hi); break; }
+
+      const pkt = buf.slice(hi, hi+40);
+      const vals = [];
+      for(let i=0;i<10;i++) {
+        vals.push((pkt[i*4]|(pkt[i*4+1]<<8)|(pkt[i*4+2]<<16)|(pkt[i*4+3]<<24))>>>0);
+      }
+      App.onPacket(vals);
+      buf = buf.slice(hi+40);
+    }
+    if(buf.length>500) buf=buf.slice(-100);
+  }
+
+  return { connect, disconnect, isConnected:()=>connected };
+})();
+
+// ═══════════════════════════════════════════════════════
+//  APP STATE
+// ═══════════════════════════════════════════════════════
+const App = (() => {
+  let connected=false, calibrated=false;
+  let currentPreset='therapy';
+  let activeFingers = new Set();
+  let baseline={};
+  let calibSamples={};
+
+  // Hysteresis thresholds (match server.py defaults)
+  let threshOn=0.4, threshOff=0.2;
+  let thumbThreshOn=0.3, thumbThreshOff=0.15; // kept for compat, unused
+  let switchThreshold=1000000; // fallback global threshold (overridden per-finger after calibration)
+  let fingerRestMin={thumb:0,index:0,middle:0,ring:0,pinky:0};   // resting baseline per finger
+  let fingerPressMax=0;  // pressed value seen during calibration (may be lower than rest if sensor is inverted)
+  let fingerOnThresh={thumb:0,index:0,middle:0,ring:0,pinky:0};  // trigger threshold per finger
+  let fingerOffThresh={thumb:0,index:0,middle:0,ring:0,pinky:0}; // release threshold per finger
+  let sensorPressDir=1; // +1 = pressing gives HIGH value, -1 = pressing gives LOW value
+  let filterSize=12;
+  const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
+  const fingerPeak={thumb:0,index:0,middle:0,ring:0,pinky:0};
+  // Armed = finger has returned to rest zone and is ready to trigger again
+  const fingerArmed={thumb:true,index:true,middle:true,ring:true,pinky:true};
+  // Raw peak while switch is held — used for instant release on slow decay
+  const fingerRawPeak={thumb:0,index:0,middle:0,ring:0,pinky:0};
+  // Adaptive normalization min/max — starts from calibration, self-corrects as user plays
+  let fingerObsMin={thumb:null,index:null,middle:null,ring:null,pinky:null};
+  let fingerObsMax={thumb:null,index:null,middle:null,ring:null,pinky:null};
+
+  // Tutorial state
+  let mode='play'; // 'play' | 'tutorial'
+  let tutState={current:null, step:0, completed:false, windowStart:0, songNotes:[]};
+  let tutReady = new Set(TUT_FINGERS);
+
+  // Recording state
+  let recording=false, playingBack=false;
+  let recEvents=[], recStart=0;
+  let savedRecordings=[];
+  let pbTimer=null;
+
+  // Custom per-finger type
+  let customTypes={thumb:'note',index:'note',middle:'note',ring:'note',pinky:'note'};
+  let customInstrument='sine';
+
+  // Current active tab
+  let activeTab='play';
+
+  function getPreset() {
+    return PRESETS[currentPreset];
+  }
+
+  // Moving average filter
+  function filterValue(finger, raw) {
+    const arr = fingerBuffers[finger];
+    arr.push(raw);
+    if(arr.length > filterSize) arr.shift();
+    return arr.reduce((a,b)=>a+b,0)/arr.length;
+  }
+
+  function clearBuffers() {
+    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerPeak[f]=0; fingerArmed[f]=true; fingerRawPeak[f]=0; fingerObsMin[f]=null; fingerObsMax[f]=null; });
+  }
+
+  // Called by Serial on each 10-value packet
+  let _debugRaw = {};
+  let _debugDrop = {};
+  let _debugMaxDrop = {thumb:0,index:0,middle:0,ring:0,pinky:0};
+  let _debugBase = {};
+
+  function onPacket(vals) {
+    if(!connected) return;
+    // Feed calibration collector if active
+    if(App._collectHook) { App._collectHook(vals); return; }
+    if(!calibrated) return;
+
+    const newActive = new Set();
+
+    for(const f of FINGERS) {
+      const cfg = FINGER_CFG[f];
+      // Apply moving average filter — smooths fluctuations before any threshold comparison
+      const raw = Math.round(filterValue(f, vals[cfg.idx]));
+
+      // Per-finger calibrated thresholds; fall back to global if not yet calibrated
+      const onThresh  = fingerOnThresh[f]  || (sensorPressDir > 0 ? switchThreshold : -switchThreshold);
+      const offThresh = fingerOffThresh[f] || (sensorPressDir > 0 ? Math.round(switchThreshold * 0.5) : Math.round(switchThreshold * 1.5));
+
+      // Track peak while active for instant release on slow-decay (no-resistor) sensors
+      if(activeFingers.has(f)) {
+        if(sensorPressDir > 0 ? raw > fingerRawPeak[f] : raw < fingerRawPeak[f])
+          fingerRawPeak[f] = raw;
+      } else {
+        fingerRawPeak[f] = raw; // reset peak while idle
+      }
+
+      const range = Math.abs(fingerPressMax - fingerRestMin[f]) || switchThreshold;
+      const peakDelta = sensorPressDir > 0 ? fingerRawPeak[f] - raw : raw - fingerRawPeak[f];
+      // Peak-drop release only fires while actively pressed (avoids false releases at rest)
+      const peakReleased   = activeFingers.has(f) && peakDelta > range * 0.15;
+      const threshReleased = sensorPressDir > 0 ? raw <= offThresh : raw >= offThresh;
+      const released = peakReleased || threshReleased;
+      const pressed  = sensorPressDir > 0 ? raw > onThresh : raw < onThresh;
+
+      _debugRaw[f] = raw;
+      _debugDrop[f] = activeFingers.has(f) ? 1 : 0; // 1 = active/on, 0 = inactive/off
+      _debugBase[f] = onThresh;
+      if(sensorPressDir > 0 ? raw > (_debugMaxDrop[f]||0) : raw < (_debugMaxDrop[f]||Infinity))
+        _debugMaxDrop[f] = raw;
+
+      // Simple hysteresis state machine with re-arm guard
+      if(activeFingers.has(f)) {
+        if(!released) {
+          newActive.add(f); // stay active while not fully released
+        } else {
+          fingerArmed[f] = false; // disarm to prevent immediate re-trigger
+        }
+      } else {
+        if(released) fingerArmed[f] = true; // re-arm when clearly at rest
+        if(fingerArmed[f] && pressed) newActive.add(f);
+      }
+
+      // Tutorial release tracking
+      if(mode==='tutorial' && released) tutReady.add(f);
+    }
+
+    const changed = newActive.size!==activeFingers.size || [...newActive].some(f=>!activeFingers.has(f));
+
+    if(changed) {
+      const newlyPressed = [...newActive].filter(f=>!activeFingers.has(f));
+
+      // Record
+      if(recording && newlyPressed.length>0) {
+        const ts = (Date.now()-recStart)/1000;
+        recEvents.push({ time:ts, fingers:[...newlyPressed] });
+      }
+
+      // Tutorial progress
+      if(mode==='tutorial' && newlyPressed.length>0) {
+        for(const f of newlyPressed) checkTutorialProgress(f);
+      }
+
+      // Audio
+      AudioEngine.triggerDrums(new Set(newlyPressed), getPreset());
+      AudioEngine.updateActive(newActive, getPreset());
+
+      activeFingers = newActive;
+      UI.updateFingers(activeFingers, currentPreset);
+      UI.updateStatus(activeFingers, currentPreset);
+    }
+  }
+
+  function checkTutorialProgress(finger) {
+    if(!tutState.current || tutState.completed) return;
+    const tut = TUTORIALS[tutState.current];
+    if(!tut) return;
+    const item = tut.sequence[tutState.step];
+    const expectedNote = item.note;
+    // Check if this finger maps to the expected note in the current window
+    const expectedFinger = fingerForNote(expectedNote, tutState.songNotes, tutState.windowStart);
+    if(finger === expectedFinger && tutReady.has(finger)) {
+      tutReady.delete(finger);
+      tutState.step++;
+      if(tutState.step >= tut.sequence.length) {
+        tutState.completed = true;
+      } else {
+        // Update window for next step
+        const nextNote = tut.sequence[tutState.step].note;
+        const newWS = getWindowStart(nextNote, tutState.songNotes, tutState.windowStart);
+        if(newWS !== tutState.windowStart) {
+          tutState.windowStart = newWS;
+          PRESETS.piano.mapping = buildWindowMapping(tutState.songNotes, newWS);
+          UI.flashMappingChange();
+        }
+      }
+      UI.renderTutorialActive();
+    }
+  }
+
+  async function doConnect() {
+    const ok = await Serial.connect();
+    if(ok) {
+      connected=true;
+      AudioEngine.init();
+      UI.syncAll();
+    } else {
+      UI.syncAll();
+    }
+  }
+
+  async function doDisconnect() {
+    AudioEngine.stopAll();
+    await Serial.disconnect();
+    connected=false; calibrated=false;
+    baseline={}; calibSamples={};
+    activeFingers=new Set();
+    clearBuffers();
+    UI.syncAll();
+  }
+
+  let openBaseline={};  // raw values with hand open
+  let closedBaseline={}; // raw values with hand closed (fist)
+
+  function getRawVal(f, vals) {
+    return vals[FINGER_CFG[f].idx];
+  }
+
+  // Collect raw samples from live packets over durationMs, return per-finger averages
+  async function doCalibrate() {
+    if(!connected) return;
+    clearBuffers();
+    calibrated = true;
+    UI.syncAll();
+  }
+
+  function getNormalized(f, rawVal) {
+    const open   = openBaseline[f] ?? baseline[f] ?? rawVal;
+    const closed = closedBaseline[f] ?? rawVal;
+
+    // Adapt observed min/max over time so range self-corrects
+    if(fingerObsMin[f] === null) fingerObsMin[f] = open;
+    if(fingerObsMax[f] === null) fingerObsMax[f] = closed;
+    if(rawVal < fingerObsMin[f]) fingerObsMin[f] = rawVal;
+    if(rawVal > fingerObsMax[f]) fingerObsMax[f] = rawVal;
+
+    // Use per-finger direction config (dir:1 = increases on bend, dir:-1 = decreases on bend)
+    // Fall back to calibration-detected direction if not specified
+    const cfgDir = FINGER_CFG[f]?.dir;
+    const calibDir = cfgDir !== undefined ? cfgDir : (closed > open ? 1 : -1);
+    const adaptOpen   = calibDir > 0 ? fingerObsMin[f] : fingerObsMax[f];
+    const adaptClosed = calibDir > 0 ? fingerObsMax[f] : fingerObsMin[f];
+    const range = adaptClosed - adaptOpen;
+    if(Math.abs(range) < 10) return 0;
+    return Math.max(0, Math.min(1, (rawVal - adaptOpen) / range));
+  }
+
+  function setPreset(p) {
+    currentPreset=p;
+    AudioEngine.stopAll();
+    activeFingers=new Set();
+    const preset = PRESETS[p];
+    if(preset?.instrument) AudioEngine.setInstrument(preset.instrument);
+    UI.syncAll();
+  }
+
+  function setMapping(finger, sound, type='note') {
+    PRESETS.custom.mapping[finger]=sound;
+    customTypes[finger]=type;
+    currentPreset='custom';
+    UI.syncAll();
+  }
+
+  // ── Manual finger press/release (clicking finger tabs) ──
+  function manualPress(finger, freqOverride) {
+    AudioEngine.init();
+    const preset = getPreset();
+    const newActive = new Set(activeFingers);
+    newActive.add(finger);
+    AudioEngine.triggerDrums(new Set([finger]), preset);
+    if(freqOverride) {
+      AudioEngine.startFingerFreqs(finger, freqOverride, preset.instrument);
+    } else {
+      AudioEngine.updateActive(newActive, preset);
+    }
+    activeFingers = newActive;
+    UI.updateFingers(activeFingers, currentPreset);
+    if(mode==='tutorial') checkTutorialProgress(finger);
+  }
+
+  function manualRelease(finger) {
+    const newActive = new Set(activeFingers);
+    newActive.delete(finger);
+    AudioEngine.updateActive(newActive, getPreset());
+    activeFingers = newActive;
+    UI.updateFingers(activeFingers, currentPreset);
+  }
+
+  // ── Demo playback ──
+  // BPM per song (quarter note = 1 beat, each sequence step = 1 beat unless noted)
+  const DEMO_BPM = {
+    // English set
+    scale:120, hotcross:110, rain:110,
+    mary:110, happy:140, london:120,
+    twinkle:110, brother:110, jingle:150,
+    ode:116, rowboat:108, entertainer:168, furelise:100,
+    // Chinese-only songs
+    molihua:88, liangzhi:112, mama:96,
+  };
+
+  let demoTimer = null;
+  let demoPlaying = false;
+
+  function startDemo(id) {
+    stopDemo();
+    const tut = TUTORIALS[id];
+    if(!tut) return;
+
+    AudioEngine.init();
+    activeFingers = new Set();
+    currentPreset = 'piano';
+
+    const bpm = DEMO_BPM[id] || tut.bpm || 120;
+    const beatMs = (60 / bpm) * 1000;
+
+    // Build sorted note list for the window system
+    const songNotes = getSongNotes(tut.sequence);
+    let demoWindowStart = 0;
+    if(tut.sequence[0]?.note) {
+      demoWindowStart = getWindowStart(tut.sequence[0].note, songNotes, 0);
+    }
+    PRESETS.piano.mapping = buildWindowMapping(songNotes, demoWindowStart);
+    UI.syncAll();
+
+    demoPlaying = true;
+    let step = 0;
+    const seq = tut.sequence;
+    UI.setDemoPlaying(true);
+
+    function playStep() {
+      if(!demoPlaying || step >= seq.length) { stopDemo(); return; }
+      const item = seq[step];
+      const note = item.note;
+      const dur  = item.d;
+
+      // Shift window if this note is outside current window
+      const newWS = getWindowStart(note, songNotes, demoWindowStart);
+      if(newWS !== demoWindowStart) {
+        demoWindowStart = newWS;
+        PRESETS.piano.mapping = buildWindowMapping(songNotes, demoWindowStart);
+        if(tutState.current === id) {
+          tutState.windowStart = demoWindowStart;
+        }
+        UI.flashMappingChange();
+        UI.renderTutorialHand();
+      }
+
+      // Find finger for this note and get its frequencies
+      const finger = fingerForNote(note, songNotes, demoWindowStart); // uses TUT_FINGERS
+      const freqs  = getFreqs(note);
+
+      const noteOnMs  = beatMs * dur * 0.92;
+      const noteOffMs = beatMs * dur * 0.08;
+
+      manualPress(finger, freqs);
+      step++;
+
+      if(tutState.current === id) {
+        tutState.step = step;
+        if(tutState.step >= seq.length) tutState.completed = true;
+        UI.renderTutorialActive();
+      }
+
+      demoTimer = setTimeout(()=>{
+        manualRelease(finger);
+        demoTimer = setTimeout(playStep, noteOffMs);
+      }, noteOnMs);
+    }
+
+    playStep();
+  }
+
+  function stopDemo() {
+    demoPlaying = false;
+    if(demoTimer) { clearTimeout(demoTimer); demoTimer = null; }
+    AudioEngine.stopAll();
+    activeFingers = new Set();
+    UI.updateFingers(activeFingers, currentPreset);
+    UI.setDemoPlaying(false);
+  }
+
+  function startTutorial(id) {
+    const tut = TUTORIALS[id];
+    if(!tut) { console.error('Tutorial not found:', id, 'Available:', Object.keys(TUTORIALS)); return; }
+    const songNotes = getSongNotes(tut.sequence);
+    const firstNote = tut.sequence[0]?.note;
+    const initWS = firstNote ? getWindowStart(firstNote, songNotes, 0) : 0;
+    tutState = {current:id, step:0, completed:false, windowStart:initWS, songNotes};
+    tutReady = new Set(TUT_FINGERS);
+    mode = 'tutorial';
+    PRESETS.piano.mapping = buildWindowMapping(songNotes, initWS);
+    currentPreset = 'piano';
+    AudioEngine.stopAll();
+    activeFingers = new Set();
+    UI.renderTutorialActive();
+    UI.renderTutorialHand();
+    document.getElementById('tut-browser').classList.add('hidden');
+    document.getElementById('tut-active-panel').classList.remove('hidden');
+    document.getElementById('tut-hand-panel').classList.remove('hidden');
+  }
+
+  function resetTutorial() {
+    if(!tutState.current) return;
+    const tut = TUTORIALS[tutState.current];
+    if(!tut) return;
+    const songNotes = getSongNotes(tut.sequence);
+    const firstNote = tut.sequence[0]?.note;
+    const initWS = firstNote ? getWindowStart(firstNote, songNotes, 0) : 0;
+    tutState.step = 0; tutState.completed = false;
+    tutState.windowStart = initWS; tutState.songNotes = songNotes;
+    tutReady = new Set(TUT_FINGERS);
+    PRESETS.piano.mapping = buildWindowMapping(songNotes, initWS);
+    AudioEngine.stopAll();
+    activeFingers = new Set();
+    UI.renderTutorialActive();
+    UI.renderTutorialHand();
+  }
+
+  function exitTutorial() {
+    stopDemo();
+    mode='play'; tutState={current:null,step:0,completed:false,windowStart:0,songNotes:[]};
+    PRESETS.piano.mapping={thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'};
+    AudioEngine.stopAll(); activeFingers=new Set();
+    document.getElementById('tut-browser').classList.remove('hidden');
+    document.getElementById('tut-active-panel').classList.add('hidden');
+    document.getElementById('tut-hand-panel').classList.add('hidden');
+    UI.renderTutorialList();
+  }
+
+  function startRecording() {
+    recording=true; recEvents=[]; recStart=Date.now();
+    // Record tab buttons
+    document.getElementById('rec-start-btn').classList.add('hidden');
+    document.getElementById('rec-stop-btn').classList.remove('hidden');
+    document.getElementById('rec-indicator').classList.remove('hidden');
+    // Play tab buttons
+    document.getElementById('play-rec-start-btn').classList.add('hidden');
+    document.getElementById('play-rec-stop-btn').classList.remove('hidden');
+    document.getElementById('play-rec-indicator').classList.remove('hidden');
+  }
+
+  function stopRecording() {
+    recording=false;
+    const dur = (Date.now()-recStart)/1000;
+    savedRecordings.push({ events:[...recEvents], duration:dur, preset:currentPreset, id:Date.now() });
+    // Record tab buttons
+    document.getElementById('rec-start-btn').classList.remove('hidden');
+    document.getElementById('rec-stop-btn').classList.add('hidden');
+    document.getElementById('rec-indicator').classList.add('hidden');
+    // Play tab buttons
+    document.getElementById('play-rec-start-btn').classList.remove('hidden');
+    document.getElementById('play-rec-stop-btn').classList.add('hidden');
+    document.getElementById('play-rec-indicator').classList.add('hidden');
+    UI.renderRecordingList();
+  }
+
+  function playbackRecording(rec) {
+    if(playingBack) return;
+    playingBack=true;
+    const events=[...rec.events];
+    const savedPreset=currentPreset;
+    currentPreset=rec.preset||currentPreset;
+    let ei=0;
+
+    function scheduleNext() {
+      if(!playingBack || ei>=events.length) {
+        playingBack=false;
+        AudioEngine.stopAll();
+        activeFingers=new Set();
+        currentPreset=savedPreset;
+        UI.updateFingers(activeFingers, currentPreset);
+        UI.renderRecordingList();
+        return;
+      }
+      const ev=events[ei];
+      const nextTime=events[ei+1] ? events[ei+1].time : ev.time+0.5;
+      const holdMs=Math.max(80, (nextTime-ev.time)*1000*0.88);
+      const gapMs =Math.max(20, (nextTime-ev.time)*1000*0.12);
+      const preset=getPreset();
+
+      const newSet=new Set(ev.fingers);
+      AudioEngine.triggerDrums(newSet, preset);
+      for(const f of newSet) {
+        const sound=preset.mapping?.[f];
+        const freqs=CHORDS[sound]||[];
+        AudioEngine.startFingerFreqs(f, freqs, preset.instrument||'bell');
+      }
+      activeFingers=newSet;
+      UI.updateFingers(activeFingers, currentPreset);
+      ei++;
+
+      pbTimer=setTimeout(()=>{
+        AudioEngine.stopAll();
+        activeFingers=new Set();
+        UI.updateFingers(activeFingers, currentPreset);
+        pbTimer=setTimeout(scheduleNext, gapMs);
+      }, holdMs);
+    }
+
+    scheduleNext();
+    UI.renderRecordingList();
+  }
+
+  function stopPlayback() {
+    playingBack=false;
+    clearTimeout(pbTimer);
+    AudioEngine.stopAll();
+    activeFingers=new Set();
+    UI.updateFingers(activeFingers, currentPreset);
+    UI.renderRecordingList();
+  }
+
+  function deleteRecording(id) {
+    savedRecordings=savedRecordings.filter(r=>r.id!==id);
+    UI.renderRecordingList();
+  }
+
+  return {
+    onPacket,
+    get _debugRaw(){return _debugRaw},
+    get _debugDrop(){return _debugDrop},
+    get _debugMaxDrop(){return _debugMaxDrop},
+    get _debugBase(){return _debugBase},
+    get threshOn(){return threshOn},
+    get threshOff(){return threshOff},
+    doConnect, doDisconnect, doCalibrate,
+    setPreset, setMapping,
+    startTutorial, resetTutorial, exitTutorial,
+    startRecording, stopRecording,
+    playbackRecording, stopPlayback, deleteRecording,
+    get connected(){return connected},
+    get calibrated(){return calibrated},
+    get currentPreset(){return currentPreset},
+    get activeFingers(){return activeFingers},
+    get mode(){return mode},
+    get tutState(){return tutState},
+    get savedRecordings(){return savedRecordings},
+    get isPlayingBack(){return playingBack},
+    get customTypes(){return customTypes},
+    get customInstrument(){return customInstrument},
+    set customInstrument(v){ customInstrument=v; AudioEngine.setInstrument(v); },
+    get switchThreshold(){return switchThreshold},
+    setSwitchThreshold(v){switchThreshold=v},
+    get fingerOnThresh(){return fingerOnThresh},
+    get fingerOffThresh(){return fingerOffThresh},
+    get fingerRestMin(){return fingerRestMin},
+    setThreshOn(v){threshOn=v},
+    setThreshOff(v){threshOff=v},
+    get thumbThreshOn(){return thumbThreshOn},
+    get thumbThreshOff(){return thumbThreshOff},
+    setThumbThreshOn(v){thumbThreshOn=v},
+    setThumbThreshOff(v){thumbThreshOff=v},
+    setFilterSize(v){filterSize=v},
+    _collectHook: null,
+    manualPress, manualRelease,
+    startDemo, stopDemo,
+    get demoPlaying(){return demoPlaying},
+  };
+})();
+
+// ═══════════════════════════════════════════════════════
+//  UI
+// ═══════════════════════════════════════════════════════
+const UI = (() => {
+
+  function syncAll() {
+    renderConnectBtn();
+    renderPresets();
+    renderHand();
+    renderMapping();
+    renderRecordingList();
+    updateHints();
+  }
+
+  function updateHints() {
+    // Clear all existing hint bubbles and highlights
+    document.querySelectorAll('.btn-hint-bubble').forEach(e=>e.remove());
+    document.querySelectorAll('.btn-highlighted').forEach(e=>e.classList.remove('btn-highlighted'));
+
+    if(App.connected && App.calibrated) return; // no hints needed
+
+    const zh = currentLang === 'zh'; const es = currentLang === 'es';
+
+    if(!App.connected) {
+      // Highlight connect button and show bubble next to it
+      const btn = document.getElementById('connect-btn');
+      const wrap = document.getElementById('connect-hint-wrap');
+      if(btn) btn.classList.add('btn-highlighted');
+      if(wrap) {
+        const bubble = document.createElement('div');
+        bubble.className = 'btn-hint-bubble';
+        bubble.innerHTML = `<span class="btn-hint-icon">🔌</span>${zh ? '点击<strong>连接</strong>外骨骼' : es ? 'Haz clic para <strong>conectar</strong>' : 'Click to connect your exoskeleton'}`;
+        wrap.appendChild(bubble);
+      }
+    } else if(!App.calibrated) {
+      // Highlight calibrate button and show bubble next to it
+      const btn = document.getElementById('calibrate-btn');
+      const wrap = document.getElementById('calibrate-hint-wrap');
+      if(btn) btn.classList.add('btn-highlighted');
+      if(wrap) {
+        const bubble = document.createElement('div');
+        bubble.className = 'btn-hint-bubble';
+        bubble.innerHTML = `<span class="btn-hint-icon">✋</span>${zh ? '放平手掌，点击<strong>校准</strong>' : es ? 'Mano plana, luego <strong>Calibrar</strong>' : 'Rest hand flat, then <strong>Calibrate</strong>'}`;
+        wrap.appendChild(bubble);
+      }
+    }
+  }
+
+  function renderConnectBtn() {
+    const cb = document.getElementById('connect-btn');
+    const cal = document.getElementById('calibrate-btn');
+    const recal = document.getElementById('recalibrate-btn');
+
+    if(App.connected) {
+      cb.textContent=t('disconnect'); cb.className='btn btn-disconnect'; cb.disabled=false;
+      if(App.calibrated) {
+        cal.classList.add('hidden');
+        recal.classList.remove('hidden');
+        recal.disabled=false;
+        recal.textContent=t('recalibrate'); recal.className='btn btn-recalibrate';
+      } else {
+        cal.disabled=false; cal.textContent=t('calibrate'); cal.className='btn btn-calibrate';
+        cal.classList.remove('hidden'); recal.classList.add('hidden');
+      }
+    } else {
+      cb.textContent=t('connect'); cb.className='btn btn-connect'; cb.disabled=false;
+      cal.disabled=true; cal.textContent=t('calibrate'); cal.className='btn btn-calibrate';
+      cal.classList.remove('hidden'); recal.classList.add('hidden');
+    }
+    const ssb = document.getElementById('stop-sound-btn');
+    if(ssb) { ssb.disabled = !App.connected; ssb.textContent = t('stopSound'); }
+  }
+
+  function renderPresets() {
+    const strip = document.getElementById('preset-strip');
+    strip.innerHTML = Object.entries(PRESETS).map(([k,v])=>`
+      <button class="preset-btn ${App.currentPreset===k?'active':''}" data-p="${k}">${currentLang==='zh' && v.nameZh ? v.nameZh : currentLang==='es' && v.nameEs ? v.nameEs : v.name}</button>
+    `).join('');
+    strip.querySelectorAll('.preset-btn').forEach(b=>{
+      b.addEventListener('click',()=>App.setPreset(b.dataset.p));
+    });
+  }
+
+  function renderHand() {
+    const wrap = document.getElementById('hand-wrap');
+    const preset = PRESETS[App.currentPreset];
+    const isCustom = App.currentPreset==='custom';
+    wrap.innerHTML = FINGERS.map(f=>{
+      const cfg=FINGER_CFG[f];
+      const active=App.activeFingers.has(f);
+      const sound=preset.mapping[f];
+      const ch = formatChord(sound);
+      return `
+        <div class="finger-col">
+          <div class="finger ${active?'active':''} clickable"
+               data-f="${f}"
+               style="
+                 width:${cfg.w}px;height:${cfg.h}px;
+                 background:${active?`linear-gradient(180deg,${cfg.color},${cfg.color}88)`:'var(--surface3)'};
+                 border-color:${active?cfg.color+'66':'var(--border)'};
+                 box-shadow:${active?`0 0 20px ${cfg.color}44`:'none'};
+               ">
+            <span class="finger-note" style="color:${active?'#fff':cfg.color};font-size:${Math.min(cfg.w*0.38,38)}px">${ch.root}${ch.quality?`<br><span style="font-size:${Math.min(cfg.w*0.22,18)}px;opacity:0.88;font-weight:700;letter-spacing:0.04em">${ch.quality}</span>`:''}</span>
+          </div>
+          <span class="finger-label">${tFinger(f)}</span>
+        </div>
+      `;
+    }).join('');
+
+    // All fingers: mousedown/touchstart = press, mouseup/touchend = release
+    wrap.querySelectorAll('.finger').forEach(el=>{
+      const f = el.dataset.f;
+
+      const press = (e) => {
+        e.preventDefault();
+        if(isCustom) { openChordModal(f); return; }
+        App.manualPress(f);
+      };
+      const release = (e) => {
+        e.preventDefault();
+        if(!isCustom) App.manualRelease(f);
+      };
+
+      el.addEventListener('mousedown', press);
+      el.addEventListener('mouseup', release);
+      el.addEventListener('mouseleave', release);
+      el.addEventListener('touchstart', press, {passive:false});
+      el.addEventListener('touchend', release, {passive:false});
+    });
+  }
+
+  function renderTutorialHand() {
+    const wrap = document.getElementById('tut-hand-wrap');
+    if(!wrap) return;
+    const preset = PRESETS[App.currentPreset];
+    const ts = App.tutState;
+    const tut = ts.current ? TUTORIALS[ts.current] : null;
+    const nextItem = tut && !ts.completed ? tut.sequence[ts.step] : null;
+    const nextNote = nextItem?.note;
+    const nextF = nextNote ? fingerForNote(nextNote, ts.songNotes, ts.windowStart) : null;
+
+    wrap.innerHTML = FINGERS.map(f=>{
+      const cfg = FINGER_CFG[f];
+      const active = App.activeFingers.has(f);
+      const sound = preset?.mapping[f] || '';
+      const isNext = nextF === f;
+      return `
+        <div class="finger-col">
+          <div class="finger ${active?'active':''}"
+               data-tut-f="${f}"
+               style="
+                 width:${cfg.w}px;height:${cfg.h}px;
+                 background:${active?`linear-gradient(180deg,${cfg.color},${cfg.color}88)`:'var(--surface3)'};
+                 border-color:${active?cfg.color+'66':isNext?cfg.color+'99':'var(--border)'};
+                 box-shadow:${active?`0 0 20px ${cfg.color}44`:isNext?`0 0 12px ${cfg.color}55`:'none'};
+                 outline:${isNext&&!active?`2px solid ${cfg.color}66`:'none'};
+               ">
+            <span class="finger-note" style="color:${active?'#fff':cfg.color};font-size:${Math.min(cfg.w*0.38,38)}px">${currentLang==='zh'&&sound?noteToSolfege(sound):sound}</span>
+          </div>
+          <span class="finger-label">${tFinger(f)}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function updateFingers(activeSet, preset) {
+    const p = PRESETS[preset];
+    document.querySelectorAll('.finger[data-f]').forEach(el=>{
+      const f=el.dataset.f; const cfg=FINGER_CFG[f]; const active=activeSet.has(f);
+      el.classList.toggle('active', active);
+      el.style.background=active?`linear-gradient(180deg,${cfg.color},${cfg.color}88)`:'var(--surface3)';
+      el.style.borderColor=active?cfg.color+'66':'var(--border)';
+      el.style.boxShadow=active?`0 0 20px ${cfg.color}44`:'none';
+    });
+    updateStatus(activeSet, preset);
+    if(App.mode==='tutorial') {
+      updateTutorialFingers(activeSet);
+    }
+  }
+
+  function updateTutorialFingers(activeSet) {
+    const wrap = document.getElementById('tut-hand-wrap');
+    if(!wrap) return;
+    const preset = PRESETS[App.currentPreset];
+    const ts = App.tutState;
+    const tut = ts.current ? TUTORIALS[ts.current] : null;
+    const nextItem = tut && !ts.completed ? tut.sequence[ts.step] : null;
+    const nextNote = nextItem?.note;
+    const nextF = nextNote ? fingerForNote(nextNote, ts.songNotes, ts.windowStart) : null;
+
+    wrap.querySelectorAll('.finger[data-tut-f]').forEach(el=>{
+      const f=el.dataset.tutF; const cfg=FINGER_CFG[f]; const active=activeSet.has(f);
+      const isNext=nextF===f;
+      el.classList.toggle('active', active);
+      el.style.background=active?`linear-gradient(180deg,${cfg.color},${cfg.color}88)`:'var(--surface3)';
+      el.style.borderColor=active?cfg.color+'66':isNext?cfg.color+'99':'var(--border)';
+      el.style.boxShadow=active?`0 0 20px ${cfg.color}44`:isNext?`0 0 12px ${cfg.color}55`:'none';
+      el.style.outline=isNext&&!active?`2px solid ${cfg.color}66`:'none';
+      // Update note label
+      const noteEl = el.querySelector('.finger-note');
+      if(noteEl) { const s=preset?.mapping[f]||''; noteEl.textContent = currentLang==='zh'&&s ? noteToSolfege(s) : s; }
+    });
+
+    // update tut status line
+    const line=document.getElementById('tut-status-line');
+    if(line) {
+      if(!App.connected) line.textContent=t('connectToStart');
+      else if(!App.calibrated) line.textContent=t('clickCalibrate');
+      else if(activeSet.size>0) line.textContent=t('playing')+[...activeSet].map(f=>{ const s=preset?.mapping[f]||f; return currentLang==='zh'&&s?noteToSolfege(s):s; }).join(' + ');
+      else line.textContent=t('bendToPlay');
+    }
+  }
+
+  function updateStatus(activeSet, preset) {
+    const line = document.getElementById('status-line');
+    if(!App.connected) { line.textContent=t('connectToStart'); return; }
+    if(!App.calibrated) { line.textContent=t('clickCalibrate'); return; }
+    if(activeSet.size>0) {
+      const p=PRESETS[preset];
+      line.textContent=t('playing')+[...activeSet].map(f=>{ const s=p.mapping[f]||''; return currentLang==='zh'&&s?noteToSolfege(s):s; }).join(' + ');
+    } else {
+      line.textContent=t('bendToPlay');
+    }
+  }
+
+  function showCalibModal(phase, state) {
+    const modal = document.getElementById('calib-modal');
+    modal.style.display = 'flex';
+    if(modal._timerId) { clearInterval(modal._timerId); modal._timerId = null; }
+    document.getElementById('calib-progress-bar').style.width = '0%';
+
+    const setBar = (dur) => {
+      let start = Date.now();
+      const id = setInterval(() => {
+        const pct = Math.min(100, (Date.now()-start)/dur*100);
+        document.getElementById('calib-progress-bar').style.width = pct+'%';
+        if(pct >= 100) clearInterval(id);
+      }, 50);
+      modal._timerId = id;
+    };
+
+    if(phase === 'rest' && state === 'reading') {
+      document.getElementById('calib-icon').textContent = '🤚';
+      document.getElementById('calib-title').textContent = 'Step 1 of 2 — Rest Your Hand';
+      document.getElementById('calib-desc').textContent = 'Do not press any switches. Keep your hand relaxed and still. Recording will begin in 2 seconds.';
+      document.getElementById('calib-status').textContent = 'Get ready…';
+    } else if(phase === 'rest' && state === 'recording') {
+      document.getElementById('calib-icon').textContent = '🤚';
+      document.getElementById('calib-title').textContent = 'Step 1 of 2 — Hold Still';
+      document.getElementById('calib-desc').textContent = 'Keep all fingers relaxed — do not press anything. Recording the resting baseline…';
+      document.getElementById('calib-status').textContent = 'Recording rest values…';
+      setBar(3000);
+    } else if(phase === 'thumb' && state === 'reading') {
+      document.getElementById('calib-icon').textContent = '☝️';
+      document.getElementById('calib-title').textContent = 'Step 2 of 2 — Press Your Index Finger';
+      document.getElementById('calib-desc').textContent = 'Now press and hold only your index finger switch as hard as you can. Recording will begin in 2 seconds.';
+      document.getElementById('calib-status').textContent = 'Get ready…';
+    } else if(phase === 'thumb' && state === 'recording') {
+      document.getElementById('calib-icon').textContent = '☝️';
+      document.getElementById('calib-title').textContent = 'Step 2 of 2 — Hold Index Finger Down';
+      document.getElementById('calib-desc').textContent = 'Keep your index finger pressed firmly. This sets the maximum value for all fingers…';
+      document.getElementById('calib-status').textContent = 'Recording index finger press…';
+      setBar(3000);
+    }
+  }
+
+  function hideCalibModal() {
+    const modal = document.getElementById('calib-modal');
+    if(modal._timerId) clearInterval(modal._timerId);
+    document.getElementById('calib-progress-bar').style.width = '100%';
+    document.getElementById('calib-status').textContent = '✅ Done!';
+    setTimeout(() => { modal.style.display = 'none'; }, 600);
+  }
+
+  function setStatus(msg) {
+    const line = document.getElementById('status-line');
+    if(line) line.textContent=msg;
+  }
+
+  function renderMapping() {
+    const grid = document.getElementById('mapping-grid');
+    const preset = PRESETS[App.currentPreset];
+    const isCustom = App.currentPreset==='custom';
+    grid.innerHTML = FINGERS.map(f=>{
+      const ch = formatChord(preset.mapping[f]);
+      return `
+      <div class="mapping-cell ${isCustom?'clickable':''}" data-f="${f}">
+        <div class="note-root" style="color:${FINGER_CFG[f].color}">${ch.root}</div>
+        <div class="note-quality" style="color:${FINGER_CFG[f].color}">${ch.quality}</div>
+        <div class="fname">${tFinger(f)}</div>
+      </div>`;
+    }).join('');
+    if(isCustom) {
+      grid.querySelectorAll('.mapping-cell').forEach(el=>{
+        el.addEventListener('click',()=>openChordModal(el.dataset.f));
+      });
+    }
+  }
+
+  function openChordModal(finger) {
+    document.getElementById('modal-finger-label').textContent=tFinger(finger);
+    const current=PRESETS.custom.mapping[finger];
+    const body=document.getElementById('chord-modal-body');
+
+    const groups=[
+      {label:t('singleNotes'), keys:['C','D','E','F','G','A','B','C#','D#','F#','G#','A#','C5','D5','E5','F5','G5'], cls:''},
+      {label:t('majorChords'), keys:Object.keys(CHORDS).filter(k=>k.includes('_maj')), cls:''},
+      {label:t('minorChords'), keys:Object.keys(CHORDS).filter(k=>k.endsWith('m')&&!k.includes('_')), cls:''},
+      {label:t('seventhChords'), keys:Object.keys(CHORDS).filter(k=>k.endsWith('7')), cls:''},
+      {label:t('drums'),       keys:DRUMS, cls:'drum-btn-modal'},
+      {label:t('none'),        keys:['none'], cls:''},
+    ];
+
+    body.innerHTML=groups.map(g=>`
+      <div class="modal-section-title">${g.label}</div>
+      <div class="chord-grid-modal">
+        ${g.keys.map(k=>{
+          const ch = formatChord(k);
+          const label = ch.quality ? `${ch.root} <span style="font-size:0.58em;opacity:0.7">${ch.quality}</span>` : ch.root;
+          return `<button class="chord-btn-modal ${g.cls} ${k===current?'selected':''}" data-k="${k}" data-drum="${g.cls?'1':'0'}">${label}</button>`;
+        }).join('')}
+      </div>
+    `).join('');
+
+    body.querySelectorAll('.chord-btn-modal').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const isDrum=btn.dataset.drum==='1';
+        App.setMapping(finger, btn.dataset.k, isDrum?'drum':'note');
+        closeModal();
+      });
+    });
+
+    document.getElementById('chord-modal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('chord-modal').classList.add('hidden');
+  }
+
+  function renderTutorialList() {
+    const diffKey = { Beginner:'diffBeginner', Easy:'diffEasy', Medium:'diffMedium', Hard:'diffHard' };
+    const diffOrder = { Beginner:0, Easy:1, Medium:2, Hard:3 };
+    const sorted = Object.entries(TUTORIALS).sort((a,b)=>
+      (diffOrder[a[1].difficulty]??9) - (diffOrder[b[1].difficulty]??9)
+    );
+    // Group into difficulty buckets
+    const groups = {};
+    const groupOrder = [];
+    for(const [id, tut] of sorted) {
+      if(!groups[tut.difficulty]) { groups[tut.difficulty]=[]; groupOrder.push(tut.difficulty); }
+      groups[tut.difficulty].push([id, tut]);
+    }
+    const list = document.getElementById('tutorial-list');
+    list.innerHTML = groupOrder.map(diff => {
+      const songs = groups[diff];
+      const cards = songs.map(([id, tut]) => `
+        <div class="tutorial-card" data-id="${id}">
+          <div class="tut-name">${tut.name}</div>
+          ${currentLang==='zh' && tut.nameEn ? `<div style="font-size:0.68rem;color:var(--muted);margin-bottom:3px;font-style:italic;">${tut.nameEn}</div>` : ''}
+          <div class="tut-meta difficulty-${diff.toLowerCase()}">${tut.sequence.length} ${t('notes')}</div>
+        </div>`).join('');
+      return `
+        <div class="tut-group">
+          <div class="tut-group-header difficulty-${diff.toLowerCase()}">${t(diffKey[diff]||diff)}</div>
+          <div class="tut-group-cards">${cards}</div>
+        </div>`;
+    }).join('');
+    list.querySelectorAll('.tutorial-card').forEach(c=>{
+      c.addEventListener('click',()=>App.startTutorial(c.dataset.id));
+    });
+  }
+
+  function renderTutorialActive() {
+    const ts = App.tutState;
+    if(!ts.current) return;
+    const tut = ts.current ? TUTORIALS[ts.current] : null;
+    if(!tut) return;
+    const content = document.getElementById('tut-active-content');
+
+    if(ts.completed) {
+      content.innerHTML=`
+        <div class="tut-complete">${t('complete')}</div>
+        <div style="color:var(--muted);font-size:0.8rem;margin-bottom:16px;">${t('youPlayed')} <em>${tut.name}</em></div>
+      `;
+      updateTutorialFingers(App.activeFingers);
+      return;
+    }
+
+    const nextItem = tut.sequence[ts.step];
+    const nextNote = nextItem.note;
+    const nextF    = fingerForNote(nextNote, ts.songNotes, ts.windowStart);
+    const cfg = FINGER_CFG[nextF];
+    const pct = Math.round(ts.step / tut.sequence.length * 100);
+    const mapping = PRESETS[App.currentPreset]?.mapping || {};
+
+    // Dot row: colour by finger
+    const dots = tut.sequence.map((item, i) => {
+      const f = fingerForNote(item.note, ts.songNotes, ts.windowStart);
+      const fCfg = FINGER_CFG[f];
+      let cls = 'seq-dot';
+      if(i < ts.step) cls += ' done';
+      else if(i === ts.step) cls += ' current';
+      return `<div class="${cls}" style="${i===ts.step?`background:${fCfg.color};border-color:${fCfg.color}`:''}"></div>`;
+    }).join('');
+
+    content.innerHTML=`
+      <div class="tut-next-label">${tut.name} · ${t('step')} ${ts.step+1} / ${tut.sequence.length}</div>
+      <div class="tut-progress-bar"><div class="tut-progress-fill" style="width:${pct}%"></div></div>
+      <div style="color:var(--text);font-size:0.82rem;font-weight:600;margin-bottom:8px;">${t('pressThis')}</div>
+      <div class="tut-next-finger" style="color:${cfg.color}">${tFinger(nextF)}</div>
+      <div style="font-size:0.85rem;font-weight:600;color:${cfg.color};opacity:0.9;margin-bottom:12px;">${currentLang==='zh' ? noteToSolfege(nextNote) : nextNote}</div>
+      <div class="tut-sequence">${dots}</div>
+      <div id="tut-mapping-row" style="display:flex;justify-content:center;gap:14px;margin-top:14px;flex-wrap:wrap;">
+        ${FINGERS.map(f=>`
+          <div style="text-align:center;">
+            <div style="color:${FINGER_CFG[f].color};font-weight:800;font-size:1rem;">${currentLang==='zh'&&mapping[f] ? noteToSolfege(mapping[f]) : (mapping[f]||'')} </div>
+            <div style="color:var(--text);font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.07em;margin-top:2px;">${tFinger(f)}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    updateTutorialFingers(App.activeFingers);
+  }
+
+  function flashMappingChange() {
+    // Show a brief toast banner when the finger mapping shifts
+    let toast = document.getElementById('mapping-toast');
+    if(!toast) {
+      toast = document.createElement('div');
+      toast.id = 'mapping-toast';
+      toast.style.cssText = `
+        position:fixed;top:70px;left:50%;transform:translateX(-50%);
+        background:linear-gradient(135deg,rgba(255,200,60,0.95),rgba(255,160,20,0.95));
+        color:#222;font-size:0.72rem;font-weight:700;letter-spacing:0.06em;
+        padding:6px 16px;border-radius:20px;z-index:999;
+        box-shadow:0 4px 16px rgba(0,0,0,0.3);pointer-events:none;
+        transition:opacity 0.3s;
+      `;
+      document.body.appendChild(toast);
+    }
+    const msg = currentLang === 'zh' ? '🎹 音符映射已更新' : currentLang === 'es' ? '🎹 Mapeo actualizado' : '🎹 Mapping shifted';
+    toast.textContent = msg;
+    toast.style.opacity = '1';
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => { toast.style.opacity = '0'; }, 1200);
+  }
+
+  function renderRecordingList() {
+    const list=document.getElementById('recording-list');
+    if(App.savedRecordings.length===0) {
+      list.innerHTML=`<div style="color:var(--muted);font-size:0.75rem;margin-top:8px;">${t('noRecordings')}</div>`;
+      return;
+    }
+    list.innerHTML=App.savedRecordings.map(r=>`
+      <div class="recording-item">
+        <div>
+          <div class="rec-info">${PRESETS[r.preset]?.name||r.preset} · ${r.events.length} ${t('events')}</div>
+          <div class="rec-dur">${r.duration.toFixed(1)}s</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          ${App.isPlayingBack
+            ? `<button class="btn-sm stop" data-stop="1">${t('recStop')}</button>`
+            : `<button class="btn-sm play" data-id="${r.id}">▶ ${t('tabPlay')}</button>`
+          }
+          <button class="btn-sm" data-edit="${r.id}" style="border-color:rgba(var(--btn1),0.9);color:#ffffff;background:rgba(var(--btn1),0.85);font-weight:700;box-shadow:0 0 12px rgba(var(--btn1),0.35);">✏️ Edit</button>
+          <button class="btn-sm danger" data-del="${r.id}">✕</button>
+        </div>
+      </div>
+    `).join('');
+    list.querySelectorAll('[data-id]').forEach(b=>{
+      b.addEventListener('click',()=>{
+        const rec=App.savedRecordings.find(r=>r.id===parseInt(b.dataset.id));
+        if(rec) App.playbackRecording(rec);
+      });
+    });
+    list.querySelectorAll('[data-stop]').forEach(b=>{
+      b.addEventListener('click',()=>App.stopPlayback());
+    });
+    list.querySelectorAll('[data-del]').forEach(b=>{
+      b.addEventListener('click',()=>App.deleteRecording(parseInt(b.dataset.del)));
+    });
+    list.querySelectorAll('[data-edit]').forEach(b=>{
+      b.addEventListener('click',()=>{
+        const rec=App.savedRecordings.find(r=>r.id===parseInt(b.dataset.edit));
+        if(rec) PianoRoll.open(rec);
+      });
+    });
+  }
+
+  function setDemoPlaying(playing) {
+    const btn = document.getElementById('tut-demo-btn');
+    const stop = document.getElementById('tut-demo-stop-btn');
+    if(!btn || !stop) return;
+    btn.classList.toggle('hidden', playing);
+    stop.classList.toggle('hidden', !playing);
+  }
+
+  return {
+    syncAll, renderConnectBtn, renderPresets, renderHand, showCalibModal, hideCalibModal,
+    updateFingers, updateStatus, setStatus,
+    renderMapping, openChordModal, closeModal,
+    renderTutorialList, renderTutorialActive, renderTutorialHand,
+    flashMappingChange,
+    renderRecordingList,
+    setDemoPlaying,
+    updateHints,
+  };
+})();
+
+// ═══════════════════════════════════════════════════════
+//  PIANO ROLL EDITOR
+// ═══════════════════════════════════════════════════════
+const PianoRoll = (() => {
+  let rec = null;          // working copy of recording
+  let editEvents = [];     // deep copy of events being edited
+  let prPlayTimer = null;
+  let prPlaying = false;
+  let pxPerSec = 120;      // zoom level
+  let activePopup = null;
+
+  const FINGER_COLORS = {
+    thumb:  '#ff6b6b', index: '#ff9f43',
+    middle: '#ffd93d', ring:  '#6bcb77', pinky: '#9b8cff'
+  };
+
+  function open(recording) {
+    rec = recording;
+    editEvents = JSON.parse(JSON.stringify(recording.events)); // deep copy
+    document.getElementById('pr-title').textContent = `${t('editTitle')} ${PRESETS[rec.preset]?.name || rec.preset}`;
+    document.getElementById('pianoroll-overlay').classList.remove('hidden');
+    render();
+  }
+
+  function close() {
+    stopPlay();
+    closePopup();
+    document.getElementById('pianoroll-overlay').classList.add('hidden');
+    rec = null; editEvents = [];
+  }
+
+  function save() {
+    if(!rec) return;
+    const original = App.savedRecordings.find(r => r.id === rec.id);
+    if(original) {
+      original.events = JSON.parse(JSON.stringify(editEvents));
+      original.duration = editEvents.length > 0
+        ? editEvents[editEvents.length-1].time + 0.3
+        : original.duration;
+    }
+    UI.renderRecordingList();
+    close();
+  }
+
+  function render() {
+    const body = document.getElementById('pr-body');
+    const dur = Math.max(rec.duration, editEvents.length ? editEvents[editEvents.length-1].time + 1 : 2);
+    const totalW = dur * pxPerSec;
+
+    // Build timeline ticks
+    const ticks = [];
+    for(let t = 0; t <= dur; t += 0.5) {
+      ticks.push(`<div class="pr-tick" style="left:${t*pxPerSec}px">${t.toFixed(1)}s</div>`);
+    }
+
+    // Build lanes per finger
+    const lanes = FINGERS.map(f => {
+      const cfg = FINGER_CFG[f];
+      const color = FINGER_COLORS[f];
+      const preset = PRESETS[rec.preset];
+      const noteName = preset?.mapping[f] || '—';
+
+      // Find all events for this finger
+      const blocks = editEvents
+        .map((ev, evIdx) => ({ ev, evIdx }))
+        .filter(({ ev }) => ev.fingers.includes(f))
+        .map(({ ev, evIdx }) => {
+          const x = Math.round(ev.time * pxPerSec);
+          const w = Math.max(18, Math.round(pxPerSec * 0.35));
+          return `
+            <div class="pr-note-block"
+              data-evidx="${evIdx}" data-finger="${f}" data-time="${ev.time}"
+              style="left:${x}px;width:${w}px;background:${color}99;border-color:${color};cursor:grab;">
+              <span class="pr-note-del" data-del-ev="${evIdx}" data-del-f="${f}">✕</span>
+            </div>`;
+        }).join('');
+
+      return `
+        <div class="pr-track">
+          <div class="pr-track-label" style="color:${color}">
+            <span class="pr-track-name">${f}</span>
+            <span class="pr-track-note">${noteName}</span>
+          </div>
+          <div class="pr-lane" data-lane-f="${f}" style="width:${totalW}px">
+            ${blocks}
+          </div>
+        </div>`;
+    }).join('');
+
+    body.innerHTML = `
+      <div style="overflow-x:auto;overflow-y:visible;padding-bottom:8px;">
+        <div style="min-width:${totalW+80}px;">
+          <div class="pr-timeline" style="width:${totalW}px">${ticks.join('')}</div>
+          ${lanes}
+          <div style="margin-top:12px;display:flex;align-items:center;gap:12px;">
+            <span style="font-size:0.65rem;color:var(--muted);">Zoom:</span>
+            <input type="range" min="40" max="400" value="${pxPerSec}" id="pr-zoom" style="width:120px;">
+            <span style="font-size:0.65rem;color:var(--muted);" id="pr-zoom-label">${pxPerSec} ${t('zoomLabel')}</span>
+          </div>
+        </div>
+      </div>`;
+
+    // Zoom
+    body.querySelector('#pr-zoom').addEventListener('input', e => {
+      pxPerSec = parseInt(e.target.value);
+      body.querySelector('#pr-zoom-label').textContent = pxPerSec + 'px/s';
+      render();
+    });
+
+    // Click lane = add note
+    body.querySelectorAll('.pr-lane').forEach(lane => {
+      lane.addEventListener('click', e => {
+        if(e.target.closest('.pr-note-block')) return;
+        const f = lane.dataset.laneF;
+        const rect = lane.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const t = parseFloat((x / pxPerSec).toFixed(3));
+        // Insert event sorted by time
+        const newEv = { time: t, fingers: [f] };
+        editEvents.push(newEv);
+        editEvents.sort((a,b) => a.time - b.time);
+        render();
+      });
+    });
+
+    // Note block: drag to move, click to edit pitch
+    body.querySelectorAll('.pr-note-block').forEach(block => {
+      let dragStartX = null;
+      let dragStartTime = null;
+      let didDrag = false;
+      let laneW = 0;
+
+      block.addEventListener('mousedown', e => {
+        if(e.target.closest('.pr-note-del')) return;
+        e.stopPropagation();
+        e.preventDefault();
+        didDrag = false;
+        dragStartX = e.clientX;
+        dragStartTime = parseFloat(block.dataset.time);
+        const lane = block.closest('.pr-lane');
+        laneW = lane ? lane.getBoundingClientRect().width : 9999;
+        block.style.cursor = 'grabbing';
+
+        const onMove = mv => {
+          const dx = mv.clientX - dragStartX;
+          if(Math.abs(dx) > 3) didDrag = true;
+          if(!didDrag) return;
+          const evIdx = parseInt(block.dataset.evidx);
+          const newTime = Math.max(0, parseFloat((dragStartTime + dx / pxPerSec).toFixed(3)));
+          editEvents[evIdx].time = newTime;
+          block.style.left = Math.round(newTime * pxPerSec) + 'px';
+          block.dataset.time = newTime;
+        };
+
+        const onUp = () => {
+          block.style.cursor = 'grab';
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+          if(didDrag) {
+            editEvents.sort((a,b) => a.time - b.time);
+            render();
+          }
+        };
+
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+
+      block.addEventListener('click', e => {
+        if(e.target.closest('.pr-note-del')) return;
+        if(didDrag) return; // was a drag, not a click
+        e.stopPropagation();
+        const evIdx = parseInt(block.dataset.evidx);
+        const finger = block.dataset.finger;
+        openPitchPopup(block, evIdx, finger);
+      });
+    });
+
+    // Delete finger from event
+    body.querySelectorAll('.pr-note-del').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const evIdx = parseInt(btn.dataset.delEv);
+        const f = btn.dataset.delF;
+        editEvents[evIdx].fingers = editEvents[evIdx].fingers.filter(x => x !== f);
+        // Remove event entirely if no fingers left
+        if(editEvents[evIdx].fingers.length === 0) editEvents.splice(evIdx, 1);
+        closePopup();
+        render();
+      });
+    });
+  }
+
+  function openPitchPopup(blockEl, evIdx, finger) {
+    closePopup();
+    const preset = PRESETS[rec.preset];
+    const currentNote = preset?.mapping[finger] || 'C';
+    const popup = document.getElementById('pr-note-popup');
+
+    // Group chords for display
+    const groups = [
+      { label: t('singleNotes'), keys: ['C','D','E','F','G','A','B','C5','D5','E5','F5','G5','C#','D#','F#','G#','A#','Bb','Eb'] },
+      { label: t('majorChords'), keys: Object.keys(CHORDS).filter(k=>k.endsWith('_maj')) },
+      { label: t('minorChords'), keys: Object.keys(CHORDS).filter(k=>k.endsWith('m') && !k.endsWith('_maj') && !k.includes('7')) },
+      { label: t('seventhChords'), keys: Object.keys(CHORDS).filter(k=>k.endsWith('7')) },
+    ];
+
+    popup.innerHTML = `
+      <div class="pr-note-popup-title">${t('changeNote')} <span style="color:${FINGER_COLORS[finger]}">${tFinger(finger)}</span></div>
+      <div style="font-size:0.6rem;color:var(--muted);margin-bottom:8px;">${t('currentLabel')}<strong style="color:var(--text)">${currentNote}</strong></div>
+      ${groups.map(g=>`
+        <div style="font-size:0.58rem;color:var(--muted);margin:6px 0 3px;text-transform:uppercase;letter-spacing:0.08em;">${g.label}</div>
+        <div class="pr-chord-grid">
+          ${g.keys.map(k=>{const ch=formatChord(k);return `<button class="pr-chord-btn ${k===currentNote?'active':''}" data-note="${k}">${ch.root}${ch.quality?` <span style="font-size:0.8em;opacity:0.7">${ch.quality}</span>`:''}</button>`;}).join('')}
+        </div>
+      `).join('')}
+    `;
+
+    // Position popup near block
+    const rect = blockEl.getBoundingClientRect();
+    popup.style.left = Math.min(rect.left, window.innerWidth - 240) + 'px';
+    popup.style.top = (rect.bottom + 6) + 'px';
+    popup.classList.remove('hidden');
+    activePopup = popup;
+
+    popup.querySelectorAll('.pr-chord-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const note = btn.dataset.note;
+        // Update the mapping for this finger in this recording's preset snapshot
+        if(preset) preset.mapping[finger] = note;
+        closePopup();
+        render();
+      });
+    });
+  }
+
+  function closePopup() {
+    const popup = document.getElementById('pr-note-popup');
+    popup.classList.add('hidden');
+    activePopup = null;
+  }
+
+  function startPlay() {
+    stopPlay();
+    if(!editEvents.length) return;
+    AudioEngine.init();
+    prPlaying = true;
+    document.getElementById('pr-play-btn').classList.add('hidden');
+    document.getElementById('pr-stop-btn').classList.remove('hidden');
+
+    const preset = PRESETS[rec.preset];
+    let ei = 0;
+
+    function scheduleNext() {
+      if(!prPlaying || ei >= editEvents.length) { stopPlay(); return; }
+      const ev = editEvents[ei];
+      const nextTime = editEvents[ei+1] ? editEvents[ei+1].time : ev.time + 0.5;
+      const holdMs = Math.max(80, (nextTime - ev.time) * 1000 * 0.90);
+      const gapMs  = Math.max(20, (nextTime - ev.time) * 1000 * 0.10);
+
+      // Start notes
+      for(const f of ev.fingers) {
+        const sound = preset.mapping?.[f];
+        const freqs = CHORDS[sound] || [];
+        AudioEngine.startFingerFreqs(f, freqs, preset.instrument || 'bell');
+      }
+
+      ei++;
+      // Release after hold
+      prPlayTimer = setTimeout(()=>{
+        AudioEngine.stopAll();
+        prPlayTimer = setTimeout(scheduleNext, gapMs);
+      }, holdMs);
+    }
+
+    scheduleNext();
+  }
+
+  function stopPlay() {
+    prPlaying = false;
+    if(prPlayTimer) { clearTimeout(prPlayTimer); prPlayTimer = null; }
+    AudioEngine.stopAll();
+    document.getElementById('pr-play-btn')?.classList.remove('hidden');
+    document.getElementById('pr-stop-btn')?.classList.add('hidden');
+  }
+
+  // Close popup on outside click
+  document.addEventListener('click', e => {
+    if(activePopup && !activePopup.contains(e.target) && !e.target.closest('.pr-note-block')) {
+      closePopup();
+    }
+  });
+
+  return { open, close, save, startPlay, stopPlay };
+})();
+
+// ═══════════════════════════════════════════════════════
+//  BOOTSTRAP
+// ═══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Init splash screen
+  initSplash();
+
+  // Back to splash button
+  (() => {
+    let soundStopped = false;
+    const ssb = document.getElementById('stop-sound-btn');
+    ssb.addEventListener('click', () => {
+      soundStopped = !soundStopped;
+      if(soundStopped) {
+        AudioEngine.stopAll();
+        UI.updateFingers(new Set(), App.currentPreset);
+        UI.updateStatus(new Set(), App.currentPreset);
+        ssb.textContent = t('resumeSound');
+        ssb.style.borderColor = 'rgba(60,180,100,0.6)';
+        ssb.style.background = 'linear-gradient(135deg,rgba(60,180,100,0.22),rgba(60,180,100,0.08))';
+        ssb.style.boxShadow = '0 0 14px rgba(60,180,100,0.2)';
+      } else {
+        ssb.textContent = t('stopSound');
+        ssb.style.borderColor = '';
+        ssb.style.background = '';
+        ssb.style.boxShadow = '';
+      }
+    });
+    // Reset toggle state and label when disconnected
+    const _origRenderConn = UI.renderConnectBtn;
+  })();
+
+  document.getElementById('back-to-splash').addEventListener('click', () => {
+    const splash = document.getElementById('splash');
+    // Sync splash internal state to current app language
+    if(typeof selectedLang !== 'undefined') {
+      // selectedLang is closure-scoped inside initSplash — trigger via lang buttons
+    }
+    // Re-trigger the correct lang button so splash state syncs
+    const activeLangBtn = document.querySelector(`.lang-btn[data-lang="${currentLang}"]`);
+    if(activeLangBtn) activeLangBtn.click();
+
+    splash.style.display = 'flex';
+    splash.style.opacity = '0';
+    splash.classList.remove('splash-fade-out');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        splash.style.transition = 'opacity 0.35s ease';
+        splash.style.opacity = '1';
+      });
+    });
+  });
+
+  // Browser check
+  if(!('serial' in navigator)) {
+    document.getElementById('browser-warning').classList.remove('hidden');
+    document.getElementById('connect-btn').disabled=true;
+  }
+
+  // Initial render
+  UI.syncAll();
+  UI.renderTutorialList();
+
+  // Connect / Disconnect
+  document.getElementById('connect-btn').addEventListener('click', async ()=>{
+    if(App.connected) { await App.doDisconnect(); }
+    else {
+      document.getElementById('connect-btn').disabled=true;
+      document.getElementById('connect-btn').textContent=t('connecting');
+      await App.doConnect();
+    }
+  });
+
+  // Calibrate
+  document.getElementById('calibrate-btn').addEventListener('click', async ()=>{
+    document.getElementById('calibrate-btn').disabled=true;
+    document.getElementById('calibrate-btn').textContent=t('calibrating');
+    UI.setStatus(t('keepStill'));
+    await App.doCalibrate();
+  });
+
+  // Re-calibrate
+  document.getElementById('recalibrate-btn').addEventListener('click', async ()=>{
+    document.getElementById('recalibrate-btn').disabled=true;
+    document.getElementById('recalibrate-btn').textContent=t('calibrating');
+    UI.setStatus(t('keepStill'));
+    await App.doCalibrate();
+  });
+
+  // Tabs
+  document.querySelectorAll('.tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      tab.classList.add('active');
+      ['play','tutorial','record','settings'].forEach(id=>{
+        document.getElementById('tab-'+id).classList.toggle('hidden', id!==tab.dataset.tab);
+      });
+      // Reset piano mapping when returning to Play tab so tutorial doesn't leave stale notes
+      if(tab.dataset.tab === 'play' && App.mode !== 'tutorial') {
+        PRESETS.piano.mapping = {thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'};
+        UI.syncAll();
+      }
+    });
+  });
+
+  // Tutorial buttons
+  document.getElementById('tut-reset-btn').addEventListener('click', ()=>App.resetTutorial());
+  document.getElementById('tut-rec-start-btn').addEventListener('click', ()=>{
+    App.startRecording();
+    document.getElementById('tut-rec-start-btn').classList.add('hidden');
+    document.getElementById('tut-rec-stop-btn').classList.remove('hidden');
+    document.getElementById('tut-rec-indicator').classList.remove('hidden');
+  });
+  document.getElementById('tut-rec-stop-btn').addEventListener('click', ()=>{
+    App.stopRecording();
+    document.getElementById('tut-rec-start-btn').classList.remove('hidden');
+    document.getElementById('tut-rec-stop-btn').classList.add('hidden');
+    document.getElementById('tut-rec-indicator').classList.add('hidden');
+  });
+  document.getElementById('tut-exit-btn').addEventListener('click', ()=>{ App.stopDemo(); App.exitTutorial(); });
+  document.getElementById('tut-demo-btn').addEventListener('click', ()=>{
+    const id = App.tutState.current;
+    if(id) App.startDemo(id);
+  });
+  document.getElementById('tut-demo-stop-btn').addEventListener('click', ()=>App.stopDemo());
+
+  // Recording (record tab)
+  document.getElementById('rec-start-btn').addEventListener('click', ()=>App.startRecording());
+  document.getElementById('rec-stop-btn').addEventListener('click', ()=>App.stopRecording());
+
+  // Recording (play tab)
+  document.getElementById('play-rec-start-btn').addEventListener('click', ()=>App.startRecording());
+  document.getElementById('play-rec-stop-btn').addEventListener('click', ()=>App.stopRecording());
+
+  // Modal cancel
+  document.getElementById('modal-cancel').addEventListener('click', ()=>UI.closeModal());
+  document.getElementById('chord-modal').addEventListener('click', e=>{
+    if(e.target.id==='chord-modal') UI.closeModal();
+  });
+
+  // Settings sliders
+  document.getElementById('switch-threshold').addEventListener('input', e=>{
+    switchThreshold = parseInt(e.target.value);
+    document.getElementById('switch-threshold-val').textContent = switchThreshold.toLocaleString();
+  });
+  document.getElementById('thresh-on').addEventListener('input', e=>{
+    const v=parseFloat(e.target.value);
+    App.setThreshOn(v);
+    document.getElementById('thresh-on-val').textContent=v.toFixed(2);
+  });
+  document.getElementById('thresh-off').addEventListener('input', e=>{
+    const v=parseFloat(e.target.value);
+    App.setThreshOff(v);
+    document.getElementById('thresh-off-val').textContent=v.toFixed(2);
+  });
+  document.getElementById('filter-size').addEventListener('input', e=>{
+    App.setFilterSize(parseInt(e.target.value));
+    document.getElementById('filter-val').textContent=e.target.value;
+  });
+  document.getElementById('volume-range').addEventListener('input', e=>{
+    AudioEngine.setVolume(parseInt(e.target.value)/100);
+    document.getElementById('volume-val').textContent=e.target.value;
+  });
+
+  // ── Debug panel ──────────────────────────────────────────────────────────
+  const debugToggle = document.getElementById('debug-toggle');
+  const debugPanel  = document.getElementById('debug-panel');
+  const debugTable  = document.getElementById('debug-table');
+  const debugSuggest= document.getElementById('debug-suggest');
+  const debugReset  = document.getElementById('debug-reset-btn');
+
+  debugToggle.addEventListener('change', () => {
+    debugPanel.style.display = debugToggle.checked ? 'block' : 'none';
+  });
+  debugReset.addEventListener('click', () => {
+    FINGERS.forEach(f => { App._debugMaxDrop[f] = 0; });
+  });
+  setInterval(() => {
+    if (!debugToggle.checked) return;
+    const rd = App._debugRaw  || {};
+    const dr = App._debugDrop || {};
+    const md = App._debugMaxDrop || {};
+    debugTable.innerHTML = FINGERS.map(f => {
+      const drop = dr[f] ?? 0;
+      const maxD = md[f] ?? 0;
+      const thOff = App.threshOff;
+      const isActive = drop > thOff;
+      const col = isActive ? '#22c55e' : FINGER_CFG[f].color;
+      return `<div style="background:var(--surface2);border-radius:10px;padding:10px 4px;">
+        <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;color:${FINGER_CFG[f].color};margin-bottom:4px;">${f}</div>
+        <div style="font-size:0.6rem;color:var(--muted);">raw</div>
+        <div style="font-size:0.72rem;font-family:'DM Mono',monospace;color:var(--text);">${(rd[f]??0).toLocaleString()}</div>
+        <div style="font-size:0.6rem;color:var(--muted);margin-top:3px;">drop</div>
+        <div style="font-size:0.95rem;font-weight:800;font-family:'DM Mono',monospace;color:${col};">${drop.toLocaleString()}</div>
+        <div style="font-size:0.6rem;color:var(--muted);margin-top:3px;">peak</div>
+        <div style="font-size:0.72rem;font-family:'DM Mono',monospace;color:#a78bfa;">${maxD.toLocaleString()}</div>
+      </div>`;
+    }).join('');
+    const peaks = FINGERS.map(f => md[f] || 0).filter(v => v > 0);
+    if (peaks.length === 5) {
+      const minPeak = Math.min(...peaks);
+      const sugOn  = Math.round(minPeak * 0.6 / 500) * 500;
+      const sugOff = Math.round(minPeak * 0.2 / 100) * 100;
+      debugSuggest.innerHTML =
+        `Trigger (ON): <strong>${sugOn.toLocaleString()}</strong> &nbsp;·&nbsp; Release (OFF): <strong>${sugOff.toLocaleString()}</strong><br>` +
+        `<span style="font-size:0.65rem;color:var(--muted);">Based on weakest finger peak: ${minPeak.toLocaleString()}</span>`;
+    } else {
+      debugSuggest.textContent = 'Bend all 5 fingers fully after calibrating to generate suggestions.';
+    }
+  }, 100);
+
+  // Piano Roll
+  document.getElementById('pr-close-btn').addEventListener('click', ()=>PianoRoll.close());
+  document.getElementById('pr-save-btn').addEventListener('click', ()=>PianoRoll.save());
+  document.getElementById('pr-play-btn').addEventListener('click', ()=>PianoRoll.startPlay());
+  document.getElementById('pr-stop-btn').addEventListener('click', ()=>PianoRoll.stopPlay());
+});
+</script>
+</body>
 </html>
