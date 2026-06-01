@@ -3322,21 +3322,19 @@ const App = (() => {
     sensorPressDir = fingerPressMax >= fingerRestMin['thumb'] ? 1 : -1;
 
     FINGERS.forEach(f => {
-      const rest  = fingerRestMin[f];
       const press = fingerPressMax; // calibrated pressed value
-      const range = Math.abs(press - rest);
       if(sensorPressDir > 0) {
-        // High = pressed: trigger at calibrated press value, release below it
-        fingerOnThresh[f]  = Math.round(press - range * 0.10);
-        fingerOffThresh[f] = Math.round(press - range * 0.25);
-        fingerFloor[f]     = 0; // dir+1: crosstalk goes LOW, but pressed is HIGH — no floor needed
+        // High = pressed: window above 50% of press, hysteresis up to 200%
+        fingerOnThresh[f]  = Math.round(press * 0.50); // trigger when raw > 50% of press
+        fingerOffThresh[f] = Math.round(press * 0.30); // release when raw drops below 30%
+        fingerFloor[f]     = Math.round(press * 0.10); // reject if raw < 10% (pure noise)
       } else {
-        // Low = pressed: trigger at calibrated press value, release above it
-        fingerOnThresh[f]  = Math.round(press + range * 0.10);
-        fingerOffThresh[f] = Math.round(press + range * 0.25);
-        // Floor = half the calibrated press value. Crosstalk goes BELOW the real press value
-        // (e.g. real press ~500k, crosstalk ~1k). Anything below press/2 is rejected as noise.
-        fingerFloor[f]     = Math.round(press * 0.5);
+        // Low = pressed: tight window [50% of press, 150% of press]
+        // Values BELOW 50% of press = crosstalk/noise → rejected by floor
+        // Values ABOVE 150% of press = intermediate or resting → rejected by ceiling (onThresh)
+        fingerOnThresh[f]  = Math.round(press * 1.50); // trigger when raw drops below 150% of press
+        fingerOffThresh[f] = Math.round(press * 2.00); // release when raw rises above 200% of press
+        fingerFloor[f]     = Math.round(press * 0.50); // reject raw below 50% of press (too low = noise)
       }
     });
     switchThreshold = fingerOnThresh['thumb'];
