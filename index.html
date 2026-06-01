@@ -3323,19 +3323,20 @@ const App = (() => {
 
     FINGERS.forEach(f => {
       const rest  = fingerRestMin[f];
-      const press = fingerPressMax; // calibrated pressed value — use this directly as trigger
+      const press = fingerPressMax; // calibrated pressed value
       const range = Math.abs(press - rest);
       if(sensorPressDir > 0) {
-        // High = pressed: trigger at calibrated press value, release at 75% back toward rest
-        fingerOnThresh[f]  = Math.round(press - range * 0.10); // just below press value
-        fingerOffThresh[f] = Math.round(press - range * 0.25); // hysteresis band below
-        fingerFloor[f]     = 0; // no lower floor needed for high-press sensors
+        // High = pressed: trigger at calibrated press value, release below it
+        fingerOnThresh[f]  = Math.round(press - range * 0.10);
+        fingerOffThresh[f] = Math.round(press - range * 0.25);
+        fingerFloor[f]     = 0; // dir+1: crosstalk goes LOW, but pressed is HIGH — no floor needed
       } else {
-        // Low = pressed: trigger at calibrated press value, release at 25% back toward rest
-        fingerOnThresh[f]  = Math.round(press + range * 0.10); // just above press value
-        fingerOffThresh[f] = Math.round(press + range * 0.25); // hysteresis band above
-        // Floor: reject anything lower than press - 20% of range (crosstalk goes too low)
-        fingerFloor[f]     = Math.round(press - range * 0.20);
+        // Low = pressed: trigger at calibrated press value, release above it
+        fingerOnThresh[f]  = Math.round(press + range * 0.10);
+        fingerOffThresh[f] = Math.round(press + range * 0.25);
+        // Floor = half the calibrated press value. Crosstalk goes BELOW the real press value
+        // (e.g. real press ~500k, crosstalk ~1k). Anything below press/2 is rejected as noise.
+        fingerFloor[f]     = Math.round(press * 0.5);
       }
     });
     switchThreshold = fingerOnThresh['thumb'];
