@@ -1331,8 +1331,8 @@
       <div class="panel-title" data-i18n="configuration">Configuration</div>
       <div class="settings-grid">
         <div class="setting-group" style="grid-column:1/-1">
-          <label for="switch-threshold">Switch threshold (raw ADC): <span id="switch-threshold-val">1,000,000</span></label>
-          <input type="range" id="switch-threshold" min="100000" max="4000000" step="50000" value="1000000">
+          <label for="switch-threshold">Switch trigger threshold: <span id="switch-threshold-val">1,000,000</span></label>
+          <input type="range" id="switch-threshold" min="0" max="5000000" step="50000" value="1000000">
         </div>
         <div class="setting-group">
           <label for="thresh-on">Bend threshold (trigger): <span id="thresh-on-val">0.40</span></label>
@@ -1343,8 +1343,8 @@
           <input type="range" id="thresh-off" min="0.01" max="0.99" step="0.01" value="0.20">
         </div>
         <div class="setting-group">
-          <label for="filter-size">Smoothing (filter frames): <span id="filter-val">12</span></label>
-          <input type="range" id="filter-size" min="1" max="30" value="12">
+          <label for="filter-size">Smoothing (filter frames): <span id="filter-val">2</span></label>
+          <input type="range" id="filter-size" min="1" max="30" value="2">
         </div>
 
         <div class="setting-group">
@@ -3092,25 +3092,13 @@ const App = (() => {
   let baseline={};
   let calibSamples={};
 
-  // Hysteresis thresholds (match server.py defaults)
-  let threshOn=0.4, threshOff=0.2;
-  let thumbThreshOn=0.3, thumbThreshOff=0.15; // kept for compat, unused
-  let switchThreshold=1000000; // fallback global threshold (overridden per-finger after calibration)
-  let fingerRestMin={thumb:0,index:0,middle:0,ring:0,pinky:0};   // resting baseline per finger
-  let fingerPressMax=0;  // pressed value seen during calibration (may be lower than rest if sensor is inverted)
-  let fingerOnThresh={thumb:0,index:0,middle:0,ring:0,pinky:0};  // trigger threshold per finger
-  let fingerOffThresh={thumb:0,index:0,middle:0,ring:0,pinky:0}; // release threshold per finger
-  let sensorPressDir=1; // +1 = pressing gives HIGH value, -1 = pressing gives LOW value
-  let filterSize=12;
+  // Switch threshold — raw ADC value below which a finger is considered pressed
+  // (low = pressed because 3.3V → ADC with pull-down: released=HIGH, pressed=LOW)
+  let switchThreshold=1000000;
+  let filterSize=2; // switches are binary — heavy smoothing adds sluggishness
   const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
-  const fingerPeak={thumb:0,index:0,middle:0,ring:0,pinky:0};
-  // Armed = finger has returned to rest zone and is ready to trigger again
+  // Armed = true means finger is ready to trigger; disarmed after press to prevent bounce
   const fingerArmed={thumb:true,index:true,middle:true,ring:true,pinky:true};
-  // Raw peak while switch is held — used for instant release on slow decay
-  const fingerRawPeak={thumb:0,index:0,middle:0,ring:0,pinky:0};
-  // Adaptive normalization min/max — starts from calibration, self-corrects as user plays
-  let fingerObsMin={thumb:null,index:null,middle:null,ring:null,pinky:null};
-  let fingerObsMax={thumb:null,index:null,middle:null,ring:null,pinky:null};
 
   // Tutorial state
   let mode='play'; // 'play' | 'tutorial'
@@ -3143,63 +3131,42 @@ const App = (() => {
   }
 
   function clearBuffers() {
-    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerPeak[f]=0; fingerArmed[f]=true; fingerRawPeak[f]=0; fingerObsMin[f]=null; fingerObsMax[f]=null; });
+    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerArmed[f]=true; });
   }
 
   // Called by Serial on each 10-value packet
   let _debugRaw = {};
   let _debugDrop = {};
-  let _debugMaxDrop = {thumb:0,index:0,middle:0,ring:0,pinky:0};
+  let _debugMaxDrop = {thumb:Infinity,index:Infinity,middle:Infinity,ring:Infinity,pinky:Infinity}; // tracks lowest raw (most-pressed)
   let _debugBase = {};
 
   function onPacket(vals) {
     if(!connected) return;
-    // Feed calibration collector if active
-    if(App._collectHook) { App._collectHook(vals); return; }
     if(!calibrated) return;
 
     const newActive = new Set();
 
     for(const f of FINGERS) {
       const cfg = FINGER_CFG[f];
-      // Apply moving average filter — smooths fluctuations before any threshold comparison
       const raw = Math.round(filterValue(f, vals[cfg.idx]));
 
-      // Per-finger calibrated thresholds; fall back to global if not yet calibrated
-      const onThresh  = fingerOnThresh[f]  || (sensorPressDir > 0 ? switchThreshold : -switchThreshold);
-      const offThresh = fingerOffThresh[f] || (sensorPressDir > 0 ? Math.round(switchThreshold * 0.5) : Math.round(switchThreshold * 1.5));
+      // low raw = pressed (3.3V with pull-down: released=HIGH, pressed=LOW)
+      const pressed  = raw < switchThreshold;
+      const released = raw >= switchThreshold;
 
-      // Track peak while active for instant release on slow-decay (no-resistor) sensors
+      _debugRaw[f]     = raw;
+      _debugDrop[f]    = pressed ? 1 : 0;        // 1 = triggered, 0 = idle
+      _debugMaxDrop[f] = Math.min(_debugMaxDrop[f] ?? raw, raw); // track lowest (most-pressed) value
+
+      // State machine with re-arm guard to prevent switch bounce
       if(activeFingers.has(f)) {
-        if(sensorPressDir > 0 ? raw > fingerRawPeak[f] : raw < fingerRawPeak[f])
-          fingerRawPeak[f] = raw;
-      } else {
-        fingerRawPeak[f] = raw; // reset peak while idle
-      }
-
-      const range = Math.abs(fingerPressMax - fingerRestMin[f]) || switchThreshold;
-      const peakDelta = sensorPressDir > 0 ? fingerRawPeak[f] - raw : raw - fingerRawPeak[f];
-      // Peak-drop release only fires while actively pressed (avoids false releases at rest)
-      const peakReleased   = activeFingers.has(f) && peakDelta > range * 0.15;
-      const threshReleased = sensorPressDir > 0 ? raw <= offThresh : raw >= offThresh;
-      const released = peakReleased || threshReleased;
-      const pressed  = sensorPressDir > 0 ? raw > onThresh : raw < onThresh;
-
-      _debugRaw[f] = raw;
-      _debugDrop[f] = activeFingers.has(f) ? 1 : 0; // 1 = active/on, 0 = inactive/off
-      _debugBase[f] = onThresh;
-      if(sensorPressDir > 0 ? raw > (_debugMaxDrop[f]||0) : raw < (_debugMaxDrop[f]||Infinity))
-        _debugMaxDrop[f] = raw;
-
-      // Simple hysteresis state machine with re-arm guard
-      if(activeFingers.has(f)) {
-        if(!released) {
-          newActive.add(f); // stay active while not fully released
+        if(pressed) {
+          newActive.add(f); // stay active while still pressed
         } else {
-          fingerArmed[f] = false; // disarm to prevent immediate re-trigger
+          fingerArmed[f] = false; // disarm on release — must go above threshold before re-trigger
         }
       } else {
-        if(released) fingerArmed[f] = true; // re-arm when clearly at rest
+        if(released) fingerArmed[f] = true; // re-arm once fully released
         if(fingerArmed[f] && pressed) newActive.add(f);
       }
 
@@ -3288,88 +3255,13 @@ const App = (() => {
     return vals[FINGER_CFG[f].idx];
   }
 
-  // Collect raw samples from live packets over durationMs, return per-finger averages
-  async function collectRawSamples(durationMs) {
-    const samples = {};
-    FINGERS.forEach(f => { samples[f] = []; });
-    App._collectHook = vals => {
-      FINGERS.forEach(f => { samples[f].push(vals[FINGER_CFG[f].idx]); });
-    };
-    await new Promise(r => setTimeout(r, durationMs));
-    App._collectHook = null;
-    const avgs = {};
-    FINGERS.forEach(f => {
-      const s = samples[f];
-      avgs[f] = s.length > 0 ? s.reduce((a,b)=>a+b,0)/s.length : 0;
-    });
-    return avgs;
-  }
-
   async function doCalibrate() {
     if(!connected) return;
-    calibrated = false;
     clearBuffers();
-
-    // ── Phase 1: Rest — record baseline ───────────────────────────────
-    UI.showCalibModal('rest', 'reading');
-    await new Promise(r => setTimeout(r, 2000));
-    UI.showCalibModal('rest', 'recording');
-    await new Promise(r => setTimeout(r, 1500));
-    const restVals = await collectRawSamples(1500);
-    FINGERS.forEach(f => { fingerRestMin[f] = restVals[f]; });
-
-    // ── Phase 2: Press index finger — record max ───────────────────────
-    UI.showCalibModal('thumb', 'reading');
-    await new Promise(r => setTimeout(r, 2000));
-    UI.showCalibModal('thumb', 'recording');
-    await new Promise(r => setTimeout(r, 1500));
-    const pressVals = await collectRawSamples(1500);
-    fingerPressMax = pressVals['thumb'];
-
-    // ── Detect sensor direction ────────────────────────────────────────
-    sensorPressDir = fingerPressMax >= fingerRestMin['thumb'] ? 1 : -1;
-
-    // ── Compute per-finger thresholds ─────────────────────────────────
-    FINGERS.forEach(f => {
-      const rest  = fingerRestMin[f];
-      const range = Math.abs(fingerPressMax - rest);
-      if(sensorPressDir > 0) {
-        fingerOnThresh[f]  = Math.round(rest + range * 0.50);
-        fingerOffThresh[f] = Math.round(rest + range * 0.25);
-      } else {
-        fingerOnThresh[f]  = Math.round(rest - range * 0.50);
-        fingerOffThresh[f] = Math.round(rest - range * 0.25);
-      }
-    });
-    switchThreshold = fingerOnThresh['thumb'];
-    document.getElementById('switch-threshold-val').textContent = switchThreshold.toLocaleString();
-    document.getElementById('switch-threshold').value = Math.min(4000000, Math.max(100000, Math.abs(switchThreshold)));
-
     calibrated = true;
-    UI.hideCalibModal();
     UI.syncAll();
   }
 
-  function getNormalized(f, rawVal) {
-    const open   = openBaseline[f] ?? baseline[f] ?? rawVal;
-    const closed = closedBaseline[f] ?? rawVal;
-
-    // Adapt observed min/max over time so range self-corrects
-    if(fingerObsMin[f] === null) fingerObsMin[f] = open;
-    if(fingerObsMax[f] === null) fingerObsMax[f] = closed;
-    if(rawVal < fingerObsMin[f]) fingerObsMin[f] = rawVal;
-    if(rawVal > fingerObsMax[f]) fingerObsMax[f] = rawVal;
-
-    // Use per-finger direction config (dir:1 = increases on bend, dir:-1 = decreases on bend)
-    // Fall back to calibration-detected direction if not specified
-    const cfgDir = FINGER_CFG[f]?.dir;
-    const calibDir = cfgDir !== undefined ? cfgDir : (closed > open ? 1 : -1);
-    const adaptOpen   = calibDir > 0 ? fingerObsMin[f] : fingerObsMax[f];
-    const adaptClosed = calibDir > 0 ? fingerObsMax[f] : fingerObsMin[f];
-    const range = adaptClosed - adaptOpen;
-    if(Math.abs(range) < 10) return 0;
-    return Math.max(0, Math.min(1, (rawVal - adaptOpen) / range));
-  }
 
   function setPreset(p) {
     currentPreset=p;
@@ -3667,17 +3559,8 @@ const App = (() => {
     set customInstrument(v){ customInstrument=v; AudioEngine.setInstrument(v); },
     get switchThreshold(){return switchThreshold},
     setSwitchThreshold(v){switchThreshold=v},
-    get fingerOnThresh(){return fingerOnThresh},
-    get fingerOffThresh(){return fingerOffThresh},
-    get fingerRestMin(){return fingerRestMin},
-    setThreshOn(v){threshOn=v},
-    setThreshOff(v){threshOff=v},
-    get thumbThreshOn(){return thumbThreshOn},
-    get thumbThreshOff(){return thumbThreshOff},
-    setThumbThreshOn(v){thumbThreshOn=v},
-    setThumbThreshOff(v){thumbThreshOff=v},
+
     setFilterSize(v){filterSize=v},
-    _collectHook: null,
     manualPress, manualRelease,
     startDemo, stopDemo,
     get demoPlaying(){return demoPlaying},
@@ -4664,7 +4547,7 @@ document.addEventListener('DOMContentLoaded', () => {
     debugPanel.style.display = debugToggle.checked ? 'block' : 'none';
   });
   debugReset.addEventListener('click', () => {
-    FINGERS.forEach(f => { App._debugMaxDrop[f] = 0; });
+    FINGERS.forEach(f => { App._debugMaxDrop[f] = Infinity; });
   });
   setInterval(() => {
     if (!debugToggle.checked) return;
