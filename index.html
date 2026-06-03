@@ -3920,25 +3920,25 @@ const UI = (() => {
 
     if(phase === 'rest' && state === 'reading') {
       document.getElementById('calib-icon').textContent = '🤚';
-      document.getElementById('calib-title').textContent = 'Step 1 of 2 — Rest Your Hand';
-      document.getElementById('calib-desc').textContent = 'Do not press any switches. Keep your hand relaxed and still. Recording will begin in 2 seconds.';
-      document.getElementById('calib-status').textContent = 'Get ready…';
+      document.getElementById('calib-title').textContent = currentLang==='zh' ? '第一步（共两步）— 放松手部' : 'Step 1 of 2 — Rest Your Hand';
+      document.getElementById('calib-desc').textContent = currentLang==='zh' ? '请勿按下任何按钮，保持手部放松静止。2秒后开始录制。' : 'Do not press any switches. Keep your hand relaxed and still. Recording will begin in 2 seconds.';
+      document.getElementById('calib-status').textContent = currentLang==='zh' ? '准备中…' : 'Get ready…';
     } else if(phase === 'rest' && state === 'recording') {
       document.getElementById('calib-icon').textContent = '🤚';
-      document.getElementById('calib-title').textContent = 'Step 1 of 2 — Hold Still';
-      document.getElementById('calib-desc').textContent = 'Keep all fingers relaxed — do not press anything. Recording the resting baseline…';
-      document.getElementById('calib-status').textContent = 'Recording rest values…';
+      document.getElementById('calib-title').textContent = currentLang==='zh' ? '第一步（共两步）— 请保持不动' : 'Step 1 of 2 — Hold Still';
+      document.getElementById('calib-desc').textContent = currentLang==='zh' ? '保持所有手指放松，请勿按下任何按钮。正在记录静止基准值…' : 'Keep all fingers relaxed — do not press anything. Recording the resting baseline…';
+      document.getElementById('calib-status').textContent = currentLang==='zh' ? '正在录制静止数值…' : 'Recording rest values…';
       setBar(3000);
     } else if(phase === 'thumb' && state === 'reading') {
       document.getElementById('calib-icon').textContent = '👍';
-      document.getElementById('calib-title').textContent = 'Step 2 of 2 — Press Your Thumb';
-      document.getElementById('calib-desc').textContent = 'Now press and hold only your thumb switch as hard as you can. Recording will begin in 2 seconds.';
-      document.getElementById('calib-status').textContent = 'Get ready…';
+      document.getElementById('calib-title').textContent = currentLang==='zh' ? '第二步（共两步）— 按下拇指' : 'Step 2 of 2 — Press Your Thumb';
+      document.getElementById('calib-desc').textContent = currentLang==='zh' ? '现在尽力按住拇指按钮不放。2秒后开始录制。' : 'Now press and hold only your thumb switch as hard as you can. Recording will begin in 2 seconds.';
+      document.getElementById('calib-status').textContent = currentLang==='zh' ? '准备中…' : 'Get ready…';
     } else if(phase === 'thumb' && state === 'recording') {
       document.getElementById('calib-icon').textContent = '👍';
-      document.getElementById('calib-title').textContent = 'Step 2 of 2 — Hold Thumb Down';
-      document.getElementById('calib-desc').textContent = 'Keep your thumb pressed firmly. This sets the maximum value for all fingers…';
-      document.getElementById('calib-status').textContent = 'Recording thumb press…';
+      document.getElementById('calib-title').textContent = currentLang==='zh' ? '第二步（共两步）— 保持按住拇指' : 'Step 2 of 2 — Hold Thumb Down';
+      document.getElementById('calib-desc').textContent = currentLang==='zh' ? '请持续用力按住拇指。此步骤将为所有手指设定最大值…' : 'Keep your thumb pressed firmly. This sets the maximum value for all fingers…';
+      document.getElementById('calib-status').textContent = currentLang==='zh' ? '正在录制拇指按压数值…' : 'Recording thumb press…';
       setBar(3000);
     }
   }
@@ -3947,7 +3947,7 @@ const UI = (() => {
     const modal = document.getElementById('calib-modal');
     if(modal._timerId) clearInterval(modal._timerId);
     document.getElementById('calib-progress-bar').style.width = '100%';
-    document.getElementById('calib-status').textContent = '✅ Done!';
+    document.getElementById('calib-status').textContent = currentLang==='zh' ? '✅ 完成！' : '✅ Done!';
     setTimeout(() => { modal.style.display = 'none'; }, 600);
   }
 
