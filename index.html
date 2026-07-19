@@ -1344,6 +1344,14 @@
         </div>
 
         <div class="setting-group">
+          <label for="lockout-ms">Retrigger lockout (tremor): <span id="lockout-val">250</span> ms</label>
+          <input type="range" id="lockout-ms" min="0" max="600" step="25" value="250">
+          <div style="font-size:0.68rem;color:var(--muted);margin-top:6px;line-height:1.4;text-transform:none;letter-spacing:0;">
+            Minimum gap between repeat notes on the same finger. Higher = steadier for shaky hands; lower = faster repeated notes. 0 disables.
+          </div>
+        </div>
+
+        <div class="setting-group">
           <label for="volume-range">Volume: <span id="volume-val">70</span>%</label>
           <input type="range" id="volume-range" min="5" max="100" value="70">
         </div>
@@ -1810,7 +1818,8 @@ const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 const TUT_FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 
 const FINGER_CFG = {
-  thumb:  { idx: 1, range: 139000, w: 80, h: 108, mt: 80, color: '#ff4d4d', rc: '255,77,77', dir: -1 },
+  // idx = packet slot. Slot 0 is header/system and is never read; thumb is slot 1.
+  thumb:  { idx: 1, range: 139000, w: 80, h: 108, mt: 80, color: '#ff4d4d', rc: '255,77,77' },
   index:  { idx: 3, range: 140000, w: 68, h: 168, mt: 12, color: '#ff8c2a', rc: '255,140,42' },
   middle: { idx: 4, range: 139000, w: 68, h: 192, mt: 0,  color: '#e6b800', rc: '230,184,0' },
   ring:   { idx: 5, range: 184000, w: 68, h: 168, mt: 12, color: '#22c55e', rc: '34,197,94' },
@@ -3103,6 +3112,14 @@ const App = (() => {
   // Encoders swing ~400k; a flex divider on 3.3V swings ~1M. 5k rejects noise.
   const MIN_SPAN = 5000;
 
+  // ── PHASE B2: retrigger lockout (tremor defense) ──
+  // Tremor sits at 4–12 Hz; a deliberate finger curl is ~1–2 Hz. After a note
+  // fires we refuse to RE-trigger that finger for lockoutMs. Onset is still
+  // instant (the very first threshold crossing always fires), so this costs
+  // zero added latency — it only blocks the machine-gunning that tremor causes.
+  let lockoutMs = 250;
+  const fingerLastFire = {thumb:0,index:0,middle:0,ring:0,pinky:0};
+
   const fingerBuffers={thumb:[],index:[],middle:[],ring:[],pinky:[]};
 
   // Tutorial state
@@ -3136,7 +3153,7 @@ const App = (() => {
   }
 
   function clearBuffers() {
-    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; });
+    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerLastFire[f]=0; });
   }
 
   // Called by Serial on each 10-value packet
@@ -3161,6 +3178,7 @@ const App = (() => {
     if(!calibrated) return;
 
     const newActive = new Set();
+    const now = Date.now();
     const on  = threshOn;
     const off = Math.min(threshOff, threshOn - 0.02); // always keep a hysteresis gap
 
@@ -3169,7 +3187,18 @@ const App = (() => {
       const norm = normalize(f, raw);
 
       // Hysteresis: cross `on` to fire, must fall below the lower `off` to release.
-      const isActive = activeFingers.has(f) ? (norm > off) : (norm > on);
+      // Plus a retrigger lockout: a finger that just fired cannot fire AGAIN
+      // until lockoutMs has elapsed. A held note is unaffected (it stays in
+      // activeFingers and only needs to stay above `off`).
+      let isActive;
+      if(activeFingers.has(f)) {
+        isActive = norm > off;                       // sustaining — never blocked
+      } else if(norm > on) {
+        isActive = (now - fingerLastFire[f]) >= lockoutMs;
+        if(isActive) fingerLastFire[f] = now;        // stamp the new attack
+      } else {
+        isActive = false;
+      }
       if(isActive) newActive.add(f);
 
       _debugRaw[f]  = raw;
@@ -3610,6 +3639,8 @@ const App = (() => {
     get customTypes(){return customTypes},
     get customInstrument(){return customInstrument},
     set customInstrument(v){ customInstrument=v; AudioEngine.setInstrument(v); },
+    get lockoutMs(){return lockoutMs},
+    setLockoutMs(v){lockoutMs=v},
     setThreshOn(v){threshOn=v},
     setThreshOff(v){threshOff=v},
     setFilterSize(v){filterSize=v},
@@ -4579,6 +4610,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('filter-size').addEventListener('input', e=>{
     App.setFilterSize(parseInt(e.target.value));
     document.getElementById('filter-val').textContent=e.target.value;
+  });
+  document.getElementById('lockout-ms').addEventListener('input', e=>{
+    App.setLockoutMs(parseInt(e.target.value));
+    document.getElementById('lockout-val').textContent=e.target.value;
   });
   document.getElementById('volume-range').addEventListener('input', e=>{
     AudioEngine.setVolume(parseInt(e.target.value)/100);
