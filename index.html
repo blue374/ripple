@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ripple — Music Therapy System</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Newsreader:opsz,ital,wght@6..72,0,300;6..72,0,400;6..72,0,500;6..72,0,600;6..72,1,300;6..72,1,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #0d0d1a;
@@ -27,13 +27,24 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'DM Mono', monospace;
+      font-family: 'Manrope', 'Segoe UI', Verdana, sans-serif;
+      line-height: 1.6;
+      font-weight: 400;
+      letter-spacing: 0.005em;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-feature-settings: 'liga' 1, 'kern' 1;
+      text-rendering: optimizeLegibility;
       font-size: 16px;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
     }
+
+    /* Overlay tokens — each theme sets its own scrim and modal surface so
+       dialogs stop being hardcoded dark. */
+    :root { --scrim: rgba(0,0,0,0.75); --modal-bg: rgba(20,20,35,0.97); }
 
     /* ── THEMES ── */
     /* ── DARK THEME: deep navy with vivid purple/pink/teal accents ── */
@@ -53,6 +64,8 @@
       --diff-b: #4ade80; --diff-e: #22d3ee; --diff-m: #f97316; --diff-h: #ef4444;
       --grad1: #0e0e1c;
       --grad2: #151528;
+      --scrim: rgba(0,0,0,0.75);
+      --modal-bg: rgba(20,20,35,0.97);
     }
 
     /* ── LIGHT THEME: warm cream with vivid coral/indigo/amber accents ── */
@@ -71,6 +84,91 @@
       --btn1: 232,72,85;
       --diff-b: #15803d; --diff-e: #0369a1; --diff-m: #c2410c; --diff-h: #9f1239;
       --grad2: #e8e2da;
+      --scrim: rgba(45,32,18,0.42);
+      --modal-bg: #fffdf9;
+    }
+
+    /* ── CLEAR THEME: maximum-contrast, large-type. Built for aging eyes,
+          bright activity rooms, and glare. Solid surfaces (no translucency),
+          near-black on near-white, and every accent darkened to pass
+          WCAG AA contrast against its background. ── */
+    body.theme-clear {
+      --bg: #f5f1e8;
+      --surface: #fdfbf6;
+      --surface2: #ebe5d8;
+      --surface3: #fdfbf6;
+      --border: #1a1a1a;
+      --text: #14100a;
+      --muted: #3d3527;
+      --accent: #0b4fa8;
+      --accent2: #0b6b3a;
+      --orb1: 11,79,168;
+      --orb2: 11,107,58;
+      --btn1: 11,79,168;
+      --diff-b: #0b6b3a; --diff-e: #0b4fa8; --diff-m: #8a3d00; --diff-h: #9b1111;
+      --grad1: #f5f1e8;
+      --grad2: #f5f1e8;
+      --scrim: rgba(45,32,18,0.38);
+      --modal-bg: #fffdf9;
+    }
+
+    /* Clear theme: scale type up and remove decorative effects that
+       reduce legibility (blur, translucency, glow, background orbs). */
+    /* Clear theme keeps the same typefaces as every other theme — it only
+       scales them up, loosens the leading, and drops the all-caps transforms
+       (all-caps removes the word-shape cues the eye uses to recognise words). */
+    body.theme-clear {
+      font-size: 20px;
+      letter-spacing: 0.008em;
+      line-height: 1.72;
+    }
+    body.theme-clear .panel-title { letter-spacing: 0.05em; }
+    body.theme-clear h1, body.theme-clear .header h1 { font-weight: 500; }
+    body.theme-clear .status-line { font-style: italic; }
+    body.theme-clear .panel-title,
+    body.theme-clear .finger-label,
+    body.theme-clear .mapping-cell .fname,
+    body.theme-clear .setting-group label,
+    body.theme-clear .header p,
+    body.theme-clear .tut-next-label,
+    body.theme-clear .splash-section-title {
+      text-transform: none;
+      letter-spacing: 0.01em;
+    }
+    body.theme-clear::before,
+    body.theme-clear::after { display: none; }
+    body.theme-clear .panel {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      border-width: 2px;
+      background: #fdfbf6;
+    }
+    body.theme-clear .btn,
+    body.theme-clear .preset-btn,
+    body.theme-clear .tab,
+    body.theme-clear .btn-sm {
+      box-shadow: none !important;
+      border-width: 2px;
+      font-weight: 700;
+    }
+    body.theme-clear .btn { font-size: 1.05rem; padding: 14px 26px; }
+    body.theme-clear .tab { font-size: 1.1rem; padding: 14px; }
+    body.theme-clear .preset-btn { font-size: 1rem; padding: 12px 22px; }
+    body.theme-clear .panel-title { font-size: 1.05rem; color: #14100a; }
+    body.theme-clear .status-line { font-size: 1.15rem; font-weight: 600; }
+    body.theme-clear .finger-label { font-size: 1rem; font-weight: 700; color: #14100a; }
+    body.theme-clear .finger { border-width: 3px; box-shadow: none !important; }
+    body.theme-clear .mapping-cell { border-width: 2px; }
+    body.theme-clear .mapping-cell .fname { font-size: 0.85rem; color: #14100a; }
+    body.theme-clear .tut-name { font-size: 1.15rem; font-weight: 700; }
+    body.theme-clear .tut-meta { font-size: 0.9rem; }
+    body.theme-clear .tutorial-card { border-width: 2px; background: #ebe5d8; }
+    body.theme-clear .setting-group label { font-size: 0.95rem; color: #14100a; }
+    body.theme-clear .header p { color: #3d3527; }
+    body.theme-clear .header h1 {
+      -webkit-text-fill-color: #14100a;
+      background: none;
+      color: #14100a;
     }
 
     /* Dynamic background using theme vars */
@@ -105,6 +203,133 @@
       100% { transform: translate(-60px,80px) scale(1.15); }
     }
 
+    .profile-list { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:14px; }
+    .profile-chip {
+      display:flex; align-items:center; gap:10px;
+      padding:12px 18px; border-radius:999px;
+      border:2px solid var(--border); background:var(--surface2);
+      color:var(--text); font-size:1.02rem; cursor:pointer; transition:0.15s;
+    }
+    .profile-chip:hover { border-color:rgba(var(--btn1),0.7); }
+    .profile-chip.active { background:rgba(var(--btn1),0.9); color:#fff; border-color:rgba(var(--btn1),1); font-weight:600; }
+    .profile-chip.demo { border-style:dashed; }
+    /* In demo mode the picker gets out of the way entirely — just a thin
+       line so there is still a way back to a saved profile. */
+    body.demo-active #profile-panel { display:none; }
+    #demo-bar {
+      display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+      margin-bottom:16px; padding:8px 4px;
+      font-size:0.9rem; color:var(--muted);
+    }
+    #demo-bar button {
+      background:none; border:none; padding:0;
+      color:var(--accent); font-family:inherit; font-size:0.9rem;
+      text-decoration:underline; cursor:pointer;
+    }
+    #demo-bar button:hover { color:var(--text); }
+    .profile-chip.demo.active { background:var(--muted); border-color:var(--muted); border-style:solid; }
+    body.demo-active #profile-panel { border-color:var(--muted); }
+    .profile-chip .pname { pointer-events:none; }
+    .profile-chip .pdel {
+      background:none; border:none; cursor:pointer;
+      color:inherit; opacity:0.45; font-size:1.05em; line-height:1;
+      padding:6px 8px; margin:-6px -10px -6px 0; border-radius:50%;
+      font-family:inherit;
+    }
+    .profile-chip .pdel:hover { opacity:1; background:rgba(220,60,60,0.18); }
+    .profile-chip.confirming { border-color:#d94a4a; }
+    .pconfirm { display:flex; gap:6px; }
+    .pconfirm button {
+      border:none; cursor:pointer; font-family:inherit; font-weight:600;
+      font-size:0.86rem; padding:6px 12px; border-radius:999px;
+    }
+    .pconfirm .pyes { background:#d94a4a; color:#fff; }
+    .pconfirm .pno  { background:var(--surface); color:var(--text); border:1px solid var(--border); }
+    .profile-add { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .profile-add input {
+      flex:1; min-width:180px; padding:12px 16px; border-radius:10px;
+      border:2px solid var(--border); background:var(--surface2);
+      color:var(--text); font-size:1rem; font-family:inherit;
+    }
+    .profile-status { margin-top:12px; font-size:0.92rem; color:var(--muted); line-height:1.5; }
+    .tut-progress { font-size:0.8rem; color:var(--accent2); margin-top:4px; font-weight:600; }
+    .tutorial-card.done { border-color:var(--accent2); }
+
+    /* ── Typography ──
+       Newsreader is a variable font with an optical-size axis: at large sizes
+       its display cut has finer hairlines and tighter joins, which is what
+       makes a heading look considered rather than merely large. */
+    h1, .splash-logo, .header h1 {
+      font-variation-settings: 'opsz' 72;
+      font-weight: 600;
+    }
+    .panel-title, .tut-name, .modal h3, .tut-next-finger, .tut-complete {
+      font-variation-settings: 'opsz' 32;
+    }
+    .panel-title {
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    .tut-name { font-weight: 600; letter-spacing: 0.01em; }
+    .status-line { font-variation-settings: 'opsz' 20; font-weight: 400; }
+    /* Controls: lighter weight and a touch of tracking reads as tailored
+       rather than shouty. */
+    /* Every control the user presses stays firmly weighted — a button that
+       whispers is a button people miss. */
+    .btn, .btn-sm, .preset-btn, .lang-btn, .tab {
+      font-weight: 600;
+      letter-spacing: 0.025em;
+    }
+    .setting-group label, .splash-section-title {
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+    .big-toggle-title { font-weight: 700; }
+    .profile-chip { font-weight: 600; }
+    .tut-meta, .big-toggle-sub, .profile-status {
+      font-weight: 400;
+      letter-spacing: 0.01em;
+    }
+
+    /* ── Large, obvious on/off controls. A checkbox is a small target and
+          an ambiguous affordance; this reads as a switch from across a room. ── */
+    .big-toggle {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      border-radius: 14px;
+      background: var(--surface2);
+      border: 2px solid var(--border);
+    }
+    .big-toggle-text { text-align: left; }
+    .big-toggle-title { font-size: 1.12rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .big-toggle-sub { font-size: 0.88rem; color: var(--muted); line-height: 1.45; }
+    .big-switch { position: relative; display: inline-block; width: 68px; height: 38px; flex-shrink: 0; cursor: pointer; }
+    .big-switch input { opacity: 0; width: 0; height: 0; }
+    .big-slider {
+      position: absolute; inset: 0;
+      background: rgba(128,128,128,0.35);
+      border: 2px solid var(--border);
+      border-radius: 999px;
+      transition: 0.22s;
+    }
+    .big-slider::before {
+      content: '';
+      position: absolute;
+      height: 26px; width: 26px;
+      left: 4px; top: 4px;
+      background: #fff;
+      border-radius: 50%;
+      transition: 0.22s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+    .big-switch input:checked + .big-slider { background: rgba(var(--btn1),0.9); }
+    .big-switch input:checked + .big-slider::before { transform: translateX(30px); }
+    .big-switch input:focus-visible + .big-slider { outline: 3px solid var(--accent2); outline-offset: 3px; }
+    .tab-ico { margin-right: 8px; font-size: 1.1em; }
+
     /* ── SPLASH SCREEN ── */
     #splash {
       position: fixed;
@@ -113,45 +338,85 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(160deg, #0a0a18 0%, #12122a 50%, #0a0a18 100%);
+      background: linear-gradient(165deg, #fdf8ee 0%, #f8efe0 45%, #f4e8d8 100%);
       overflow: auto;
     }
+    /* Two soft washes of colour drifting very slowly across each other.
+       Movement is kept under 0.02 Hz — enough to feel alive, slow enough
+       that it never pulls the eye away from what someone is reading. */
+    /* Two washes of colour sweeping across each other on different cycles.
+       Generous overscan (inset:-40%) so the gradients can travel a long way
+       without their edges ever entering the frame. */
     #splash::before {
       content: '';
       position: fixed;
-      inset: 0;
+      inset: -40%;
       background:
-        radial-gradient(ellipse at 20% 20%, rgba(155,140,255,0.2) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 80%, rgba(255,140,200,0.15) 0%, transparent 50%);
+        radial-gradient(ellipse 46% 40% at 22% 26%, rgba(226,142,72,0.72) 0%, transparent 58%),
+        radial-gradient(ellipse 42% 38% at 78% 32%, rgba(104,166,142,0.68) 0%, transparent 58%),
+        radial-gradient(ellipse 50% 44% at 50% 84%, rgba(206,124,150,0.60) 0%, transparent 60%);
       pointer-events: none;
+      animation: splashDrift 17s ease-in-out infinite alternate;
+    }
+    #splash::after {
+      content: '';
+      position: fixed;
+      inset: -40%;
+      background:
+        radial-gradient(ellipse 40% 34% at 68% 14%, rgba(238,192,88,0.62) 0%, transparent 58%),
+        radial-gradient(ellipse 44% 36% at 26% 72%, rgba(120,164,212,0.60) 0%, transparent 58%),
+        radial-gradient(ellipse 38% 32% at 88% 78%, rgba(196,150,196,0.52) 0%, transparent 60%);
+      pointer-events: none;
+      animation: splashDrift2 23s ease-in-out infinite alternate;
+    }
+    @keyframes splashDrift {
+      0%   { transform: translate3d(-9%, -6%, 0) scale(1) rotate(0deg); }
+      50%  { transform: translate3d(7%, 5%, 0) scale(1.22) rotate(4deg); }
+      100% { transform: translate3d(10%, -8%, 0) scale(1.1) rotate(-3deg); }
+    }
+    @keyframes splashDrift2 {
+      0%   { transform: translate3d(8%, 7%, 0) scale(1.15) rotate(2deg); }
+      50%  { transform: translate3d(-8%, -4%, 0) scale(1) rotate(-4deg); }
+      100% { transform: translate3d(-10%, 8%, 0) scale(1.2) rotate(3deg); }
+    }
+    /* Respect the OS "reduce motion" setting — some people get dizzy. */
+    @media (prefers-reduced-motion: reduce) {
+      #splash::before, #splash::after { animation: none; }
     }
     .splash-inner {
       position: relative;
       z-index: 1;
       text-align: center;
       padding: 60px 24px;
+      background: radial-gradient(ellipse 66% 62% at 50% 46%, rgba(255,253,249,0.92) 0%, rgba(255,253,249,0.62) 52%, transparent 80%);
       max-width: 640px;
       width: 100%;
     }
     .splash-logo {
-      font-family: 'DM Serif Display', serif;
-      font-size: 3.5rem;
-      color: #fff;
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 4.4rem;
+      font-weight: 600;
+      color: #1d160e;
       margin-bottom: 10px;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.005em;
+      text-shadow: 0 1px 0 rgba(255,252,246,0.9);
     }
     .splash-tagline {
-      font-size: 0.9rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.45);
-      margin-bottom: 56px;
+      letter-spacing: 0.05em;
+      font-size: 1.15rem;
+      font-weight: 500;
+      text-transform: none;
+      font-style: italic;
+      font-family: 'Newsreader', Georgia, serif;
+      color: #5a4a35;
+      margin-bottom: 52px;
     }
     .splash-section-title {
-      font-size: 0.78rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.4);
+      font-size: 1.08rem;
+      letter-spacing: 0.03em;
+      text-transform: none;
+      font-weight: 700;
+      color: #3d3125;
       margin-bottom: 18px;
     }
     /* Language picker */
@@ -162,20 +427,21 @@
       margin-bottom: 56px;
     }
     .lang-btn {
-      font-family: 'DM Mono', monospace;
-      padding: 12px 0;
-      width: 160px;
+      font-family: 'Manrope', 'Segoe UI', Verdana, sans-serif;
+      padding: 16px 0;
+      width: 170px;
       border-radius: 12px;
-      border: 2px solid rgba(var(--btn1),0.5);
-      background: rgba(var(--btn1),0.18);
-      color: rgba(255,255,255,0.7);
+      border: 2px solid rgba(120,98,72,0.45);
+      background: rgba(255,255,255,0.72);
+      color: #35291c;
       cursor: pointer;
-      font-size: 1rem;
+      font-size: 1.12rem;
+      font-weight: 600;
       transition: all 0.18s;
       text-align: center;
     }
-    .lang-btn:hover { background: rgba(var(--btn1),0.38); color: #fff; border-color: rgba(var(--btn1),0.8); }
-    .lang-btn.active { border-color: rgba(var(--btn1),1); color: #fff; background: rgba(var(--btn1),0.88); box-shadow: 0 0 20px rgba(var(--btn1),0.45); }
+    .lang-btn:hover { background: #fff; border-color: rgba(120,98,72,0.8); }
+    .lang-btn.active { border-color: #6b5335; color: #2a2015; background: #fff; font-weight: 600; box-shadow: 0 3px 14px rgba(90,70,45,0.18); }
     /* Theme grid */
     .theme-grid {
       display: flex;
@@ -196,8 +462,9 @@
       position: relative;
       overflow: hidden;
     }
-    .theme-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.3); }
-    .theme-card.selected { border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+    .theme-card { background: rgba(255,255,255,0.62); }
+    .theme-card:hover { transform: translateY(-2px); border-color: rgba(120,98,72,0.5); }
+    .theme-card.selected { border-color: #6b5335; background: #fff; box-shadow: 0 4px 18px rgba(90,70,45,0.2); }
     .theme-card .theme-preview {
       width: 100%;
       height: 44px;
@@ -205,25 +472,27 @@
       margin-bottom: 8px;
     }
     .theme-card .theme-name {
-      font-size: 0.74rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.7);
+      font-size: 1.02rem;
+      letter-spacing: 0.01em;
+      text-transform: none;
+      font-weight: 600;
+      color: #35291c;
     }
-    .theme-card.selected .theme-name { color: #fff; font-weight: 500; }
+    .theme-card.selected .theme-name { color: #1d160e; font-weight: 700; }
     /* Enter button */
     .splash-enter-btn {
-      font-family: 'DM Mono', monospace;
-      padding: 16px 64px;
+      font-family: 'Manrope', 'Segoe UI', Verdana, sans-serif;
+      padding: 20px 76px;
       border-radius: 14px;
-      border: 2px solid rgba(var(--btn1),0.9);
-      background: rgba(var(--btn1),0.88);
+      border: 2px solid #6b5335;
+      background: #6b5335;
       color: #fff;
-      font-size: 1rem;
-      letter-spacing: 0.1em;
+      font-size: 1.4rem;
+      letter-spacing: 0.03em;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
-      box-shadow: 0 0 30px rgba(var(--btn1),0.35);
+      box-shadow: 0 4px 18px rgba(90,70,45,0.28);
     }
     .splash-enter-btn:hover {
       background: rgba(var(--btn1),1);
@@ -253,7 +522,7 @@
     }
 
     .header h1 {
-      font-family: 'DM Serif Display', serif;
+      font-family: 'Newsreader', Georgia, serif;
       font-size: 3.5rem;
       letter-spacing: -0.02em;
       background: linear-gradient(135deg, var(--text) 40%, var(--accent));
@@ -275,7 +544,7 @@
       position: absolute;
       top: 0;
       right: 0;
-      font-family: 'DM Mono', monospace;
+      font-family: 'Manrope', 'Segoe UI', Verdana, sans-serif;
       font-size: 0.74rem;
       letter-spacing: 0.08em;
       padding: 6px 12px;
@@ -316,7 +585,7 @@
     }
 
     .btn {
-      font-family: 'DM Mono', monospace;
+      font-family: 'Manrope', 'Segoe UI', Verdana, sans-serif;
       font-size: 0.9rem;
       letter-spacing: 0.08em;
       padding: 10px 22px;
@@ -413,7 +682,7 @@
 
     .tab {
       flex: 1;
-      font-family: 'DM Mono', monospace;
+      font-family: 'Manrope', 'Segoe UI', Verdana, sans-serif;
       font-size: 1rem;
       font-weight: 700;
       letter-spacing: 0.06em;
@@ -447,7 +716,7 @@
     }
 
     .preset-btn {
-      font-family: 'DM Mono', monospace;
+      font-family: 'Manrope', 'Segoe UI', Verdana, sans-serif;
       font-size: 0.9rem;
       font-weight: 700;
       padding: 9px 18px;
@@ -644,7 +913,7 @@
     }
 
     .inst-btn {
-      font-family: 'DM Mono', monospace;
+      font-family: 'Manrope', 'Segoe UI', Verdana, sans-serif;
       font-size: 0.86rem;
       padding: 8px 10px;
       border-radius: 7px;
@@ -740,7 +1009,7 @@
     }
 
     .tut-next-finger {
-      font-family: 'DM Serif Display', serif;
+      font-family: 'Newsreader', Georgia, serif;
       font-size: 2.5rem;
       margin-bottom: 16px;
     }
@@ -766,7 +1035,7 @@
     .seq-dot.current { background: var(--accent); border-color: var(--accent); transform: scale(1.4); }
 
     .tut-complete {
-      font-family: 'DM Serif Display', serif;
+      font-family: 'Newsreader', Georgia, serif;
       font-size: 2rem;
       color: var(--green);
       margin-bottom: 10px;
@@ -826,7 +1095,7 @@
     .pianoroll-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.75);
+      background: var(--scrim);
       backdrop-filter: blur(6px);
       z-index: 200;
       display: flex;
@@ -835,7 +1104,7 @@
       padding: 16px;
     }
     .pianoroll-modal {
-      background: rgba(20,20,35,0.97);
+      background: var(--modal-bg);
       border: 1px solid var(--border);
       border-radius: 20px;
       width: 100%;
@@ -844,8 +1113,9 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+      box-shadow: 0 24px 80px rgba(40,28,14,0.28);
     }
+    body.theme-dark .pianoroll-modal { box-shadow: 0 24px 80px rgba(0,0,0,0.6); }
     .pianoroll-header {
       display: flex;
       align-items: center;
@@ -855,7 +1125,7 @@
       flex-shrink: 0;
     }
     .pianoroll-header h3 {
-      font-family: 'DM Serif Display', serif;
+      font-family: 'Newsreader', Georgia, serif;
       font-size: 1.2rem;
       color: var(--text);
     }
@@ -869,7 +1139,7 @@
       flex-shrink: 0;
     }
     .pr-tool-btn {
-      font-family: 'DM Mono', monospace;
+      font-family: 'Manrope', 'Segoe UI', Verdana, sans-serif;
       font-size: 0.82rem;
       padding: 5px 12px;
       border-radius: 6px;
@@ -914,14 +1184,24 @@
     .pr-lane {
       flex: 1;
       height: 36px;
-      background: var(--surface);
+      background: var(--surface2);
       border: 1px solid var(--border);
       border-radius: 6px;
       position: relative;
       overflow: hidden;
       cursor: crosshair;
     }
-    .pr-lane:hover { background: var(--surface2); }
+    .pr-lane:hover { filter: brightness(0.97); }
+    body.theme-dark .pr-lane { background: rgba(255,255,255,0.06); }
+    body.theme-dark .pr-lane:hover { background: rgba(255,255,255,0.11); }
+    /* recessed, ruled lane on the light themes */
+    body.theme-light .pr-lane, body.theme-clear .pr-lane {
+      background: rgba(120,98,72,0.10);
+      border-color: rgba(120,98,72,0.30);
+    }
+    body.theme-light .pr-lane:hover, body.theme-clear .pr-lane:hover {
+      background: rgba(120,98,72,0.16);
+    }
     .pr-note-block {
       position: absolute;
       top: 4px;
@@ -932,7 +1212,7 @@
       align-items: center;
       justify-content: center;
       font-size: 0.82rem;
-      font-family: 'DM Mono', monospace;
+      font-family: 'Manrope', 'Segoe UI', Verdana, sans-serif;
       color: rgba(255,255,255,0.9);
       transition: filter 0.1s;
       user-select: none;
@@ -972,7 +1252,7 @@
     }
     .pr-note-popup {
       position: fixed;
-      background: rgba(20,20,35,0.98);
+      background: var(--modal-bg);
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 10px;
@@ -994,7 +1274,7 @@
       max-width: 220px;
     }
     .pr-chord-btn {
-      font-family: 'DM Mono', monospace;
+      font-family: 'Manrope', 'Segoe UI', Verdana, sans-serif;
       font-size: 0.86rem;
       padding: 3px 7px;
       border-radius: 4px;
@@ -1007,7 +1287,7 @@
     .pr-chord-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(155,140,255,0.15); }
 
     .btn-sm {
-      font-family: 'DM Mono', monospace;
+      font-family: 'Manrope', 'Segoe UI', Verdana, sans-serif;
       font-size: 0.82rem;
       padding: 6px 12px;
       border-radius: 6px;
@@ -1045,7 +1325,7 @@
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.85);
+      background: var(--scrim);
       backdrop-filter: blur(4px);
       display: flex;
       align-items: center;
@@ -1066,7 +1346,7 @@
     }
 
     .modal h3 {
-      font-family: 'DM Serif Display', serif;
+      font-family: 'Newsreader', Georgia, serif;
       font-size: 1.4rem;
       margin-bottom: 20px;
     }
@@ -1090,7 +1370,7 @@
     }
 
     .chord-btn-modal {
-      font-family: 'DM Mono', monospace;
+      font-family: 'Manrope', 'Segoe UI', Verdana, sans-serif;
       font-size: 0.86rem;
       padding: 7px 12px;
       border-radius: 6px;
@@ -1127,7 +1407,7 @@
 
     .modal-footer button {
       flex: 1;
-      font-family: 'DM Mono', monospace;
+      font-family: 'Manrope', 'Segoe UI', Verdana, sans-serif;
       font-size: 0.9rem;
       padding: 10px;
       border-radius: 8px;
@@ -1253,14 +1533,27 @@
 
   <!-- Tabs -->
   <div class="tabs">
-    <button class="tab" data-tab="tutorial">Tutorial</button>
-    <button class="tab active" data-tab="play">Play</button>
-    <button class="tab" data-tab="record">Record</button>
-    <button class="tab" data-tab="settings">Settings</button>
+    <button class="tab active" data-tab="play"><span class="tab-ico">🎵</span>Play</button>
+    <button class="tab" data-tab="tutorial"><span class="tab-ico">🎼</span>Learn a Song</button>
+    <button class="tab" data-tab="record"><span class="tab-ico">⏺</span>Record</button>
+    <button class="tab" data-tab="settings"><span class="tab-ico">⚙</span>Settings</button>
   </div>
 
   <!-- PLAY TAB -->
   <div id="tab-play">
+    <div id="demo-bar" class="hidden">
+      Demo mode — nothing is being saved.
+      <button id="demo-exit-btn">Switch person</button>
+    </div>
+    <div class="panel" id="profile-panel">
+      <div class="panel-title">Who is playing?</div>
+      <div id="profile-list" class="profile-list"></div>
+      <div class="profile-add">
+        <input type="text" id="profile-name" placeholder="Type a name…" maxlength="24">
+        <button class="btn-sm" id="profile-add-btn">+ Add person</button>
+      </div>
+      <div id="profile-status" class="profile-status"></div>
+    </div>
     <!-- Presets -->
     <div class="preset-strip" id="preset-strip"></div>
 
@@ -1288,6 +1581,16 @@
   <!-- TUTORIAL TAB -->
   <div id="tab-tutorial" class="hidden">
     <div class="panel" id="tut-browser">
+      <div class="big-toggle" id="phrase-toggle-row">
+        <label class="big-switch">
+          <input type="checkbox" id="phrase-mode">
+          <span class="big-slider"></span>
+        </label>
+        <div class="big-toggle-text">
+          <div class="big-toggle-title">Play a whole line at a time</div>
+          <div class="big-toggle-sub">One finger sounds a full phrase of the tune instead of a single note. Easier, and it sounds like real music.</div>
+        </div>
+      </div>
       <div class="panel-title" data-i18n="chooseSong">Choose a Song</div>
       <div class="tutorial-list" id="tutorial-list"></div>
     </div>
@@ -1328,8 +1631,30 @@
   <!-- SETTINGS TAB -->
   <div id="tab-settings" class="hidden">
     <div class="panel">
-      <div class="panel-title" data-i18n="configuration">Configuration</div>
-      <div class="settings-grid">
+      <div class="panel-title" data-i18n="configuration">Settings</div>
+      <div class="settings-grid" id="settings-basic">
+        <div class="setting-group">
+          <label for="volume-range">Volume: <span id="volume-val">70</span>%</label>
+          <input type="range" id="volume-range" min="5" max="100" value="70">
+        </div>
+        <div class="setting-group">
+          <label>Set up the glove for this person</label>
+          <button class="btn" id="settings-calib-btn" style="width:100%;margin-top:6px;">✋ Calibrate</button>
+        </div>
+      </div>
+
+      <div class="big-toggle" style="margin-top:8px;">
+        <label class="big-switch">
+          <input type="checkbox" id="advanced-toggle">
+          <span class="big-slider"></span>
+        </label>
+        <div class="big-toggle-text">
+          <div class="big-toggle-title">Show advanced settings</div>
+          <div class="big-toggle-sub">Sensor tuning. Only needed when setting the glove up for a new person.</div>
+        </div>
+      </div>
+
+      <div class="settings-grid hidden" id="settings-advanced">
         <div class="setting-group">
           <label for="thresh-on">Bend threshold (trigger): <span id="thresh-on-val">0.70</span></label>
           <input type="range" id="thresh-on" min="0.01" max="0.99" step="0.01" value="0.70">
@@ -1351,13 +1676,9 @@
           </div>
         </div>
 
-        <div class="setting-group">
-          <label for="volume-range">Volume: <span id="volume-val">70</span>%</label>
-          <input type="range" id="volume-range" min="5" max="100" value="70">
-        </div>
       </div>
     </div>
-    <div class="panel">
+    <div class="panel hidden" id="debug-mode-panel">
       <div class="panel-title">🔧 Debug Mode</div>
       <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.88rem;color:var(--text);">
         <input type="checkbox" id="debug-toggle" style="accent-color:var(--accent);width:18px;height:18px;">
@@ -1380,7 +1701,7 @@
 <!-- Calibration Modal -->
 <div id="calib-modal" style="
   display:none; position:fixed; inset:0; z-index:9999;
-  background:rgba(0,0,0,0.75); backdrop-filter:blur(8px);
+  background:var(--scrim); backdrop-filter:blur(8px);
   -webkit-backdrop-filter:blur(8px);
   align-items:center; justify-content:center;
 ">
@@ -1679,12 +2000,97 @@ function applyLang() {
 // ═══════════════════════════════════════════════════════
 //  THEMES
 // ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  SAVED PROGRESS
+//  Everything is stored per named person, so a resident's calibration,
+//  settings and song history come back the next time they use the glove
+//  instead of being set up from scratch each session.
+// ═══════════════════════════════════════════════════════
+const Store = (() => {
+  const KEY = 'ripple.v1';
+  let ok = true;
+  function read() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch(err) { ok = false; return null; }
+  }
+  function write(data) {
+    try { localStorage.setItem(KEY, JSON.stringify(data)); return true; }
+    catch(err) { ok = false; return false; }
+  }
+  function blank() {
+    return { activeProfile: null, profiles: {}, recordings: [] };
+  }
+  let db = read() || blank();
+  if(!db.profiles) db = blank();
+
+  // Demo mode. Everything still works — calibration, songs, settings — but
+  // it lives in memory only and is thrown away when the page closes, so
+  // showing the glove to a visitor never leaves a stray profile behind or
+  // overwrites a resident's saved setup.
+  const DEMO_ID = '__demo__';
+  let demo = newProfile('Demo');
+  let inDemo = false;
+
+  function save() {
+    if(inDemo) return true;   // demo never touches storage
+    return write(db);
+  }
+
+  function newProfile(name) {
+    return {
+      name,
+      created: Date.now(),
+      lastSeen: Date.now(),
+      calib: null,                 // {rest, press, usable}
+      settings: {},                // threshOn, threshOff, filterSize, lockoutMs, volume, phraseMode
+      songs: {},                   // id -> {best, plays, completed}
+      sessions: 0,
+    };
+  }
+
+  return {
+    get available(){ return ok; },
+    get all(){ return db.profiles; },
+    get DEMO_ID(){ return DEMO_ID; },
+    get isDemo(){ return inDemo; },
+    get activeId(){ return inDemo ? DEMO_ID : db.activeProfile; },
+    get active(){ return inDemo ? demo : (db.activeProfile ? db.profiles[db.activeProfile] : null); },
+    list(){ return Object.entries(db.profiles).sort((a,b)=>(b[1].lastSeen||0)-(a[1].lastSeen||0)); },
+    startDemo(){ inDemo = true; demo = newProfile('Demo'); },
+    clearDemo(){ demo = newProfile('Demo'); },
+    create(name){
+      inDemo = false;
+      const id = 'p' + Date.now().toString(36);
+      db.profiles[id] = newProfile(name);
+      db.activeProfile = id;
+      save();
+      return id;
+    },
+    select(id){
+      if(id === DEMO_ID) { inDemo = true; demo = newProfile('Demo'); return; }
+      inDemo = false;
+      if(id === null) { db.activeProfile = null; save(); return; }
+      if(db.profiles[id]){ db.activeProfile = id; db.profiles[id].lastSeen = Date.now(); save(); }
+    },
+    remove(id){ delete db.profiles[id]; if(db.activeProfile===id) db.activeProfile=null; save(); },
+    rename(id, name){ if(db.profiles[id]){ db.profiles[id].name = name; save(); } },
+    update(fn){ const p = this.active; if(!p) return; fn(p); p.lastSeen = Date.now(); save(); },
+    // recordings made in demo mode are also discarded
+    get recordings(){ return db.recordings || []; },
+    setRecordings(list){ if(inDemo) return; db.recordings = list; save(); },
+    reset(){ db = blank(); save(); },
+  };
+})();
+
 const THEMES = [
   { id:'dark',  nameEn:'Dark',  nameZh:'深色', nameEs:'Oscuro', dark:true,  colors:['#0e0e1c','#a78bfa','#34d399'] },
   { id:'light', nameEn:'Light', nameZh:'浅色', nameEs:'Claro',  dark:false, colors:['#f0ede8','#e84855','#6366f1'] },
+  { id:'clear', nameEn:'Warm · Large Text', nameZh:'高对比 · 大字', nameEs:'Alto Contraste', dark:false, colors:['#f5f1e8','#0b4fa8','#0b6b3a'] },
 ];
 
-let currentTheme = 'dark';
+let currentTheme = 'clear';
 
 function applyTheme(id) {
   currentTheme = id;
@@ -1869,341 +2275,233 @@ const PRESETS = {
 
 const TUTORIALS_EN = {
   scale: {
-    name:'Simple Scale', difficulty:'Beginner',
+    name:'Warm-Up Scale', difficulty:'Beginner',
+    phrases:[5,5],
     sequence:[
-      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
-      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},
-      {note:'D4',d:1},{note:'C4',d:2},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},
+      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
     ],
   },
-  hotcross: {
-    name:'Hot Cross Buns', difficulty:'Beginner',
+  auld: {
+    name:'Auld Lang Syne', difficulty:'Beginner',
+    phrases:[7,7,7,8],
     sequence:[
-      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
-      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
-      {note:'C4',d:0.5},{note:'C4',d:0.5},{note:'C4',d:0.5},{note:'C4',d:0.5},
-      {note:'D4',d:0.5},{note:'D4',d:0.5},{note:'D4',d:0.5},{note:'D4',d:0.5},
-      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'G3',d:1},{note:'C4',d:1.5},{note:'C4',d:0.5},{note:'C4',d:1},{note:'E4',d:1},{note:'D4',d:1.5},{note:'C4',d:0.5},
+      {note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'C4',d:1},{note:'E4',d:1},{note:'G4',d:2},
+      {note:'A4',d:1.5},{note:'G4',d:0.5},{note:'G4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'D4',d:1},
+      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'C4',d:1},{note:'A3',d:1},{note:'G3',d:1},{note:'C4',d:2},{note:'C4',d:2},
     ],
   },
-  rain: {
-    name:'Rain Rain Go Away', difficulty:'Beginner',
+  aura: {
+    name:'Aura Lee', difficulty:'Beginner',
+    phrases:[6,7,7,8],
     sequence:[
-      // Rain rain go away
-      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},
-      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:2},
-      // Come again another day
-      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},
-      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:2},
-      // Little Johnny wants to play
-      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:1},
-      {note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:2},
+      {note:'G4',d:1},{note:'C5',d:2},{note:'C5',d:1},{note:'B4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'A4',d:1},{note:'B4',d:1},{note:'C5',d:2},{note:'B4',d:1},{note:'A4',d:1},{note:'G4',d:2},{note:'G4',d:1},
+      {note:'C5',d:2},{note:'C5',d:1},{note:'B4',d:1},{note:'A4',d:1},{note:'G4',d:2},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:3},{note:'C4',d:1},
     ],
   },
-  mary: {
-    name:'Mary Had a Little Lamb', difficulty:'Easy',
+  swinglow: {
+    name:'Swing Low, Sweet Chariot', difficulty:'Beginner',
+    phrases:[6,7,6,7],
     sequence:[
-      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},
-      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},
-      {note:'D4',d:1},{note:'D4',d:1},{note:'D4',d:2},
-      {note:'E4',d:1},{note:'G4',d:1},{note:'G4',d:2},
-      {note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},
-      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},
-      {note:'D4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:1},
-      {note:'C4',d:2},
+      {note:'G4',d:1},{note:'E4',d:2},{note:'C4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'G4',d:1},{note:'E4',d:2},{note:'C4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'C4',d:3},
     ],
   },
-  happy: {
-    // 8 notes → mapping shifts mid-song
-    name:'Happy Birthday', difficulty:'Easy',
+  simplegifts: {
+    name:'Simple Gifts', difficulty:'Easy',
+    phrases:[7,7,7,7],
     sequence:[
-      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},
-      {note:'C4',d:1},{note:'F4',d:1},{note:'E4',d:2},
-      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},
-      {note:'C4',d:1},{note:'G4',d:1},{note:'F4',d:2},
-      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'C5',d:1},
-      {note:'A4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:2},
-      {note:'Bb4',d:0.75},{note:'Bb4',d:0.25},{note:'A4',d:1},
-      {note:'F4',d:1},{note:'G4',d:1},{note:'F4',d:2},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:2},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'F4',d:1},
+      {note:'E4',d:2},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'C4',d:3},
     ],
   },
-  london: {
-    name:'London Bridge', difficulty:'Easy',
+  byandby: {
+    name:'In the Sweet By and By', difficulty:'Easy',
+    phrases:[7,7,7,7],
     sequence:[
-      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'F4',d:1},
-      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
-      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:2},
-      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
-      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'F4',d:1},
-      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},{note:'D4',d:1},{note:'G4',d:2},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'E4',d:1},{note:'G4',d:2},{note:'G4',d:1},{note:'G4',d:1},{note:'E4',d:2},
+      {note:'C4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'A4',d:2},{note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:2},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'E4',d:1},{note:'G4',d:2},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:2},{note:'D4',d:1},{note:'C4',d:1},{note:'C4',d:3},
     ],
   },
-  twinkle: {
-    // 6 notes (C D E F G A) → mapping shifts when A4 needed
-    name:'Twinkle Twinkle', difficulty:'Easy',
+  home: {
+    name:'Home on the Range', difficulty:'Easy',
+    phrases:[7,7,7,7],
     sequence:[
-      {note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:1},
-      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
-      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},
-      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
-      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'F4',d:1},
-      {note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:2},
-      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'F4',d:1},
-      {note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:2},
-      {note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:1},
-      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
-      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},
-      {note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:2},
+      {note:'C4',d:1},{note:'F4',d:2},{note:'F4',d:1},{note:'G4',d:1},{note:'A4',d:2},{note:'A4',d:1},{note:'G4',d:1},
+      {note:'F4',d:3},{note:'F4',d:1},{note:'G4',d:1},{note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'F4',d:2},
+      {note:'C5',d:1},{note:'C5',d:2},{note:'C5',d:1},{note:'D5',d:1},{note:'C5',d:2},{note:'A4',d:1},{note:'A4',d:1},
+      {note:'G4',d:2},{note:'F4',d:1},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'F4',d:3},
     ],
   },
-  brother: {
-    // 6 notes (C D E F G A) → mapping shifts for A4
-    name:'Are You Sleeping', difficulty:'Medium',
+  daisy: {
+    name:'Daisy Bell (Bicycle Built for Two)', difficulty:'Easy',
+    phrases:[9,9,9,9],
     sequence:[
-      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},
-      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},
-      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
-      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
-      {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'C4',d:1},
-      {note:'G4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'C4',d:1},
-      {note:'C4',d:1},{note:'G4',d:1},{note:'C4',d:2},
-      {note:'C4',d:1},{note:'G4',d:1},{note:'C4',d:2},
+      {note:'C5',d:2},{note:'A4',d:2},{note:'F4',d:2},{note:'C4',d:2},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'D4',d:1},{note:'C4',d:3},
+      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},{note:'A4',d:2},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:3},
+      {note:'C5',d:2},{note:'A4',d:2},{note:'F4',d:2},{note:'C4',d:2},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'D4',d:1},{note:'C4',d:3},
+      {note:'A4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'D4',d:1},{note:'C4',d:3},
+    ],
+  },
+  ballgame: {
+    name:'Take Me Out to the Ball Game', difficulty:'Easy',
+    phrases:[7,6,9,8],
+    sequence:[
+      {note:'C4',d:1},{note:'C5',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:2},{note:'D4',d:3},
+      {note:'C4',d:1},{note:'C5',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:3},
+      {note:'A4',d:1},{note:'A4',d:1},{note:'B4',d:1},{note:'C5',d:1},{note:'D5',d:1},{note:'C5',d:1},{note:'B4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'E4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:3},
+    ],
+  },
+  sweetheart: {
+    name:'Let Me Call You Sweetheart', difficulty:'Medium',
+    phrases:[7,7,7,8],
+    sequence:[
+      {note:'G4',d:1},{note:'C5',d:2},{note:'C5',d:1},{note:'B4',d:1},{note:'A4',d:1},{note:'G4',d:2},{note:'E4',d:1},
+      {note:'G4',d:1},{note:'A4',d:2},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:2},{note:'G4',d:1},
+      {note:'C5',d:2},{note:'C5',d:1},{note:'B4',d:1},{note:'A4',d:1},{note:'G4',d:2},{note:'A4',d:1},{note:'B4',d:1},
+      {note:'C5',d:2},{note:'A4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:3},{note:'C4',d:1},
+    ],
+  },
+  beautiful: {
+    name:'Beautiful Dreamer', difficulty:'Medium',
+    phrases:[7,7,7,8],
+    sequence:[
+      {note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'C5',d:2},{note:'B4',d:1},
+      {note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'G4',d:2},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'C5',d:2},{note:'B4',d:1},
+      {note:'A4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:3},{note:'C4',d:1},
+    ],
+  },
+  shenandoah: {
+    name:'Shenandoah', difficulty:'Medium',
+    phrases:[7,7,7,7],
+    sequence:[
+      {note:'C4',d:1},{note:'E4',d:1},{note:'G4',d:2},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:2},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:2},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:2},{note:'E4',d:1},
+      {note:'G4',d:1},{note:'A4',d:1},{note:'C5',d:2},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:2},{note:'D4',d:1},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},{note:'C4',d:2},{note:'C4',d:1},
+    ],
+  },
+  danny: {
+    name:'Danny Boy (Londonderry Air)', difficulty:'Medium',
+    phrases:[7,7,8,8],
+    sequence:[
+      {note:'C4',d:1},{note:'F4',d:1},{note:'G4',d:1},{note:'A4',d:2},{note:'F4',d:1},{note:'A4',d:1},{note:'C5',d:2},
+      {note:'D5',d:1},{note:'C5',d:1},{note:'A4',d:1},{note:'F4',d:2},{note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:2},
+      {note:'F4',d:1},{note:'D4',d:1},{note:'C4',d:2},{note:'C4',d:1},{note:'F4',d:1},{note:'G4',d:1},{note:'A4',d:2},{note:'F4',d:1},
+      {note:'A4',d:1},{note:'C5',d:2},{note:'D5',d:1},{note:'C5',d:1},{note:'A4',d:1},{note:'G4',d:1},{note:'F4',d:3},{note:'F4',d:1},
+    ],
+  },
+  amazinggrace: {
+    name:'Amazing Grace', difficulty:'Medium',
+    phrases:[7,7,7,8],
+    sequence:[
+      {note:'G4',d:1},{note:'C5',d:2},{note:'E5',d:0.5},{note:'C5',d:1.5},{note:'E5',d:2},{note:'D5',d:1},{note:'C5',d:2},
+      {note:'A4',d:1},{note:'G4',d:3},{note:'G4',d:1},{note:'C5',d:2},{note:'E5',d:0.5},{note:'C5',d:1.5},{note:'E5',d:2},
+      {note:'D5',d:1},{note:'G5',d:3},{note:'E5',d:0.5},{note:'G5',d:1.5},{note:'E5',d:1},{note:'C5',d:1},{note:'E5',d:2},
+      {note:'D5',d:1},{note:'C5',d:2},{note:'A4',d:1},{note:'G4',d:3},{note:'G4',d:1},{note:'C5',d:4},{note:'C5',d:1},{note:'C5',d:1},
+    ],
+  },
+  saints: {
+    name:'When the Saints Go Marching In', difficulty:'Medium',
+    phrases:[7,7,7,8],
+    sequence:[
+      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:3},{note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},
+      {note:'G4',d:3},{note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},{note:'E4',d:2},{note:'C4',d:2},
+      {note:'E4',d:2},{note:'D4',d:3},{note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:2},{note:'C4',d:1},
+      {note:'E4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:2},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},{note:'C4',d:3},
     ],
   },
   jingle: {
-    name:'Jingle Bells (Chorus)', difficulty:'Medium',
+    name:'Jingle Bells (Chorus)', difficulty:'Easy',
+    phrases:[7,7,7,8],
     sequence:[
-      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},
-      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},
-      {note:'E4',d:1},{note:'G4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:4},
-      {note:'F4',d:1},{note:'F4',d:1},{note:'F4',d:1},{note:'F4',d:1},
-      {note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},
-      {note:'E4',d:1},{note:'D4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:2},{note:'G4',d:2},
-      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},
-      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},
-      {note:'E4',d:1},{note:'G4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:4},
-      {note:'F4',d:1},{note:'F4',d:1},{note:'F4',d:1},{note:'F4',d:1},
-      {note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},
-      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'D4',d:1},{note:'C4',d:4},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},{note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:2},{note:'E4',d:1},
+      {note:'G4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:3},{note:'F4',d:1},{note:'F4',d:1},{note:'F4',d:1},
+      {note:'F4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:2},{note:'G4',d:2},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:3},{note:'C4',d:1},
     ],
   },
   ode: {
     name:'Ode to Joy', difficulty:'Medium',
+    phrases:[8,8,8,8],
     sequence:[
-      {note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},
-      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
-      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
-      {note:'E4',d:1.5},{note:'D4',d:0.5},{note:'D4',d:2},
-      {note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},
-      {note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
-      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
-      {note:'D4',d:1.5},{note:'C4',d:0.5},{note:'C4',d:2},
+      {note:'E4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'E4',d:1.5},{note:'D4',d:0.5},{note:'D4',d:2},{note:'E4',d:1},
+      {note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:1.5},{note:'C4',d:0.5},{note:'C4',d:2},{note:'C4',d:1},{note:'C4',d:1},
     ],
   },
-  rowboat: {
-    // 6 notes (C4 D4 E4 F4 G4 C5) → shifts when C5 needed
-    name:'Row Row Row Your Boat', difficulty:'Medium',
+  happy: {
+    name:'Happy Birthday', difficulty:'Easy',
+    phrases:[6,6,6,7],
     sequence:[
-      {note:'C4',d:1.5},{note:'C4',d:1.5},{note:'C4',d:1},{note:'D4',d:0.5},{note:'E4',d:1.5},
-      {note:'E4',d:1.5},{note:'D4',d:0.5},{note:'E4',d:1},{note:'F4',d:0.5},{note:'G4',d:3},
-      {note:'C5',d:0.5},{note:'C5',d:0.5},{note:'C5',d:0.5},
-      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:0.5},
-      {note:'E4',d:0.5},{note:'E4',d:0.5},{note:'E4',d:0.5},
-      {note:'C4',d:0.5},{note:'C4',d:0.5},{note:'C4',d:0.5},
-      {note:'G4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'D4',d:0.5},{note:'C4',d:3},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},{note:'C4',d:1},{note:'F4',d:1},{note:'E4',d:2},{note:'C4',d:0.75},
+      {note:'C4',d:0.25},{note:'D4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'F4',d:2},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'C5',d:1},{note:'A4',d:1},{note:'F4',d:1},{note:'E4',d:1},
+      {note:'D4',d:1},{note:'A#4',d:0.75},{note:'A#4',d:0.25},{note:'A4',d:1},{note:'F4',d:1},{note:'G4',d:1},{note:'F4',d:2},
     ],
   },
-  entertainer: {
-    // 6 notes (Bb3 C4 D4 E4 F4 G4) → shifts when G4 needed
-    name:'The Entertainer', difficulty:'Hard',
+  greensleeves: {
+    name:'Greensleeves', difficulty:'Hard',
+    phrases:[8,8,8,8],
     sequence:[
-      // Phrase A1: D C D Bb | D. F G | Eb D C D | Bb(long)
-      {note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:0.5},
-      {note:'D4',d:1},{note:'F4',d:0.5},{note:'G4',d:0.5},
-      {note:'Eb4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},
-      {note:'Bb3',d:2},
-      // Phrase A2: D C D Bb | D. G F | Eb D C | Bb(long)
-      {note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:0.5},
-      {note:'D4',d:1},{note:'G4',d:0.5},{note:'F4',d:0.5},
-      {note:'Eb4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},
-      {note:'Bb3',d:2},
-      // Phrase B: D C D Bb | D. F G | F E F | E F G | F E D E D C | D(long)
-      {note:'D4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'Bb3',d:0.5},
-      {note:'D4',d:1},{note:'F4',d:0.5},{note:'G4',d:0.5},
-      {note:'F4',d:0.5},{note:'E4',d:0.5},{note:'F4',d:0.5},
-      {note:'E4',d:0.5},{note:'F4',d:0.5},{note:'G4',d:0.5},
-      {note:'F4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:0.5},
-      {note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},
-      {note:'D4',d:2},
+      {note:'A4',d:1},{note:'C5',d:1.5},{note:'D5',d:0.5},{note:'E5',d:1.5},{note:'F5',d:0.5},{note:'E5',d:1},{note:'D5',d:1.5},{note:'B4',d:0.5},
+      {note:'G4',d:1},{note:'A4',d:1.5},{note:'B4',d:0.5},{note:'C5',d:1.5},{note:'A4',d:0.5},{note:'A4',d:1},{note:'G4',d:1},{note:'A4',d:2},
+      {note:'A4',d:1},{note:'C5',d:1.5},{note:'D5',d:0.5},{note:'E5',d:1.5},{note:'F5',d:0.5},{note:'E5',d:1},{note:'D5',d:1.5},{note:'B4',d:0.5},
+      {note:'G4',d:1},{note:'B4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1.5},{note:'F4',d:0.5},{note:'G4',d:1},{note:'A4',d:2},{note:'A4',d:1},
     ],
   },
   furelise: {
-    // 8 notes (A3 B3 C4 D4 Eb4 E4 A4 B4) → mapping shifts for upper notes
-    name:'Für Elise (Theme)', difficulty:'Hard',
+    name:'F\u00fcr Elise (Theme)', difficulty:'Hard',
+    phrases:[8,8,8,8],
     sequence:[
-      {note:'E4',d:0.5},{note:'Eb4',d:0.5},{note:'E4',d:0.5},{note:'Eb4',d:0.5},
-      {note:'E4',d:0.5},{note:'B3',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'A3',d:1},
-      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'A4',d:0.5},{note:'B4',d:1},
-      {note:'E4',d:0.5},{note:'Eb4',d:0.5},{note:'E4',d:0.5},{note:'Eb4',d:0.5},
-      {note:'E4',d:0.5},{note:'B3',d:0.5},{note:'D4',d:0.5},{note:'C4',d:0.5},{note:'A3',d:1},
-      {note:'C4',d:0.5},{note:'E4',d:0.5},{note:'A4',d:0.5},{note:'B4',d:1},
-      {note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:1},
+      {note:'E5',d:0.5},{note:'D#5',d:0.5},{note:'E5',d:0.5},{note:'D#5',d:0.5},{note:'E5',d:0.5},{note:'B4',d:0.5},{note:'D5',d:0.5},{note:'C5',d:0.5},
+      {note:'A4',d:1.5},{note:'C4',d:0.5},{note:'E4',d:0.5},{note:'A4',d:0.5},{note:'B4',d:1.5},{note:'E4',d:0.5},{note:'G#4',d:0.5},{note:'B4',d:0.5},
+      {note:'C5',d:1.5},{note:'E4',d:0.5},{note:'E5',d:0.5},{note:'D#5',d:0.5},{note:'E5',d:0.5},{note:'D#5',d:0.5},{note:'E5',d:0.5},{note:'B4',d:0.5},
+      {note:'D5',d:0.5},{note:'C5',d:0.5},{note:'A4',d:1.5},{note:'C4',d:0.5},{note:'E4',d:0.5},{note:'A4',d:0.5},{note:'B4',d:2},{note:'A4',d:1},
     ],
   },
-
-  // ── Yankee Doodle — C D E F G (5 notes, no shift) ──────────────
+  entertainer: {
+    name:'The Entertainer', difficulty:'Hard',
+    phrases:[8,8,8,8],
+    sequence:[
+      {note:'D4',d:0.5},{note:'D#4',d:0.5},{note:'E4',d:0.5},{note:'C5',d:1},{note:'E4',d:0.5},{note:'C5',d:1},{note:'E4',d:0.5},{note:'C5',d:2},
+      {note:'C4',d:0.5},{note:'D4',d:0.5},{note:'D#4',d:0.5},{note:'E4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'E4',d:1},{note:'B4',d:0.5},
+      {note:'D5',d:1.5},{note:'C5',d:1},{note:'D4',d:0.5},{note:'D#4',d:0.5},{note:'E4',d:0.5},{note:'C5',d:1},{note:'E4',d:0.5},{note:'C5',d:1},
+      {note:'E4',d:0.5},{note:'C5',d:2},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'F#4',d:0.5},{note:'A4',d:0.5},{note:'C5',d:1},{note:'E5',d:2},
+    ],
+  },
   yankeedoodle: {
-    name:'Yankee Doodle', difficulty:'Easy', bpm:120,
+    name:'Yankee Doodle', difficulty:'Easy',
+    phrases:[8,8,8,8],
     sequence:[
-      // Verse
-      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
-      {note:'C4',d:1},{note:'E4',d:1},{note:'D4',d:2},
-      // A-riding on a pony
-      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:2},
-      // Stuck a feather in his cap and
-      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},
-      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'E4',d:1},
-      // Called it macaroni
-      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
-      {note:'C4',d:1},{note:'E4',d:1},{note:'D4',d:2},
-      // Chorus — Yankee Doodle keep it up
-      {note:'C4',d:1.5},{note:'C4',d:0.5},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'E4',d:1},{note:'D4',d:2},
-      // Yankee Doodle dandy
-      {note:'C4',d:1.5},{note:'C4',d:0.5},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'G4',d:2},
-      // Mind the music and the step and
-      {note:'G4',d:1.5},{note:'G4',d:0.5},{note:'F4',d:1},{note:'E4',d:1},
-      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'E4',d:1},
-      // With the girls be handy
-      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},
-      {note:'C4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'G3',d:1},
+      {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:2},{note:'B3',d:2},{note:'C4',d:1},{note:'C4',d:1},
+      {note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'B3',d:1},{note:'G3',d:1},
+      {note:'A3',d:1},{note:'B3',d:1},{note:'C4',d:2},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:3},
     ],
   },
-
-  // ── Old MacDonald — C D E G A (5 notes, no shift) ──────────────
-  oldmac: {
-    name:"Old MacDonald", difficulty:'Easy', bpm:110,
-    sequence:[
-      // Old MacDonald had a farm
-      {note:'C4',d:1},{note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},
-      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
-      // E-I-E-I-O (Mi Re Mi Re Do)
-      {note:'E4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:4},
-      // And on this farm he had a duck
-      {note:'G4',d:1},{note:'C4',d:1},{note:'C4',d:1},{note:'C4',d:1},
-      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:2},
-      // E-I-E-I-O
-      {note:'E4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:4},
-      // With a moo moo here, and a moo moo there
-      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:1},{note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:1},
-      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:1},
-      // Here a moo, there a moo, everywhere a moo moo
-      {note:'G4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},{note:'E4',d:0.5},
-      {note:'D4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:1},{note:'G4',d:0.5},{note:'G4',d:0.5},{note:'G4',d:1},
-      // Old MacDonald had a farm, E-I-E-I-O
-      {note:'C4',d:1},{note:'C4',d:1},{note:'C4',d:1},{note:'G4',d:1},
-      {note:'A4',d:1},{note:'A4',d:1},{note:'G4',d:2},
-      {note:'E4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:4},
-    ],
-  },
-
-  // ── Oh Susanna — C D E G A (5 notes, no shift) ──────────────────
   susanna: {
-    name:"Oh Susanna", difficulty:'Easy', bpm:116,
+    name:'Oh! Susanna', difficulty:'Easy',
+    phrases:[8,8,8,8],
     sequence:[
-      // Verse 1
-      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'G4',d:1},
-      {note:'G4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},{note:'E4',d:1},
-      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'E4',d:1},
-      {note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:3},
-      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'G4',d:1},
-      {note:'G4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},{note:'E4',d:1},
-      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'E4',d:1},
-      {note:'D4',d:1},{note:'C4',d:1},{note:'C4',d:3},
-      // Chorus — Oh Susanna
-      {note:'G4',d:1},{note:'A4',d:1},{note:'G4',d:1.5},{note:'E4',d:0.5},
-      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1.5},{note:'E4',d:0.5},
-      {note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:2},
-      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'G4',d:1},
-      {note:'G4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},{note:'E4',d:1},
-      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'E4',d:1},
-      {note:'D4',d:1},{note:'C4',d:1},{note:'C4',d:3},
+      {note:'C4',d:0.5},{note:'D4',d:0.5},{note:'E4',d:1},{note:'G4',d:1},{note:'G4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},{note:'E4',d:1},
+      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:2},{note:'C4',d:0.5},
+      {note:'D4',d:0.5},{note:'E4',d:1},{note:'G4',d:1},{note:'G4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},{note:'E4',d:1},{note:'C4',d:1},
+      {note:'D4',d:1},{note:'E4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'D4',d:1},{note:'C4',d:3},{note:'C4',d:1},{note:'C4',d:1},
     ],
   },
-
-  // ── When the Saints Go Marching In — C D E F G (5 notes, no shift) ──
-  saints: {
-    name:'When the Saints Go Marching In', difficulty:'Medium', bpm:112,
-    sequence:[
-      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
-      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},
-      {note:'G4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:2},
-      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'E4',d:2},{note:'E4',d:1},
-      {note:'D4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
-      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'C4',d:3},
-      // Repeat
-      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},{note:'G4',d:2},
-      {note:'C4',d:1},{note:'E4',d:1},{note:'F4',d:1},
-      {note:'G4',d:1},{note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:2},
-      {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'E4',d:2},{note:'E4',d:1},
-      {note:'D4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'F4',d:1},
-      {note:'G4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'G4',d:1},{note:'F4',d:1},{note:'C4',d:3},
-    ],
-  },
-
-  // ── Amazing Grace — G major, B3 D4 E4 G4 A4 B4 D5 (7 notes, shifts) ──
-  amazinggrace: {
-    name:'Amazing Grace', difficulty:'Medium', bpm:76,
-    sequence:[
-      // Phrase 1: Amazing grace, how sweet the sound
-      {note:'D4',d:1},
-      {note:'G4',d:1.5},{note:'B4',d:0.5},{note:'G4',d:1},
-      {note:'B4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},
-      {note:'G4',d:3},
-      // Phrase 2: That saved a wretch like me
-      {note:'D4',d:1},
-      {note:'G4',d:1.5},{note:'B4',d:0.5},{note:'G4',d:1},
-      {note:'D4',d:1.5},{note:'B3',d:0.5},{note:'D4',d:1},
-      {note:'G4',d:3},
-      // Phrase 3: I once was lost but now am found
-      {note:'D4',d:1},
-      {note:'G4',d:1.5},{note:'B4',d:0.5},{note:'G4',d:1},
-      {note:'B4',d:1.5},{note:'D5',d:0.5},{note:'B4',d:1},
-      {note:'G4',d:3},
-      // Phrase 4: Was blind but now I see
-      {note:'G4',d:1},
-      {note:'G4',d:1.5},{note:'B4',d:0.5},{note:'D5',d:1},
-      {note:'B4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1},
-      {note:'G4',d:3},
-    ],
-  },
-
-  // ── Greensleeves — A minor, Ab3 A3 B3 C4 D4 E4 F4 G4 (8 notes, shifts) ──
-  greensleeves: {
-    name:'Greensleeves', difficulty:'Hard', bpm:72,
-    sequence:[
-      // Part A — "Alas my love you do me wrong"
-      {note:'A3',d:1},
-      {note:'C4',d:2},{note:'D4',d:1},{note:'E4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1},
-      {note:'D4',d:2},{note:'B3',d:1},{note:'C4',d:2},{note:'A3',d:1},
-      {note:'A3',d:3},{note:'B3',d:2},{note:'G4',d:1},
-      {note:'G4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1},{note:'D4',d:2},{note:'A3',d:1},
-      {note:'C4',d:2},{note:'D4',d:1},{note:'E4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1},
-      {note:'D4',d:2},{note:'B3',d:1},{note:'C4',d:2},{note:'A3',d:1},
-      {note:'A3',d:1.5},{note:'G4',d:0.5},{note:'F4',d:1},{note:'E4',d:1.5},{note:'F4',d:0.5},{note:'D4',d:1},
-      {note:'D4',d:3},
-      // Part B — "Greensleeves was all my joy"
-      {note:'G4',d:1},
-      {note:'C4',d:2},{note:'D4',d:1},{note:'E4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1},
-      {note:'D4',d:2},{note:'B3',d:1},{note:'G4',d:3},
-      {note:'F4',d:2},{note:'E4',d:1},{note:'D4',d:1.5},{note:'E4',d:0.5},{note:'F4',d:1},
-      {note:'E4',d:2},{note:'C4',d:1},
-      {note:'C4',d:2},{note:'D4',d:1},{note:'E4',d:1.5},{note:'F4',d:0.5},{note:'E4',d:1},
-      {note:'D4',d:2},{note:'B3',d:1},{note:'C4',d:2},{note:'A3',d:1},
-      {note:'A3',d:1.5},{note:'G4',d:0.5},{note:'F4',d:1},{note:'E4',d:1.5},{note:'F4',d:0.5},{note:'D4',d:1},
-      {note:'D4',d:3},
-    ],
-  },
-
 };
 
 const TUTORIALS_ZH = {
@@ -2790,11 +3088,51 @@ const AudioEngine = (() => {
   let volume = 0.7;
   let instrument = 'harp';
 
+  let reverbSend = null;
+
+  // A synthetic room impulse: exponentially decaying noise, slightly darker
+  // over time (high frequencies are absorbed first in a real room).
+  function buildImpulse(seconds, decay) {
+    const n = Math.floor(SR * seconds);
+    const buf = ctx.createBuffer(2, n, SR);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = buf.getChannelData(ch);
+      let lp = 0;
+      for (let i = 0; i < n; i++) {
+        const t = i / n;
+        const env = Math.pow(1 - t, decay);
+        // one-pole lowpass on the noise, opening less as the tail decays
+        lp += ((Math.random() * 2 - 1) - lp) * (0.35 - 0.25 * t);
+        d[i] = lp * env;
+      }
+    }
+    return buf;
+  }
+
   function init() {
     if (ctx) return;
     ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SR });
     masterGain = ctx.createGain();
     masterGain.gain.value = volume;
+
+    // Gentle room tone. Dry signal passes straight through; a parallel send
+    // feeds a convolution reverb so notes bloom and decay into a space.
+    const convolver = ctx.createConvolver();
+    convolver.buffer = buildImpulse(1.7, 3.2);
+    reverbSend = ctx.createGain();
+    reverbSend.gain.value = 1.0; // voices set their own send level
+    const wet = ctx.createGain();
+    wet.gain.value = 0.55;
+    // roll off reverb highs so the tail sits behind the note, not on top of it
+    const wetTone = ctx.createBiquadFilter();
+    wetTone.type = 'lowpass';
+    wetTone.frequency.value = 3200;
+
+    reverbSend.connect(convolver);
+    convolver.connect(wetTone);
+    wetTone.connect(wet);
+    wet.connect(ctx.destination);
+
     masterGain.connect(ctx.destination);
     buildDrums();
   }
@@ -2876,9 +3214,20 @@ const AudioEngine = (() => {
     stopFinger(finger);
     if(!freqs||freqs.length===0) return;
 
+    // How much room each instrument gets. Struck and plucked sounds need a
+    // little air to feel physical; sustained tones read as muddy with it.
+    const REVERB_SEND = { harp:0.16, bell:0.18, soft:0.09, pad:0.06, sine:0.05, drums:0.0 };
+
     const nodes = [];
     const gainNode = ctx.createGain();
-    const attackTime = inst==='pad' ? 0.06 : inst==='bell' ? 0.01 : inst==='harp' ? 0.008 : 0.02;
+    if(reverbSend) {
+      const send = ctx.createGain();
+      send.gain.value = REVERB_SEND[inst] !== undefined ? REVERB_SEND[inst] : 0.08;
+      gainNode.connect(send);
+      send.connect(reverbSend);
+      nodes.push(send);
+    }
+    const attackTime = inst==='pad' ? 0.28 : inst==='bell' ? 0.004 : inst==='harp' ? 0.006 : 0.012;
     const peakGain = inst==='pad' ? 0.22/Math.max(freqs.length,1) : 0.30/Math.max(freqs.length,1);
     gainNode.gain.setValueAtTime(0, ctx.currentTime);
     gainNode.gain.linearRampToValueAtTime(peakGain, ctx.currentTime + attackTime);
@@ -2913,30 +3262,118 @@ const AudioEngine = (() => {
       gainNode.gain.setValueAtTime(peakGain * 3, ctx.currentTime);
     } else for(const freq of freqs) {
       if(inst==='sine') {
+        // Pure tone, but softened with a touch of second harmonic and a
+        // slow-moving detune so it doesn't sit perfectly still.
         const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=freq;
-        o.connect(gainNode); o.start(); nodes.push(o);
+        const o2=ctx.createOscillator(); o2.type='sine'; o2.frequency.value=freq*2;
+        const g2=ctx.createGain(); g2.gain.value=0.08;
+        const lfo=ctx.createOscillator(); lfo.frequency.value=4.6;
+        const lfoG=ctx.createGain(); lfoG.gain.value=freq*0.0016;
+        lfo.connect(lfoG); lfoG.connect(o.frequency);
+        o.connect(gainNode); o2.connect(g2); g2.connect(gainNode);
+        o.start(); o2.start(); lfo.start();
+        nodes.push(o,o2,lfo);
+
       } else if(inst==='soft') {
-        [1,2,3].forEach((h,i)=>{
-          const o=ctx.createOscillator(); const g=ctx.createGain();
-          o.frequency.value=freq*h; g.gain.value=[0.6,0.3,0.1][i];
-          o.connect(g); g.connect(gainNode); o.start(); nodes.push(o);
+        // ── PIANO ──
+        // Three things make a struck string sound like one:
+        //  1. inharmonicity — upper partials of a stiff string run sharp
+        //  2. partial-dependent decay — highs die away first
+        //  3. a hammer transient — a brief noise thump at the attack
+        const partials = [
+          {m:1.000, g:1.00,  d:5.5},
+          {m:2.002, g:0.42,  d:3.6},
+          {m:3.006, g:0.20,  d:2.6},
+          {m:4.013, g:0.11,  d:1.9},
+          {m:5.024, g:0.055, d:1.4},
+          {m:6.038, g:0.028, d:1.0},
+        ];
+        const now0 = ctx.currentTime;
+        partials.forEach(p => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = 'sine';
+          o.frequency.value = freq * p.m;
+          g.gain.setValueAtTime(0, now0);
+          g.gain.linearRampToValueAtTime(p.g, now0 + 0.004);
+          g.gain.exponentialRampToValueAtTime(0.0008, now0 + p.d);
+          o.connect(g); g.connect(gainNode);
+          o.start(); nodes.push(o);
         });
+        // felt-hammer thump
+        const nlen = Math.floor(SR * 0.05);
+        const nbuf = ctx.createBuffer(1, nlen, SR);
+        const nd = nbuf.getChannelData(0);
+        for(let i=0;i<nlen;i++) nd[i] = (Math.random()*2-1) * Math.pow(1-i/nlen, 3);
+        const nsrc = ctx.createBufferSource(); nsrc.buffer = nbuf;
+        const nf = ctx.createBiquadFilter();
+        nf.type='bandpass'; nf.frequency.value = Math.min(freq*3.5, 5200); nf.Q.value=0.7;
+        const ng = ctx.createGain(); ng.gain.value = 0.10;
+        nsrc.connect(nf); nf.connect(ng); ng.connect(gainNode);
+        nsrc.start(); nodes.push(nsrc);
+
       } else if(inst==='bell') {
-        [1,2.756,5.404].forEach((h,i)=>{
+        // Struck metal: strongly inharmonic partials, each with its own decay,
+        // plus a faint strike transient.
+        const partials=[{m:0.56,g:0.75,d:4.5},{m:1.00,g:1.00,d:5.0},
+                        {m:1.71,g:0.50,d:3.0},{m:2.74,g:0.32,d:2.2},
+                        {m:4.07,g:0.18,d:1.5},{m:5.43,g:0.10,d:1.0}];
+        const now0=ctx.currentTime;
+        partials.forEach(p=>{
           const o=ctx.createOscillator(); const g=ctx.createGain();
-          o.type='sine';
-          o.frequency.value=freq*h; g.gain.value=[1,0.4,0.15][i];
-          o.connect(g); g.connect(gainNode); o.start(); nodes.push(o);
+          o.type='sine'; o.frequency.value=freq*p.m;
+          g.gain.setValueAtTime(0, now0);
+          g.gain.linearRampToValueAtTime(p.g*0.55, now0+0.002);
+          g.gain.exponentialRampToValueAtTime(0.0008, now0+p.d);
+          o.connect(g); g.connect(gainNode);
+          o.start(); nodes.push(o);
         });
-        gainNode.gain.cancelScheduledValues(ctx.currentTime);
-        gainNode.gain.setValueAtTime(peakGain, ctx.currentTime + attackTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5);
+
       } else if(inst==='pad') {
-        [-0.003,0,0.003].forEach(detune=>{
-          const o=ctx.createOscillator(); const g=ctx.createGain();
-          o.frequency.value=freq*(1+detune); g.gain.value=0.33;
-          o.connect(g); g.connect(gainNode); o.start(); nodes.push(o);
+        // ── STRINGS ──
+        // A section, not one instrument: several slightly detuned voices
+        // whose pitches drift independently, a slow bow-pressure swell,
+        // and vibrato that fades in rather than starting immediately.
+        const now0 = ctx.currentTime;
+        [-7, -2.5, 0, 3, 7.5].forEach((cents, i) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = 'sawtooth';
+          o.frequency.value = freq;
+          o.detune.value = cents;
+
+          // slow independent drift — real players are never perfectly in tune
+          const drift = ctx.createOscillator();
+          drift.frequency.value = 0.13 + i * 0.047;
+          const driftG = ctx.createGain();
+          driftG.gain.value = 2.2;
+          drift.connect(driftG); driftG.connect(o.detune);
+          drift.start(); nodes.push(drift);
+
+          // vibrato that eases in over ~0.9 s
+          const vib = ctx.createOscillator();
+          vib.frequency.value = 5.1 + i * 0.13;
+          const vibG = ctx.createGain();
+          vibG.gain.setValueAtTime(0, now0);
+          vibG.gain.linearRampToValueAtTime(4.5, now0 + 0.9);
+          vib.connect(vibG); vibG.connect(o.detune);
+          vib.start(); nodes.push(vib);
+
+          g.gain.value = 0.20;
+          o.connect(g); g.connect(gainNode);
+          o.start(); nodes.push(o);
         });
+        // bowed timbre: dark, opening slightly as the note settles
+        const lp = ctx.createBiquadFilter();
+        lp.type = 'lowpass';
+        lp.frequency.setValueAtTime(Math.min(freq*2.2, 900), now0);
+        lp.frequency.linearRampToValueAtTime(Math.min(freq*4.5, 2600), now0 + 1.2);
+        lp.Q.value = 0.6;
+        // reroute this voice's oscillators through the filter
+        nodes.filter(n=>n.type==='sawtooth').forEach(()=>{});
+        gainNode.gain.cancelScheduledValues(now0);
+        gainNode.gain.setValueAtTime(0, now0);
+        gainNode.gain.linearRampToValueAtTime(peakGain*0.85, now0 + 0.28);
       }
     }
 
@@ -2949,7 +3386,7 @@ const AudioEngine = (() => {
     const { nodes, gainNode, inst } = entry;
     const now = ctx.currentTime;
     // Natural release time varies by instrument
-    const releaseTime = inst==='pad' ? 0.35 : inst==='bell' ? 0.8 : inst==='harp' ? 0.06 : inst==='soft' ? 0.25 : 0.18;
+    const releaseTime = inst==='pad' ? 0.55 : inst==='bell' ? 1.2 : inst==='harp' ? 0.10 : inst==='soft' ? 0.45 : 0.22;
     gainNode.gain.cancelScheduledValues(now);
     gainNode.gain.setValueAtTime(gainNode.gain.value, now);
     gainNode.gain.exponentialRampToValueAtTime(0.001, now + releaseTime);
@@ -2970,9 +3407,40 @@ const AudioEngine = (() => {
     src.start();
   }
 
+  function getVolume() { return volume; }
   function setVolume(v) {
     volume = v;
     if(masterGain) masterGain.gain.value = v;
+  }
+
+  // Play a short melodic phrase as a single gesture. Used by Phrase Mode,
+  // where one finger press sounds a whole line of the tune instead of a
+  // single note. Rotating voice keys let notes overlap naturally.
+  // A quiet sustained chord under the melody. Deliberately dark and low in
+  // level — it should be felt as warmth, not heard as a second instrument
+  // competing with the note the person just played.
+  let phraseVoice = 0;
+  const phraseTimers = [];
+  function playPhrase(notes, inst, beatMs) {
+    init(); resume();
+    let t = 0;
+    notes.forEach(n => {
+      const key = '_phrase' + (phraseVoice++ % 6);
+      const dur = (n.d || 1) * beatMs;
+      const at = t;
+      phraseTimers.push(setTimeout(() => {
+        startFingerFreqs(key, getFreqs(n.note), inst);
+      }, at));
+      phraseTimers.push(setTimeout(() => {
+        stopFinger(key);
+      }, at + Math.max(dur * 0.92, 120)));
+      t += dur;
+    });
+    return t;
+  }
+  function cancelPhrase() {
+    while(phraseTimers.length) clearTimeout(phraseTimers.pop());
+    for(let i=0;i<6;i++) stopFinger('_phrase'+i);
   }
 
   function setInstrument(i) { instrument = i; }
@@ -3019,7 +3487,7 @@ const AudioEngine = (() => {
     startFinger(finger, freqs, inst);
   }
 
-  return { init, resume, updateActive, triggerDrums, playDrum, setVolume, setInstrument, getInstrument, stopAll, startFingerFreqs };
+  return { init, resume, updateActive, triggerDrums, playDrum, setVolume, getVolume, setInstrument, getInstrument, stopAll, startFingerFreqs, playPhrase, cancelPhrase };
 })();
 
 // ═══════════════════════════════════════════════════════
@@ -3126,6 +3594,11 @@ const App = (() => {
   let mode='play'; // 'play' | 'tutorial'
   let tutState={current:null, step:0, completed:false, windowStart:0, songNotes:[]};
   let tutReady = new Set(TUT_FINGERS);
+  // Phrase Mode: one correct press sounds an entire musical line rather than
+  // a single note. Far more rewarding for someone with limited movement —
+  // a small gesture produces a whole phrase of music.
+  let phraseMode = false;
+  let phraseTempo = 460; // ms per beat
 
   // Recording state
   let recording=false, playingBack=false;
@@ -3234,6 +3707,19 @@ const App = (() => {
     }
   }
 
+  // How many notes the next press should sound. Songs may declare explicit
+  // `phrases` (musical lines); otherwise fall back to groups of four.
+  function phraseLenAt(tut, step) {
+    const remain = tut.sequence.length - step;
+    if(!tut.phrases) return Math.min(4, remain);
+    let i = 0;
+    for(const len of tut.phrases) {
+      if(step < i + len) return Math.min(i + len - step, remain);
+      i += len;
+    }
+    return Math.min(4, remain);
+  }
+
   function checkTutorialProgress(finger) {
     if(!tutState.current || tutState.completed) return;
     const tut = TUTORIALS[tutState.current];
@@ -3244,9 +3730,24 @@ const App = (() => {
     const expectedFinger = fingerForNote(expectedNote, tutState.songNotes, tutState.windowStart);
     if(finger === expectedFinger && tutReady.has(finger)) {
       tutReady.delete(finger);
-      tutState.step++;
+      if(phraseMode) {
+        const len = phraseLenAt(tut, tutState.step);
+        const notes = tut.sequence.slice(tutState.step, tutState.step + len);
+        AudioEngine.cancelPhrase();
+        AudioEngine.playPhrase(notes, getPreset().instrument || 'soft', phraseTempo);
+        tutState.step += len;
+      } else {
+        tutState.step++;
+      }
       if(tutState.step >= tut.sequence.length) {
         tutState.completed = true;
+        Store.update(p => {
+          const s = p.songs[tutState.current] || { best:0, plays:0, completed:0 };
+          s.completed = (s.completed||0) + 1;
+          s.best = tut.sequence.length;
+          p.songs[tutState.current] = s;
+        });
+        UI.renderTutorialList();
       } else {
         // Update window for next step
         const nextNote = tut.sequence[tutState.step].note;
@@ -3256,9 +3757,51 @@ const App = (() => {
           PRESETS.piano.mapping = buildWindowMapping(tutState.songNotes, newWS);
           UI.flashMappingChange();
         }
+        // remember how far they got, even if they stop partway
+        Store.update(p => {
+          const st = p.songs[tutState.current] || { best:0, plays:0, completed:0 };
+          if(tutState.step > (st.best||0)) st.best = tutState.step;
+          p.songs[tutState.current] = st;
+        });
       }
       UI.renderTutorialActive();
     }
+  }
+
+  // Bring back a saved setup so a returning person doesn't recalibrate.
+  function loadProfile() {
+    const p = Store.active;
+    if(!p) return;
+    // switching person always starts clean, so one person's calibration
+    // can never leak into another's session
+    FINGERS.forEach(f => { fingerRest[f]=0; fingerPress[f]=0; fingerUsable[f]=false; });
+    calibrated = false;
+    if(p.calib) {
+      FINGERS.forEach(f => {
+        fingerRest[f]   = p.calib.rest[f]   ?? 0;
+        fingerPress[f]  = p.calib.press[f]  ?? 0;
+        fingerUsable[f] = !!(p.calib.usable && p.calib.usable[f]);
+      });
+      calibrated = FINGERS.some(f => fingerUsable[f]);
+    }
+    const s = p.settings || {};
+    if(s.threshOn   !== undefined) threshOn   = s.threshOn;
+    if(s.threshOff  !== undefined) threshOff  = s.threshOff;
+    if(s.filterSize !== undefined) filterSize = s.filterSize;
+    if(s.lockoutMs  !== undefined) lockoutMs  = s.lockoutMs;
+    if(s.phraseMode !== undefined) phraseMode = s.phraseMode;
+    if(s.volume     !== undefined) AudioEngine.setVolume(s.volume);
+    savedRecordings = Store.recordings.slice();
+    clearBuffers();
+  }
+
+  function saveSettings() {
+    Store.update(p => {
+      p.settings = {
+        threshOn, threshOff, filterSize, lockoutMs, phraseMode,
+        volume: AudioEngine.getVolume ? AudioEngine.getVolume() : undefined,
+      };
+    });
   }
 
   async function doConnect() {
@@ -3339,8 +3882,12 @@ const App = (() => {
     ).join('\n'));
 
     calibrated = true;
+    Store.update(p => {
+      p.calib = { rest:{...fingerRest}, press:{...fingerPress}, usable:{...fingerUsable} };
+    });
     UI.hideCalibModal();
     UI.syncAll();
+    UI.renderProfiles();
   }
 
   function setPreset(p) {
@@ -3483,6 +4030,13 @@ const App = (() => {
     const songNotes = getSongNotes(tut.sequence);
     const firstNote = tut.sequence[0]?.note;
     const initWS = firstNote ? getWindowStart(firstNote, songNotes, 0) : 0;
+    AudioEngine.cancelPhrase();
+    Store.update(p => {
+      const s = p.songs[id] || { best:0, plays:0, completed:0 };
+      s.plays = (s.plays||0) + 1;
+      p.songs[id] = s;
+      p.sessions = (p.sessions||0);
+    });
     tutState = {current:id, step:0, completed:false, windowStart:initWS, songNotes};
     tutReady = new Set(TUT_FINGERS);
     mode = 'tutorial';
@@ -3541,6 +4095,7 @@ const App = (() => {
     recording=false;
     const dur = (Date.now()-recStart)/1000;
     savedRecordings.push({ events:[...recEvents], duration:dur, preset:currentPreset, id:Date.now() });
+    Store.setRecordings(savedRecordings);
     // Record tab buttons
     document.getElementById('rec-start-btn').classList.remove('hidden');
     document.getElementById('rec-stop-btn').classList.add('hidden');
@@ -3610,6 +4165,7 @@ const App = (() => {
 
   function deleteRecording(id) {
     savedRecordings=savedRecordings.filter(r=>r.id!==id);
+    Store.setRecordings(savedRecordings);
     UI.renderRecordingList();
   }
 
@@ -3644,6 +4200,10 @@ const App = (() => {
     setThreshOn(v){threshOn=v},
     setThreshOff(v){threshOff=v},
     setFilterSize(v){filterSize=v},
+    get phraseMode(){return phraseMode},
+    setPhraseMode(v){ phraseMode=!!v; if(!v) AudioEngine.cancelPhrase(); },
+    setPhraseTempo(v){ phraseTempo=v; },
+    loadProfile, saveSettings,
     _collectHook: null,
     manualPress, manualRelease,
     startDemo, stopDemo,
@@ -4007,10 +4567,17 @@ const UI = (() => {
     list.innerHTML = groupOrder.map(diff => {
       const songs = groups[diff];
       const cards = songs.map(([id, tut]) => `
-        <div class="tutorial-card" data-id="${id}">
+        <div class="tutorial-card${(Store.active&&Store.active.songs[id]&&Store.active.songs[id].completed)?' done':''}" data-id="${id}">
           <div class="tut-name">${tut.name}</div>
           ${currentLang==='zh' && tut.nameEn ? `<div style="font-size:0.68rem;color:var(--muted);margin-bottom:3px;font-style:italic;">${tut.nameEn}</div>` : ''}
           <div class="tut-meta difficulty-${diff.toLowerCase()}">${tut.sequence.length} ${t('notes')}</div>
+          ${(() => {
+            const p = Store.active; if(!p) return '';
+            const s = p.songs[id]; if(!s) return '';
+            if(s.completed) return `<div class="tut-progress">★ Finished ${s.completed}×</div>`;
+            if(s.best) return `<div class="tut-progress">Got to ${Math.round(s.best/tut.sequence.length*100)}%</div>`;
+            return '';
+          })()}
         </div>`).join('');
       return `
         <div class="tut-group">
@@ -4098,6 +4665,59 @@ const UI = (() => {
     toast._timer = setTimeout(() => { toast.style.opacity = '0'; }, 1200);
   }
 
+  let pendingDelete = null;
+
+  function renderProfiles() {
+    const list = document.getElementById('profile-list');
+    const status = document.getElementById('profile-status');
+    const bar = document.getElementById('demo-bar');
+    document.body.classList.toggle('demo-active', Store.isDemo);
+    if(bar) bar.classList.toggle('hidden', !Store.isDemo);
+    if(!list) return;
+
+    if(!Store.available) {
+      list.innerHTML = '';
+      status.textContent = 'This browser is blocking saved data, so progress will not be kept between sessions.';
+      return;
+    }
+
+    const people = Store.list();
+    const demoChip = `
+      <div class="profile-chip demo${Store.isDemo?' active':''}" data-pid="${Store.DEMO_ID}" title="Nothing is saved in demo mode">
+        <span>▶ Demo</span>
+      </div>`;
+    list.innerHTML = demoChip + (people.length ? people.map(([id, p]) => `
+      <div class="profile-chip${(!Store.isDemo && id===Store.activeId)?' active':''}${pendingDelete===id?' confirming':''}" data-pid="${id}">
+        <span class="pname">${p.name}</span>
+        ${pendingDelete===id
+          ? `<span class="pconfirm">
+               <button type="button" class="pyes" data-confirm-del="${id}">Delete</button>
+               <button type="button" class="pno"  data-cancel-del="1">Keep</button>
+             </span>`
+          : `<button type="button" class="pdel" data-del="${id}" title="Remove ${p.name}" aria-label="Remove ${p.name}">✕</button>`}
+      </div>`).join('')
+      : '<div style="color:var(--muted);font-size:0.95rem;align-self:center;">— or type a name below to save someone\u2019s progress</div>');
+
+    if(Store.isDemo) {
+      status.innerHTML = '<strong>Demo mode</strong> — everything works, but nothing is saved. ' +
+        'Calibration, settings and song progress are cleared when you close the page. ' +
+        'Use this for visitors and demonstrations.';
+      return;
+    }
+
+    const p = Store.active;
+    if(p) {
+      const done = Object.values(p.songs||{}).filter(s=>s.completed).length;
+      const tried = Object.keys(p.songs||{}).length;
+      const bits = [];
+      bits.push(p.calib ? '✓ Glove setup saved' : 'Not calibrated yet — press Calibrate once.');
+      if(tried) bits.push(`${done} song${done===1?'':'s'} finished, ${tried} tried`);
+      status.innerHTML = `<strong>${p.name}</strong> — ` + bits.join(' · ');
+    } else {
+      status.textContent = 'Choose a name above so this session is saved.';
+    }
+  }
+
   function renderRecordingList() {
     const list=document.getElementById('recording-list');
     if(App.savedRecordings.length===0) {
@@ -4149,7 +4769,8 @@ const UI = (() => {
   }
 
   return {
-    syncAll, renderConnectBtn, renderPresets, renderHand, showCalibModal, hideCalibModal,
+    syncAll, renderConnectBtn, renderPresets, renderHand, showCalibModal, hideCalibModal, renderProfiles,
+    setPendingDelete(id){ pendingDelete = id; renderProfiles(); },
     updateFingers, updateStatus, setStatus,
     renderMapping, openChordModal, closeModal,
     renderTutorialList, renderTutorialActive, renderTutorialHand,
@@ -4611,6 +5232,85 @@ document.addEventListener('DOMContentLoaded', () => {
     App.setFilterSize(parseInt(e.target.value));
     document.getElementById('filter-val').textContent=e.target.value;
   });
+  document.getElementById('phrase-mode').addEventListener('change', e=>{
+    App.setPhraseMode(e.target.checked);
+  });
+  document.getElementById('advanced-toggle').addEventListener('change', e=>{
+    const on = e.target.checked;
+    document.getElementById('settings-advanced').classList.toggle('hidden', !on);
+    document.getElementById('debug-mode-panel').classList.toggle('hidden', !on);
+    if(!on) {
+      const dt = document.getElementById('debug-toggle');
+      if(dt.checked) { dt.checked = false; document.getElementById('debug-panel').style.display='none'; }
+    }
+  });
+  document.getElementById('settings-calib-btn').addEventListener('click', ()=>App.doCalibrate());
+
+  // ── Saved progress: pick a person, then load their setup ──
+  document.getElementById('profile-add-btn').addEventListener('click', () => {
+    const input = document.getElementById('profile-name');
+    const name = input.value.trim();
+    if(!name) { input.focus(); return; }
+    Store.create(name);
+    input.value = '';
+    App.loadProfile();
+    UI.renderProfiles();
+    UI.renderTutorialList();
+    UI.syncAll();
+  });
+  document.getElementById('profile-name').addEventListener('keydown', e => {
+    if(e.key === 'Enter') document.getElementById('profile-add-btn').click();
+  });
+  document.getElementById('demo-exit-btn').addEventListener('click', () => {
+    Store.select(null);           // leave demo, no profile selected
+    App.loadProfile();
+    UI.renderProfiles(); UI.renderTutorialList(); UI.syncAll();
+  });
+  document.getElementById('profile-list').addEventListener('click', e => {
+    // Step 1 — arm the delete (turns the chip into Delete / Keep)
+    const del = e.target.closest('[data-del]');
+    if(del) {
+      e.stopPropagation();
+      UI.setPendingDelete(del.dataset.del);
+      return;
+    }
+    // Step 2a — confirm
+    const yes = e.target.closest('[data-confirm-del]');
+    if(yes) {
+      e.stopPropagation();
+      const id = yes.dataset.confirmDel;
+      const wasActive = (id === Store.activeId);
+      Store.remove(id);
+      UI.setPendingDelete(null);
+      if(wasActive) App.loadProfile();
+      UI.renderTutorialList(); UI.syncAll();
+      return;
+    }
+    // Step 2b — cancel
+    if(e.target.closest('[data-cancel-del]')) {
+      e.stopPropagation();
+      UI.setPendingDelete(null);
+      return;
+    }
+    const chip = e.target.closest('[data-pid]');
+    if(chip) {
+      UI.setPendingDelete(null);
+      Store.select(chip.dataset.pid);
+      App.loadProfile();
+      document.body.classList.toggle('demo-active', Store.isDemo);
+      UI.renderProfiles(); UI.renderTutorialList(); UI.syncAll();
+    }
+  });
+
+  // Persist settings whenever they change
+  ['thresh-on','thresh-off','filter-size','lockout-ms','volume-range'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('change', () => App.saveSettings());
+  });
+  document.getElementById('phrase-mode').addEventListener('change', () => App.saveSettings());
+
+  UI.renderProfiles();
+  if(Store.active) App.loadProfile();
   document.getElementById('lockout-ms').addEventListener('input', e=>{
     App.setLockoutMs(parseInt(e.target.value));
     document.getElementById('lockout-val').textContent=e.target.value;
