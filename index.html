@@ -1634,8 +1634,8 @@
       <div class="panel-title" data-i18n="configuration">Settings</div>
       <div class="settings-grid" id="settings-basic">
         <div class="setting-group">
-          <label for="volume-range">Volume: <span id="volume-val">70</span>%</label>
-          <input type="range" id="volume-range" min="5" max="100" value="70">
+          <label for="volume-range">Volume: <span id="volume-val">80</span>%</label>
+          <input type="range" id="volume-range" min="5" max="100" value="80">
         </div>
         <div class="setting-group">
           <label>Set up the glove for this person</label>
@@ -3085,7 +3085,7 @@ const AudioEngine = (() => {
   let masterGain = null;
   let activeNodes = {}; // finger -> {osc nodes or buffer source}
   let drumBuffers = {};
-  let volume = 0.7;
+  let volume = 0.8;
   let instrument = 'harp';
 
   let reverbSend = null;
