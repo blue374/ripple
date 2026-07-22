@@ -3573,6 +3573,9 @@ const App = (() => {
   // Detection works on a 0..1 normalized value per finger, so encoders and
   // flex-sensor dividers (any range, either direction) behave identically.
   let threshOn=0.75, threshOff=0.4;
+  // Per-finger trigger overrides. The ring finger is the hardest to move on
+  // its own, so it fires at a gentler bend than the rest.
+  const fingerOnOverride = { ring: 0.6 };
   let filterSize=12;
 
   // Per-finger calibration endpoints (raw ADC counts)
@@ -3596,6 +3599,7 @@ const App = (() => {
 
   // Tutorial state
   let mode='play'; // 'play' | 'tutorial'
+  let prevPlayPreset='therapy'; // remembers Play-tab preset across tutorial visits
   let tutState={current:null, step:0, completed:false, windowStart:0, songNotes:[]};
   let tutReady = new Set(TUT_FINGERS);
   // Phrase Mode: one correct press sounds an entire musical line rather than
@@ -3652,6 +3656,9 @@ const App = (() => {
   function onPacket(vals) {
     if(!connected) return;
     if(App._collectHook) { App._collectHook(vals); return; }
+    // Recording playback also drives audio directly — don't let live packets
+    // interfere and chop the notes.
+    if(playingBack) return;
     // The demo drives the audio directly; live packets must not fight it,
     // or each demo note gets cut off the instant a "relaxed hand" frame
     // arrives. Keep updating the debug readouts, but don't touch playback.
@@ -3666,18 +3673,15 @@ const App = (() => {
 
     const newActive = new Set();
     const now = Date.now();
-    const on  = threshOn;
-    // In a tutorial the release threshold sits just under `on`, so a brief
-    // partial relax between two notes on the same finger reads as a real
-    // release and the repeat fires. Free play keeps the wide, chatter-proof
-    // band. (Still clamped to keep a small gap below `on`.)
-    const off = (mode === 'tutorial')
-      ? (on - 0.12)
-      : Math.min(threshOff, threshOn - 0.02);
+    // (release threshold computed per-finger inside the loop below)
 
     for(const f of FINGERS) {
       const raw  = Math.round(filterValue(f, vals[FINGER_CFG[f].idx]));
       const norm = normalize(f, raw);
+      const on   = fingerOnOverride[f] ?? threshOn;
+      // In a tutorial the release threshold sits just under this finger's `on`
+      // so a brief partial relax between repeated notes counts as a release.
+      const off  = (mode === 'tutorial') ? (on - 0.12) : Math.min(threshOff, on - 0.02);
 
       // Hysteresis: cross `on` to fire, must fall below the lower `off` to release.
       // Plus a retrigger lockout: a finger that just fired cannot fire AGAIN
@@ -3726,7 +3730,9 @@ const App = (() => {
       for(const f of newlyPressed) {
         const snd = soundSnapshot[f];
         const freqs = (typeof CHORDS !== 'undefined' && CHORDS[snd]) ? CHORDS[snd] : (snd ? getFreqs(snd) : null);
-        if(freqs && preset.instrument !== 'drums') AudioEngine.startFingerFreqs(f, freqs, preset.instrument);
+        // In a tutorial, always sound piano regardless of the global instrument.
+        const instToUse = (mode==='tutorial') ? 'soft' : preset.instrument;
+        if(freqs && instToUse !== 'drums') AudioEngine.startFingerFreqs(f, freqs, instToUse);
       }
       AudioEngine.updateActive(newActive, preset);
 
@@ -3769,7 +3775,7 @@ const App = (() => {
         const len = phraseLenAt(tut, tutState.step);
         const notes = tut.sequence.slice(tutState.step, tutState.step + len);
         AudioEngine.cancelPhrase();
-        AudioEngine.playPhrase(notes, getPreset().instrument || 'soft', phraseTempo);
+        AudioEngine.playPhrase(notes, 'soft', phraseTempo);
         tutState.step += len;
       } else {
         tutState.step++;
@@ -3926,6 +3932,7 @@ const App = (() => {
   }
 
   function setPreset(p) {
+    if(PRESETS[p]?.hidden) return;      // never selectable from UI
     currentPreset=p;
     AudioEngine.stopAll();
     activeFingers=new Set();
@@ -3949,7 +3956,8 @@ const App = (() => {
     newActive.add(finger);
     AudioEngine.triggerDrums(new Set([finger]), preset);
     if(freqOverride) {
-      AudioEngine.startFingerFreqs(finger, freqOverride, preset.instrument);
+      const inst = (mode==='tutorial') ? 'soft' : preset.instrument;
+      AudioEngine.startFingerFreqs(finger, freqOverride, inst);
     } else {
       AudioEngine.updateActive(newActive, preset);
     }
@@ -4077,6 +4085,7 @@ const App = (() => {
     mode = 'tutorial';
     PRESETS._tutorial.mapping = buildWindowMapping(songNotes, initWS);
     currentPreset = '_tutorial';
+    AudioEngine.setInstrument('soft');   // tutorials are always piano
     AudioEngine.stopAll();
     activeFingers = new Set();
     UI.renderTutorialActive();
@@ -4161,30 +4170,28 @@ const App = (() => {
         return;
       }
       const ev=events[ei];
-      const nextTime=events[ei+1] ? events[ei+1].time : ev.time+0.5;
-      const holdMs=Math.max(80, (nextTime-ev.time)*1000*0.88);
-      const gapMs =Math.max(20, (nextTime-ev.time)*1000*0.12);
+      const nextTime=events[ei+1] ? events[ei+1].time : ev.time+0.6;
+      const stepMs=Math.max(120, (nextTime-ev.time)*1000);
       const preset=getPreset();
+      const inst=preset.instrument||'soft';
 
       const newSet=new Set(ev.fingers);
       AudioEngine.triggerDrums(newSet, preset);
+      // updateActive stops only fingers that ended and starts only new ones;
+      // fingers held across events keep ringing (no re-attack, no chop).
       for(const f of newSet) {
         const sound=preset.mapping?.[f];
-        const freqs=CHORDS[sound]||[];
-        AudioEngine.startFingerFreqs(f, freqs, preset.instrument||'bell');
+        const freqs=(typeof CHORDS!=='undefined'&&CHORDS[sound])?CHORDS[sound]:[];
+        AudioEngine.startFingerFreqs(f, freqs, inst);
       }
+      // release any finger that was sounding but isn't in this event
+      for(const f of activeFingers) if(!newSet.has(f)) AudioEngine.updateActive(newSet, preset);
       activeFingers=newSet;
       UI.updateFingers(activeFingers, currentPreset);
       ei++;
 
-      // Let each note ring and decay naturally into the gap instead of hard-
-      // cutting the whole engine between events (which caused the staccato).
-      pbTimer=setTimeout(()=>{
-        AudioEngine.updateActive(new Set(), preset);   // release current notes, keep tails
-        activeFingers=new Set();
-        UI.updateFingers(activeFingers, currentPreset);
-        pbTimer=setTimeout(scheduleNext, gapMs);
-      }, holdMs + gapMs*0.6);
+      // Advance at the recorded rhythm; notes decay via their own release.
+      pbTimer=setTimeout(scheduleNext, stepMs);
     }
 
     scheduleNext();
@@ -4237,6 +4244,24 @@ const App = (() => {
     setThreshOn(v){threshOn=v},
     setThreshOff(v){threshOff=v},
     setFilterSize(v){filterSize=v},
+    enterTutorialContext(){
+      mode='tutorial';
+      AudioEngine.stopAll();
+      activeFingers=new Set();
+      AudioEngine.setInstrument('soft');          // tutorials are always piano
+      if(currentPreset!=='_tutorial'){ prevPlayPreset=currentPreset; currentPreset='_tutorial'; }
+      UI.syncAll();
+    },
+    exitTutorialContext(){
+      if(mode!=='tutorial' && currentPreset!=='_tutorial') return;
+      mode='play';
+      AudioEngine.stopAll();
+      activeFingers=new Set();
+      currentPreset = (prevPlayPreset && !PRESETS[prevPlayPreset]?.hidden) ? prevPlayPreset : 'therapy';
+      const inst = PRESETS[currentPreset]?.instrument;
+      if(inst) AudioEngine.setInstrument(inst);    // restore the Play instrument
+      UI.syncAll();
+    },
     get phraseMode(){return phraseMode},
     setPhraseMode(v){ phraseMode=!!v; if(!v) AudioEngine.cancelPhrase(); },
     setPhraseTempo(v){ phraseTempo=v; },
@@ -5211,10 +5236,14 @@ document.addEventListener('DOMContentLoaded', () => {
       ['play','tutorial','record','settings'].forEach(id=>{
         document.getElementById('tab-'+id).classList.toggle('hidden', id!==tab.dataset.tab);
       });
-      // Reset piano mapping when returning to Play tab so tutorial doesn't leave stale notes
-      if(tab.dataset.tab === 'play' && App.mode !== 'tutorial') {
-        PRESETS.piano.mapping = {thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'};
-        UI.syncAll();
+      if(tab.dataset.tab === 'play') {
+        // Leaving the tutorial: drop tutorial mode and restore the user's
+        // chosen Play-tab instrument, so tutorial audio never bleeds either way.
+        App.exitTutorialContext();
+      } else if(tab.dataset.tab === 'tutorial') {
+        // Entering the tutorial: force piano; the Play instrument stays put
+        // for when the user returns.
+        App.enterTutorialContext();
       }
     });
   });
