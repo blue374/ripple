@@ -1656,8 +1656,8 @@
 
       <div class="settings-grid hidden" id="settings-advanced">
         <div class="setting-group">
-          <label for="thresh-on">Bend threshold (trigger): <span id="thresh-on-val">0.70</span></label>
-          <input type="range" id="thresh-on" min="0.01" max="0.99" step="0.01" value="0.70">
+          <label for="thresh-on">Bend threshold (trigger): <span id="thresh-on-val">0.75</span></label>
+          <input type="range" id="thresh-on" min="0.01" max="0.99" step="0.01" value="0.75">
         </div>
         <div class="setting-group">
           <label for="thresh-off">Release threshold: <span id="thresh-off-val">0.40</span></label>
@@ -3568,7 +3568,7 @@ const App = (() => {
   // ── PHASE A: normalized, sensor-agnostic detection ──
   // Detection works on a 0..1 normalized value per finger, so encoders and
   // flex-sensor dividers (any range, either direction) behave identically.
-  let threshOn=0.7, threshOff=0.4;
+  let threshOn=0.75, threshOff=0.4;
   let filterSize=12;
 
   // Per-finger calibration endpoints (raw ADC counts)
@@ -3648,12 +3648,28 @@ const App = (() => {
   function onPacket(vals) {
     if(!connected) return;
     if(App._collectHook) { App._collectHook(vals); return; }
+    // The demo drives the audio directly; live packets must not fight it,
+    // or each demo note gets cut off the instant a "relaxed hand" frame
+    // arrives. Keep updating the debug readouts, but don't touch playback.
+    if(demoPlaying) {
+      for(const f of FINGERS) {
+        const raw = Math.round(filterValue(f, vals[FINGER_CFG[f].idx]));
+        _debugRaw[f] = raw; _debugNorm[f] = normalize(f, raw);
+      }
+      return;
+    }
     if(!calibrated) return;
 
     const newActive = new Set();
     const now = Date.now();
     const on  = threshOn;
-    const off = Math.min(threshOff, threshOn - 0.02); // always keep a hysteresis gap
+    // In a tutorial the release threshold sits just under `on`, so a brief
+    // partial relax between two notes on the same finger reads as a real
+    // release and the repeat fires. Free play keeps the wide, chatter-proof
+    // band. (Still clamped to keep a small gap below `on`.)
+    const off = (mode === 'tutorial')
+      ? (on - 0.12)
+      : Math.min(threshOff, threshOn - 0.02);
 
     for(const f of FINGERS) {
       const raw  = Math.round(filterValue(f, vals[FINGER_CFG[f].idx]));
@@ -3686,24 +3702,39 @@ const App = (() => {
     if(changed) {
       const newlyPressed = [...newActive].filter(f=>!activeFingers.has(f));
 
+      // Snapshot the pitch to sound for each newly-pressed finger BEFORE any
+      // tutorial progression can shift the window mapping underneath us.
+      // Without this, a press sounds the *next* note instead of the one the
+      // finger currently shows.
+      const preset = getPreset();
+      const soundSnapshot = {};
+      for(const f of newlyPressed) soundSnapshot[f] = preset.mapping[f];
+
       // Record
       if(recording && newlyPressed.length>0) {
         const ts = (Date.now()-recStart)/1000;
         recEvents.push({ time:ts, fingers:[...newlyPressed] });
       }
 
-      // Tutorial progress
-      if(mode==='tutorial' && newlyPressed.length>0) {
-        for(const f of newlyPressed) checkTutorialProgress(f);
+      // Audio — fire from the snapshot first, so the sound is always the note
+      // that was on screen at the moment of the press.
+      AudioEngine.triggerDrums(new Set(newlyPressed), preset);
+      for(const f of newlyPressed) {
+        const snd = soundSnapshot[f];
+        const freqs = (typeof CHORDS !== 'undefined' && CHORDS[snd]) ? CHORDS[snd] : (snd ? getFreqs(snd) : null);
+        if(freqs && preset.instrument !== 'drums') AudioEngine.startFingerFreqs(f, freqs, preset.instrument);
       }
-
-      // Audio
-      AudioEngine.triggerDrums(new Set(newlyPressed), getPreset());
-      AudioEngine.updateActive(newActive, getPreset());
+      AudioEngine.updateActive(newActive, preset);
 
       activeFingers = newActive;
       UI.updateFingers(activeFingers, currentPreset);
       UI.updateStatus(activeFingers, currentPreset);
+
+      // Tutorial progress AFTER audio, so advancing the window never changes
+      // the note that was just played.
+      if(mode==='tutorial' && newlyPressed.length>0) {
+        for(const f of newlyPressed) checkTutorialProgress(f);
+      }
     }
   }
 
