@@ -2271,6 +2271,10 @@ const PRESETS = {
   chords:  { name:'🎸 Chords',  nameZh:'🎸 和弦', nameEs:'🎸 Acordes', instrument:'soft',  mapping:{thumb:'C_maj',index:'D_maj',middle:'E_maj',ring:'G_maj',pinky:'A_maj'} },
   drums:   { name:'🥁 Drums',   nameZh:'🥁 打击乐', nameEs:'🥁 Batería', instrument:'drums', mapping:{thumb:'kick',index:'snare',middle:'hihat',ring:'tom',pinky:'clap'} },
   custom:  { name:'✏️ Custom',  nameZh:'✏️ 自定义', nameEs:'✏️ Personalizado', instrument:'sine',  mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'} },
+  // Tutorial-only preset — never shown in the Play tab (hidden), always piano.
+  // The window system writes note mappings here so tutorials can't disturb the
+  // instruments the user plays with.
+  _tutorial:{ name:'Tutorial', instrument:'soft', mapping:{thumb:'C4',index:'D4',middle:'E4',ring:'F4',pinky:'G4'}, hidden:true },
 };
 
 const TUTORIALS_EN = {
@@ -2384,7 +2388,7 @@ const TUTORIALS_EN = {
   },
   shenandoah: {
     name:'Shenandoah', difficulty:'Medium',
-    phrases:[7,7,7,7],
+    phrases:[7,7,7,6],
     sequence:[
       {note:'C4',d:1},{note:'E4',d:1},{note:'G4',d:2},{note:'A4',d:1},{note:'G4',d:1},{note:'E4',d:2},
       {note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:2},{note:'D4',d:1},{note:'C4',d:1},{note:'D4',d:2},{note:'E4',d:1},
@@ -2444,12 +2448,12 @@ const TUTORIALS_EN = {
   },
   happy: {
     name:'Happy Birthday', difficulty:'Easy',
-    phrases:[6,6,6,7],
+    phrases:[6,6,7,6],
     sequence:[
       {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'D4',d:1},{note:'C4',d:1},{note:'F4',d:1},{note:'E4',d:2},{note:'C4',d:0.75},
       {note:'C4',d:0.25},{note:'D4',d:1},{note:'C4',d:1},{note:'G4',d:1},{note:'F4',d:2},
-      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'C5',d:1},{note:'A4',d:1},{note:'F4',d:1},{note:'E4',d:1},
-      {note:'D4',d:1},{note:'A#4',d:0.75},{note:'A#4',d:0.25},{note:'A4',d:1},{note:'F4',d:1},{note:'G4',d:1},{note:'F4',d:2},
+      {note:'C4',d:0.75},{note:'C4',d:0.25},{note:'C5',d:1},{note:'A4',d:1},{note:'F4',d:1},{note:'E4',d:1},{note:'D4',d:2},
+      {note:'A#4',d:0.75},{note:'A#4',d:0.25},{note:'A4',d:1},{note:'F4',d:1},{note:'G4',d:1},{note:'F4',d:3},
     ],
   },
   greensleeves: {
@@ -2474,17 +2478,17 @@ const TUTORIALS_EN = {
   },
   entertainer: {
     name:'The Entertainer', difficulty:'Hard',
-    phrases:[8,8,8,8],
+    phrases:[8,8,8,10],
     sequence:[
       {note:'D4',d:0.5},{note:'D#4',d:0.5},{note:'E4',d:0.5},{note:'C5',d:1},{note:'E4',d:0.5},{note:'C5',d:1},{note:'E4',d:0.5},{note:'C5',d:2},
       {note:'C4',d:0.5},{note:'D4',d:0.5},{note:'D#4',d:0.5},{note:'E4',d:0.5},{note:'C4',d:0.5},{note:'D4',d:0.5},{note:'E4',d:1},{note:'B4',d:0.5},
       {note:'D5',d:1.5},{note:'C5',d:1},{note:'D4',d:0.5},{note:'D#4',d:0.5},{note:'E4',d:0.5},{note:'C5',d:1},{note:'E4',d:0.5},{note:'C5',d:1},
-      {note:'E4',d:0.5},{note:'C5',d:2},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'F#4',d:0.5},{note:'A4',d:0.5},{note:'C5',d:1},{note:'E5',d:2},
+      {note:'E4',d:0.5},{note:'C5',d:1},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'F#4',d:0.5},{note:'A4',d:0.5},{note:'G4',d:0.5},{note:'E4',d:0.5},{note:'D4',d:0.5},{note:'C4',d:2},
     ],
   },
   yankeedoodle: {
     name:'Yankee Doodle', difficulty:'Easy',
-    phrases:[8,8,8,8],
+    phrases:[8,8,8,7],
     sequence:[
       {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:1},{note:'E4',d:1},{note:'D4',d:1},{note:'G3',d:1},
       {note:'C4',d:1},{note:'C4',d:1},{note:'D4',d:1},{note:'E4',d:1},{note:'C4',d:2},{note:'B3',d:2},{note:'C4',d:1},{note:'C4',d:1},
@@ -3785,7 +3789,7 @@ const App = (() => {
         const newWS = getWindowStart(nextNote, tutState.songNotes, tutState.windowStart);
         if(newWS !== tutState.windowStart) {
           tutState.windowStart = newWS;
-          PRESETS.piano.mapping = buildWindowMapping(tutState.songNotes, newWS);
+          PRESETS._tutorial.mapping = buildWindowMapping(tutState.songNotes, newWS);
           UI.flashMappingChange();
         }
         // remember how far they got, even if they stop partway
@@ -3984,7 +3988,7 @@ const App = (() => {
 
     AudioEngine.init();
     activeFingers = new Set();
-    currentPreset = 'piano';
+    currentPreset = '_tutorial';
 
     const bpm = DEMO_BPM[id] || tut.bpm || 120;
     const beatMs = (60 / bpm) * 1000;
@@ -3995,7 +3999,7 @@ const App = (() => {
     if(tut.sequence[0]?.note) {
       demoWindowStart = getWindowStart(tut.sequence[0].note, songNotes, 0);
     }
-    PRESETS.piano.mapping = buildWindowMapping(songNotes, demoWindowStart);
+    PRESETS._tutorial.mapping = buildWindowMapping(songNotes, demoWindowStart);
     UI.syncAll();
 
     demoPlaying = true;
@@ -4013,7 +4017,7 @@ const App = (() => {
       const newWS = getWindowStart(note, songNotes, demoWindowStart);
       if(newWS !== demoWindowStart) {
         demoWindowStart = newWS;
-        PRESETS.piano.mapping = buildWindowMapping(songNotes, demoWindowStart);
+        PRESETS._tutorial.mapping = buildWindowMapping(songNotes, demoWindowStart);
         if(tutState.current === id) {
           tutState.windowStart = demoWindowStart;
         }
@@ -4071,8 +4075,8 @@ const App = (() => {
     tutState = {current:id, step:0, completed:false, windowStart:initWS, songNotes};
     tutReady = new Set(TUT_FINGERS);
     mode = 'tutorial';
-    PRESETS.piano.mapping = buildWindowMapping(songNotes, initWS);
-    currentPreset = 'piano';
+    PRESETS._tutorial.mapping = buildWindowMapping(songNotes, initWS);
+    currentPreset = '_tutorial';
     AudioEngine.stopAll();
     activeFingers = new Set();
     UI.renderTutorialActive();
@@ -4092,7 +4096,7 @@ const App = (() => {
     tutState.step = 0; tutState.completed = false;
     tutState.windowStart = initWS; tutState.songNotes = songNotes;
     tutReady = new Set(TUT_FINGERS);
-    PRESETS.piano.mapping = buildWindowMapping(songNotes, initWS);
+    PRESETS._tutorial.mapping = buildWindowMapping(songNotes, initWS);
     AudioEngine.stopAll();
     activeFingers = new Set();
     UI.renderTutorialActive();
@@ -4173,12 +4177,14 @@ const App = (() => {
       UI.updateFingers(activeFingers, currentPreset);
       ei++;
 
+      // Let each note ring and decay naturally into the gap instead of hard-
+      // cutting the whole engine between events (which caused the staccato).
       pbTimer=setTimeout(()=>{
-        AudioEngine.stopAll();
+        AudioEngine.updateActive(new Set(), preset);   // release current notes, keep tails
         activeFingers=new Set();
         UI.updateFingers(activeFingers, currentPreset);
         pbTimer=setTimeout(scheduleNext, gapMs);
-      }, holdMs);
+      }, holdMs + gapMs*0.6);
     }
 
     scheduleNext();
@@ -4317,7 +4323,7 @@ const UI = (() => {
 
   function renderPresets() {
     const strip = document.getElementById('preset-strip');
-    strip.innerHTML = Object.entries(PRESETS).map(([k,v])=>`
+    strip.innerHTML = Object.entries(PRESETS).filter(([k,v])=>!v.hidden).map(([k,v])=>`
       <button class="preset-btn ${App.currentPreset===k?'active':''}" data-p="${k}">${currentLang==='zh' && v.nameZh ? v.nameZh : currentLang==='es' && v.nameEs ? v.nameEs : v.name}</button>
     `).join('');
     strip.querySelectorAll('.preset-btn').forEach(b=>{
