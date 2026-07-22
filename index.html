@@ -2460,10 +2460,10 @@ const TUTORIALS_EN = {
     name:'Greensleeves', difficulty:'Hard',
     phrases:[8,8,8,8],
     sequence:[
-      {note:'A4',d:1},{note:'C5',d:1.5},{note:'D5',d:0.5},{note:'E5',d:1.5},{note:'F5',d:0.5},{note:'E5',d:1},{note:'D5',d:1.5},{note:'B4',d:0.5},
-      {note:'G4',d:1},{note:'A4',d:1.5},{note:'B4',d:0.5},{note:'C5',d:1.5},{note:'A4',d:0.5},{note:'A4',d:1},{note:'G4',d:1},{note:'A4',d:2},
-      {note:'A4',d:1},{note:'C5',d:1.5},{note:'D5',d:0.5},{note:'E5',d:1.5},{note:'F5',d:0.5},{note:'E5',d:1},{note:'D5',d:1.5},{note:'B4',d:0.5},
-      {note:'G4',d:1},{note:'B4',d:1.5},{note:'A4',d:0.5},{note:'G4',d:1.5},{note:'F4',d:0.5},{note:'G4',d:1},{note:'A4',d:2},{note:'A4',d:1},
+      {note:'A4',d:1},{note:'C5',d:1.5},{note:'D5',d:0.5},{note:'E5',d:1.5},{note:'F#5',d:0.5},{note:'E5',d:1},{note:'D5',d:1.5},{note:'B4',d:0.5},
+      {note:'G4',d:1},{note:'A4',d:1.5},{note:'B4',d:0.5},{note:'C5',d:1.5},{note:'B4',d:0.5},{note:'A4',d:1},{note:'G#4',d:1},{note:'B4',d:2},
+      {note:'A4',d:1},{note:'C5',d:1.5},{note:'D5',d:0.5},{note:'E5',d:1.5},{note:'F#5',d:0.5},{note:'E5',d:1},{note:'D5',d:1.5},{note:'B4',d:0.5},
+      {note:'G4',d:1},{note:'B4',d:1.5},{note:'A4',d:0.5},{note:'G#4',d:1.5},{note:'F#4',d:0.5},{note:'G#4',d:1},{note:'A4',d:2},{note:'A4',d:1},
     ],
   },
   furelise: {
@@ -3575,7 +3575,7 @@ const App = (() => {
   let threshOn=0.75, threshOff=0.4;
   // Per-finger trigger overrides. The ring finger is the hardest to move on
   // its own, so it fires at a gentler bend than the rest.
-  const fingerOnOverride = { ring: 0.6 };
+  const fingerOnOverride = { ring: 0.6, pinky: 0.65 };
   let filterSize=12;
 
   // Per-finger calibration endpoints (raw ADC counts)
