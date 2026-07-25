@@ -3626,20 +3626,7 @@ const App = (() => {
   }
 
   // Moving average filter
-  // Last known-good raw value per finger, for substituting a rejected packet.
-  const _lastGood = { thumb:null, index:null, middle:null, ring:null, pinky:null };
-  // A finger's full span is at most ~1e6 counts; a corrupt packet is off by
-  // ~1e9. Anything deviating by more than this is impossible and dropped.
-  const OUTLIER_LIMIT = 20000000; // 20M: >> any real per-frame move, << corruption
-
   function filterValue(finger, raw) {
-    // Reject a physically-impossible jump from the last good sample.
-    const lg = _lastGood[finger];
-    if(lg !== null && Math.abs(raw - lg) > OUTLIER_LIMIT) {
-      raw = lg;                       // corrupt packet → hold last good value
-    } else {
-      _lastGood[finger] = raw;        // accept as the new reference
-    }
     const arr = fingerBuffers[finger];
     arr.push(raw);
     if(arr.length > filterSize) arr.shift();
@@ -3647,13 +3634,8 @@ const App = (() => {
   }
 
   function clearBuffers() {
-    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerLastFire[f]=0; _lastGood[f]=null; });
+    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerLastFire[f]=0; });
   }
-
-  // Rolling raw history per finger for glitch diagnosis.
-  const _rawHistory = { thumb:[], index:[], middle:[], ring:[], pinky:[] };
-  const _RAWHIST = 8;
-  window.RIPPLE_GLITCH_LOG = false;  // set true in console to diagnose again
 
   // Called by Serial on each 10-value packet
   let _debugRaw = {};
@@ -3694,14 +3676,8 @@ const App = (() => {
     // (release threshold computed per-finger inside the loop below)
 
     for(const f of FINGERS) {
-      const rawPacket = vals[FINGER_CFG[f].idx];   // unfiltered, straight off the wire
-      const raw  = Math.round(filterValue(f, rawPacket));
+      const raw  = Math.round(filterValue(f, vals[FINGER_CFG[f].idx]));
       const norm = normalize(f, raw);
-
-      // keep a short history of the RAW packet values for this finger
-      const hist = _rawHistory[f];
-      hist.push(rawPacket);
-      if(hist.length > _RAWHIST) hist.shift();
       const on   = fingerOnOverride[f] ?? threshOn;
       // In a tutorial the release threshold sits just under this finger's `on`
       // so a brief partial relax between repeated notes counts as a release.
@@ -3720,15 +3696,6 @@ const App = (() => {
       } else {
         isActive = false;
       }
-      // Glitch capture: a finger reaching full bend from rest in a single frame
-      // is physically impossible — log the raw history so we can see the jump.
-      if(window.RIPPLE_GLITCH_LOG && !activeFingers.has(f) && norm >= 0.999) {
-        const prev = _debugNorm[f] ?? 0;
-        if(prev < 0.8) {   // was not already near-bent → this is a spike
-          console.warn(`[GLITCH] ${f}: norm ${prev.toFixed(2)}→1.00 | filtered raw=${raw} | rest=${fingerRest[f]} press=${fingerPress[f]} | last ${hist.length} raw packets:`, hist.slice());
-        }
-      }
-
       if(isActive) newActive.add(f);
 
       _debugRaw[f]  = raw;
