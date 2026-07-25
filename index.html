@@ -3626,7 +3626,20 @@ const App = (() => {
   }
 
   // Moving average filter
+  // Last known-good raw value per finger, for substituting a rejected packet.
+  const _lastGood = { thumb:null, index:null, middle:null, ring:null, pinky:null };
+  // A finger's full span is at most ~1e6 counts; a corrupt packet is off by
+  // ~1e9. Anything deviating by more than this is impossible and dropped.
+  const OUTLIER_LIMIT = 20000000; // 20M: >> any real per-frame move, << corruption
+
   function filterValue(finger, raw) {
+    // Reject a physically-impossible jump from the last good sample.
+    const lg = _lastGood[finger];
+    if(lg !== null && Math.abs(raw - lg) > OUTLIER_LIMIT) {
+      raw = lg;                       // corrupt packet → hold last good value
+    } else {
+      _lastGood[finger] = raw;        // accept as the new reference
+    }
     const arr = fingerBuffers[finger];
     arr.push(raw);
     if(arr.length > filterSize) arr.shift();
@@ -3634,13 +3647,13 @@ const App = (() => {
   }
 
   function clearBuffers() {
-    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerLastFire[f]=0; });
+    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerLastFire[f]=0; _lastGood[f]=null; });
   }
 
   // Rolling raw history per finger for glitch diagnosis.
   const _rawHistory = { thumb:[], index:[], middle:[], ring:[], pinky:[] };
   const _RAWHIST = 8;
-  window.RIPPLE_GLITCH_LOG = true;   // set false in console to silence
+  window.RIPPLE_GLITCH_LOG = false;  // set true in console to diagnose again
 
   // Called by Serial on each 10-value packet
   let _debugRaw = {};
