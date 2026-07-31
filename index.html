@@ -3626,20 +3626,7 @@ const App = (() => {
   }
 
   // Moving average filter
-  // Last accepted raw sample per finger, used to substitute a corrupt packet.
-  const _lastGood = { thumb:null, index:null, middle:null, ring:null, pinky:null };
-  // A finger's entire span is ~1e6 counts, so a real one-frame move is far
-  // below this; observed corruption is ~1e9 away. 20M sits safely between,
-  // wide enough never to reject genuine motion.
-  const OUTLIER_LIMIT = 20000000;
-
   function filterValue(finger, raw) {
-    const lg = _lastGood[finger];
-    if(lg !== null && Math.abs(raw - lg) > OUTLIER_LIMIT) {
-      raw = lg;                  // corrupt packet -> reuse last good value
-    } else {
-      _lastGood[finger] = raw;   // accept as the new reference
-    }
     const arr = fingerBuffers[finger];
     arr.push(raw);
     if(arr.length > filterSize) arr.shift();
@@ -3647,7 +3634,7 @@ const App = (() => {
   }
 
   function clearBuffers() {
-    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerLastFire[f]=0; _lastGood[f]=null; });
+    FINGERS.forEach(f=>{ fingerBuffers[f]=[]; fingerLastFire[f]=0; });
   }
 
   // Called by Serial on each 10-value packet
